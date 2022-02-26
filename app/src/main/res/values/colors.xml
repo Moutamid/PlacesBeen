@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="yellow">#FF3700B3</color>
+    <color name="yellow2">#f6ad21</color>
     <!--    <color name="yellow">#f6ad21</color>-->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
@@ -38,7 +39,7 @@
     <color name="lightGrey">#dbdada</color>
     <color name="lighterGrey">#e6e6e6</color>
     <color name="moreLighterGrey">#e1e1e1</color>
-    <color name="darkGrey">#bebebe</color>
+    <color name="darkGrey">#b1b1b1</color>
     <color name="lightBlack">#313335</color>
     <color name="darkerGrey">#b2b1b1</color>
     <color name="transparentWhiteOther">#99ffffff</color>

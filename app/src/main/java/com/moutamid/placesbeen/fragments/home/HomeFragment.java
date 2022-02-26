@@ -1,14 +1,13 @@
-package com.moutamid.placesbeen.activities.main;
+package com.moutamid.placesbeen.fragments.home;
 
 import static android.view.LayoutInflater.from;
-
 import static com.bumptech.glide.Glide.with;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,30 +15,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatRatingBar;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.fxn.stash.Stash;
 import com.google.android.material.card.MaterialCardView;
 import com.moutamid.placesbeen.R;
-import com.moutamid.placesbeen.activities.RegistrationActivity;
-import com.moutamid.placesbeen.databinding.ActivityMainBinding;
+import com.moutamid.placesbeen.activities.home.MainActivity;
+import com.moutamid.placesbeen.databinding.FragmentHomeBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeFragment extends Fragment {
+    public FragmentHomeBinding b;
 
-    public ActivityMainBinding b;
-    MainController controller;
+    HomeController controller;
 
     public ArrayList<MainItemModel> mainItemModelArrayList = new ArrayList<>();
 
@@ -55,14 +54,13 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerViewAdapterMessages adapter;
     LinearLayoutManager linearLayoutManager;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        b = ActivityMainBinding.inflate(getLayoutInflater());
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        setContentView(b.getRoot());
 
-        controller = new MainController(this);
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        b = FragmentHomeBinding.inflate(inflater, container, false);
+
+        controller = new HomeController(this);
 
         b.mainRecyclerView.showShimmerAdapter();
 
@@ -75,13 +73,14 @@ public class MainActivity extends AppCompatActivity {
                 CityArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);
                 CulturalSitesArrayList = Stash.getArrayList(Constants.PARAMS_CulturalSites, MainItemModel.class);
                 NationalParksArrayList = Stash.getArrayList(Constants.PARAMS_NationalParks, MainItemModel.class);
+                Collections.reverse(NationalParksArrayList);
                 AirportsArrayList = Stash.getArrayList(Constants.PARAMS_Airports, MainItemModel.class);
 
                 mainItemModelArrayList = ContinentArrayList;
 
                 controller.retrieveDatabaseItems();
 
-                runOnUiThread(new Runnable() {
+                requireActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         initRecyclerView();
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
         b.optionContinent.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotContinent);
+            controller.changeDotTo(b.dotContinent, b.textViewContinent);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = ContinentArrayList;
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             isAirport = false;
         });
         b.optionCountry.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotCountry);
+            controller.changeDotTo(b.dotCountry, b.textViewCountry);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = CountryArrayList;
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             isAirport = false;
         });
         b.optionStates.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotStates);
+            controller.changeDotTo(b.dotStates, b.textViewStates);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = StatesArrayList;
@@ -115,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             isAirport = false;
         });
         b.optionCity.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotCity);
+            controller.changeDotTo(b.dotCity, b.textViewCity);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = CityArrayList;
@@ -123,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
             isAirport = false;
         });
         b.optionCulturalSites.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotCulturalSites);
+            controller.changeDotTo(b.dotCulturalSites, b.textViewCulturalSites);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = CulturalSitesArrayList;
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             isAirport = false;
         });
         b.optionNationalParks.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotNationalParks);
+            controller.changeDotTo(b.dotNationalParks, b.textViewNationalParks);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = NationalParksArrayList;
@@ -141,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         b.optionAirports.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotAirports);
+            controller.changeDotTo(b.dotAirports, b.textViewAirports);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = AirportsArrayList;
@@ -150,7 +149,14 @@ public class MainActivity extends AppCompatActivity {
             isAirport = true;
         });
 
+        b.profileImageMain.setOnClickListener(view -> {
+            ((MainActivity) getActivity()).openProfilePage();
+        });
+
+        return b.getRoot();
+
     }
+
 
     public boolean isAirport = false;
 
@@ -158,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         conversationRecyclerView = b.mainRecyclerView;
         adapter = new RecyclerViewAdapterMessages();
-        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager = new LinearLayoutManager(requireContext());
         conversationRecyclerView.setLayoutManager(linearLayoutManager);
 
         conversationRecyclerView.setHasFixedSize(true);
@@ -171,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class RecyclerViewAdapterMessages extends Adapter
+    private class RecyclerViewAdapterMessages extends RecyclerView.Adapter
             <RecyclerViewAdapterMessages.ViewHolderRightMessage> {
 
         @NonNull
@@ -197,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
             loadImage(holder.imageView, model.title, model.desc, holder.getAdapterPosition());
 
             holder.parenLayout.setOnClickListener(view -> {
-                Toast.makeText(MainActivity.this, "" + model.lat + "\n" + model.lng + "\n" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "" + model.lat + "\n" + model.lng + "\n" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
             });
 
             controller.isSaved(model, holder.saveBtn);
@@ -217,8 +223,8 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         link = controller.getImageUrl(title, desc);
 
-                        runOnUiThread(() -> {
-                            with(MainActivity.this)
+                        requireActivity().runOnUiThread(() -> {
+                            with(requireActivity().getApplicationContext())
                                     .asBitmap()
                                     .load(link)
                                     .apply(new RequestOptions()
@@ -242,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
             return mainItemModelArrayList.size();
         }
 
-        public class ViewHolderRightMessage extends ViewHolder {
+        public class ViewHolderRightMessage extends RecyclerView.ViewHolder {
 
             TextView title, desc, ratingText;
             AppCompatRatingBar ratingBar;
@@ -263,6 +269,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
 
 }

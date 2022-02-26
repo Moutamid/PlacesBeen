@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentLayoutOnBoarding"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whitesmoke">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Saved Places"
+            android:textColor="@color/lightBlackSpotify"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/optionSaved"
+                style="@style/options_main"
+                android:paddingHorizontal="30dp">
+
+                <TextView
+                    android:id="@+id/textViewSaved"
+                    style="@style/options_txt_main"
+                    android:text="Saved"
+                    android:textColor="@color/yellow" />
+
+                <View
+                    android:id="@+id/dotSaved"
+                    style="@style/options_dot_main" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/optionBeen"
+                style="@style/options_main"
+                android:paddingHorizontal="30dp">
+
+                <TextView
+                    android:id="@+id/textViewBeen"
+                    style="@style/options_txt_main"
+                    android:text="Been" />
+
+                <View
+                    android:id="@+id/dotBeen"
+                    style="@style/options_dot_main"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/optionWantTo"
+                style="@style/options_main"
+                android:paddingHorizontal="30dp">
+
+                <TextView
+                    android:id="@+id/textViewWantTo"
+                    style="@style/options_txt_main"
+                    android:text="Want to" />
+
+                <View
+                    android:id="@+id/dotWantTo"
+                    style="@style/options_dot_main"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <com.ldt.springback.view.SpringBackLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:scrollOrientation="vertical">
+
+            <com.cooltechworks.views.shimmer.ShimmerRecyclerView
+                android:id="@+id/savedRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:shimmer_demo_angle="20"
+                app:shimmer_demo_child_count="20"
+                app:shimmer_demo_layout="@layout/layout_item_saved_demo"
+                app:shimmer_demo_layout_manager_type="linear_vertical"
+                tools:listitem="@layout/layout_item_saved_demo" />
+
+        </com.ldt.springback.view.SpringBackLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

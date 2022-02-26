@@ -1,9 +1,10 @@
-package com.moutamid.placesbeen.activities.main;
+package com.moutamid.placesbeen.fragments.home;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,12 +14,11 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.dezlum.codelabs.getjson.GetJson;
 import com.fxn.stash.Stash;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.moutamid.placesbeen.R;
+import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 
@@ -26,30 +26,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-public class MainController {
+public class HomeController {
     private static final String TAG = "FUCKK";
-    MainActivity mainActivity;
+    HomeFragment mainActivity;
     Context context;
     //    public String SELECTED_JSON = Constants.WORLD_CITIES_JSON;
     public View currentDot;
+    public TextView currentTextView;
 
-    public MainController(MainActivity mainActivity) {
+    public HomeController(HomeFragment mainActivity) {
         this.mainActivity = mainActivity;
-        this.context = mainActivity;
+        this.context = mainActivity.requireContext();
         this.currentDot = mainActivity.b.dotContinent;
+        this.currentTextView = mainActivity.b.textViewContinent;
     }
 
-    public void changeDotTo(View dot) {
+    public void changeDotTo(View dot, TextView textView) {
         Log.d(TAG, "changeDotTo: ");
         currentDot.setVisibility(View.GONE);
         currentDot = dot;
         currentDot.setVisibility(View.VISIBLE);
+
+        currentTextView.setTextColor(mainActivity.getResources().getColor(R.color.darkGrey));
+        currentTextView = textView;
+        currentTextView.setTextColor(mainActivity.getResources().getColor(R.color.yellow));
     }
 
     public JSONObject downloadJSON(String title, String desc) {

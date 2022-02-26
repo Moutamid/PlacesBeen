@@ -3,7 +3,7 @@
 
     <style name="options_main">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_marginStart">20dp</item>
+        <item name="android:paddingHorizontal">10dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
     </style>
@@ -12,7 +12,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/yellow</item>
+        <item name="android:textColor">#b1b1b1</item>
     </style>
 
     <style name="options_dot_main">

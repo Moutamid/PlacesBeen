@@ -1,13 +1,15 @@
-package com.moutamid.placesbeen.onboard;
+package com.moutamid.placesbeen.activities.home;
+
+import static com.bumptech.glide.Glide.with;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.Scroller;
 
 import androidx.annotation.NonNull;
@@ -20,80 +22,81 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.moutamid.placesbeen.R;
-import com.moutamid.placesbeen.activities.login.RegistrationActivity;
-import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingOne;
+import com.moutamid.placesbeen.databinding.ActivityMainBinding;
+import com.moutamid.placesbeen.fragments.charts.ChartsFragment;
+import com.moutamid.placesbeen.fragments.home.HomeFragment;
+import com.moutamid.placesbeen.fragments.profile.ProfileFragment;
+import com.moutamid.placesbeen.fragments.save.SaveFragment;
 import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingThree;
 import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingTwo;
-import com.moutamid.placesbeen.utils.Utils;
-import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OnBoardingActivity extends AppCompatActivity {
-    private static final String TAG = "OnBoardingActivity";
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+    public ActivityMainBinding b;
 
     private ViewPagerFragmentAdapter adapter;
     private ViewPager viewPager;
 
-//    LottieAnimationView forwardBtn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Utils.changeStatusBarColor(this, R.color.yellow);
+        b = ActivityMainBinding.inflate(getLayoutInflater());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        setContentView(R.layout.activity_on_boarding);
-        viewPager = findViewById(R.id.onBoarding_walkThrough_view_pager);
+        setContentView(b.getRoot());
+
+        viewPager = findViewById(R.id.main_view_pager);
 
         adapter = new ViewPagerFragmentAdapter(getSupportFragmentManager());
 
         // Setting up the view Pager
         setupViewPager(viewPager);
 
-        findViewById(R.id.startBtnOnBoard).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(OnBoardingActivity.this, RegistrationActivity.class));
-                finish();
-            }
+        currentDot = b.homeDotBtnNav;
+        currentBtn = b.homeBtnNavMain;
+
+        b.homeLayoutMain.setOnClickListener(view -> {
+            changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
+
+            viewPager.setCurrentItem(0, true);
+        });
+        b.chartsLayoutMain.setOnClickListener(view -> {
+            changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
+
+            viewPager.setCurrentItem(1, true);
+        });
+        b.saveLayoutMain.setOnClickListener(view -> {
+            changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_save_24);
+            viewPager.setCurrentItem(2, true);
+
+        });
+        b.profileLayoutMain.setOnClickListener(view -> {
+            changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
+            viewPager.setCurrentItem(3, true);
+
         });
 
     }
 
+    private View currentDot;
+    private ImageView currentBtn;
+
+    public void openProfilePage(){
+        changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
+        viewPager.setCurrentItem(3, true);
+    }
+
     private void setupViewPager(ViewPager viewPager) {
-//        Utils.changeStatusBarColor(OnBoardingActivity.this, R.color.whitesmoke);
         // Adding Fragments to Adapter
-        adapter.addFragment(new FragmentOnBoardingOne());
-        adapter.addFragment(new FragmentOnBoardingTwo());
-        adapter.addFragment(new FragmentOnBoardingThree());
+        adapter.addFragment(new HomeFragment());
+        adapter.addFragment(new ChartsFragment());
+        adapter.addFragment(new SaveFragment());
+        adapter.addFragment(new ProfileFragment());
 
-//        forwardBtn.addAnimatorListener(new Animator.AnimatorListener() {
-//            @Override
-//            public void onAnimationStart(Animator animator) {
-//                forwardBtn.setProgress(0.5f);
-//            }
-//
-//            @Override
-//            public void onAnimationEnd(Animator animator) {
-//                forwardBtn.pauseAnimation();
-//            }
-//
-//            @Override
-//            public void onAnimationCancel(Animator animator) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationRepeat(Animator animator) {
-//
-//            }
-//        });
-//        forwardBtn.setProgress(0.2f);
-
-        // Setting Adapter To ViewPager
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(4);
         viewPager.setAdapter(adapter);
 
         Log.d(TAG, "setupViewPager: adapter attached");
@@ -106,23 +109,13 @@ public class OnBoardingActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
-//                    forwardBtn.setProgress(0.2f);
-                    findViewById(R.id.startBtnOnBoard).setVisibility(View.GONE);
+                    changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
                 } else if (position == 1) {
-//                    forwardBtn.setProgress(0.4f);
-                    findViewById(R.id.startBtnOnBoard).setVisibility(View.GONE);
+                    changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
                 } else if (position == 2) {
-//                    forwardBtn.resumeAnimation();
-//                    YoYo.with(Techniques.FadeIn)
-//                            .delay(100)
-//                            .duration(700)
-//                            .onStart(new YoYo.AnimatorCallback() {
-//                                @Override
-//                                public void call(Animator animator) {
-                    findViewById(R.id.startBtnOnBoard).setVisibility(View.VISIBLE);
-//                                }
-//                            })
-//                            .playOn(findViewById(R.id.startBtnOnBoard));
+                    changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_save_24);
+                } else if (position == 3) {
+                    changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
                 }
             }
 
@@ -132,8 +125,22 @@ public class OnBoardingActivity extends AppCompatActivity {
             }
         });
 
-        SpringDotsIndicator springDotsIndicator = (SpringDotsIndicator) findViewById(R.id.dotsIndicatorOnBoard);
-        springDotsIndicator.setViewPager(viewPager);
+    }
+
+    private void changeNavTo(View dot, ImageView btn, int drawable) {
+
+        currentDot.setVisibility(View.GONE);
+        b.homeBtnNavMain.setImageResource(R.drawable.ic_unselected_home_24);
+        b.chartsBtnNavMain.setImageResource(R.drawable.ic_charts_unselected_24);
+        b.saveBtnNavMain.setImageResource(R.drawable.ic_unsave_24);
+        b.profileBtnNavMain.setImageResource(R.drawable.ic_profile_24);
+
+
+        currentBtn = btn;
+        currentDot = dot;
+
+        currentBtn.setImageResource(drawable);
+        currentDot.setVisibility(View.VISIBLE);
 
     }
 
@@ -173,7 +180,7 @@ public class OnBoardingActivity extends AppCompatActivity {
                 Class<?> viewpager = ViewPager.class;
                 Field scroller = viewpager.getDeclaredField("mScroller");
                 scroller.setAccessible(true);
-                scroller.set(this, new MyScroller(getContext()));
+                scroller.set(this, new NonSwipableViewPager.MyScroller(getContext()));
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -2,11 +2,8 @@ package com.moutamid.placesbeen.onboard;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
-import com.dezlum.codelabs.getjson.GetJson;
 import com.fxn.stash.Stash;
-import com.moutamid.placesbeen.activities.main.MainActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 
@@ -16,8 +13,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.concurrent.ExecutionException;
 
 public class SplashController {
     private static final String TAG = "FUCKK";

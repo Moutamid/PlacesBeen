@@ -1,4 +1,4 @@
-package com.moutamid.placesbeen.activities;
+package com.moutamid.placesbeen.activities.login;
 
 import static com.moutamid.placesbeen.utils.Utils.toast;
 
@@ -14,13 +14,12 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fxn.stash.Stash;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.moutamid.placesbeen.activities.main.MainActivity;
+import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.databinding.ActivityRegistrationBinding;
 import com.moutamid.placesbeen.utils.Constants;
 

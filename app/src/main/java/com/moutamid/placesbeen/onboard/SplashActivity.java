@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fxn.stash.Stash;
-import com.moutamid.placesbeen.activities.RegistrationActivity;
-import com.moutamid.placesbeen.activities.main.MainActivity;
+import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 

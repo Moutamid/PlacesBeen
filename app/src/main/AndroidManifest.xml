@@ -11,12 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlacesBeen">
         <activity
-            android:name=".activities.RegistrationActivity"
+            android:name=".activities.login.RegistrationActivity"
             android:exported="true">
 
         </activity>
         <activity
-            android:name=".activities.main.MainActivity"
+            android:name=".activities.home.MainActivity"
             android:exported="true"></activity>
         <activity
             android:name=".onboard.OnBoardingActivity"
