@@ -6,6 +6,7 @@ import static com.bumptech.glide.Glide.with;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatRatingBar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
@@ -23,8 +25,10 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import com.bumptech.glide.request.RequestOptions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
+import com.fxn.stash.Stash;
 import com.google.android.material.card.MaterialCardView;
 import com.moutamid.placesbeen.R;
+import com.moutamid.placesbeen.activities.RegistrationActivity;
 import com.moutamid.placesbeen.databinding.ActivityMainBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
@@ -37,53 +41,112 @@ public class MainActivity extends AppCompatActivity {
     public ActivityMainBinding b;
     MainController controller;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        b = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(b.getRoot());
-
-        controller = new MainController(this);
-
-        controller.getContinents(Constants.CONTINENTS_LIST);
-
-        b.optionContinent.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotContinent);
-            controller.getContinents(Constants.CONTINENTS_LIST);
-        });
-        b.optionCountry.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotCountry);
-            controller.getCountries();
-        });
-        b.optionStates.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotStates);
-            controller.getStates();
-        });
-        b.optionCity.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotCity);
-            controller.getCities(Constants.WORLD_CITIES_JSON);
-        });
-        b.optionCulturalSites.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotCulturalSites);
-            controller.getCulturalSites();
-        });
-        b.optionNationalParks.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotNationalParks);
-            controller.getNationalParks();
-        });
-
-        b.optionAirports.setOnClickListener(view -> {
-            controller.changeDotTo(b.dotAirports);
-            controller.getAirports();
-        });
-
-    }
-
     public ArrayList<MainItemModel> mainItemModelArrayList = new ArrayList<>();
+
+    public ArrayList<MainItemModel> ContinentArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> CountryArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> StatesArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> CityArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> CulturalSitesArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> NationalParksArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> AirportsArrayList = new ArrayList<>();
 
     private ShimmerRecyclerView conversationRecyclerView;
     private RecyclerViewAdapterMessages adapter;
     LinearLayoutManager linearLayoutManager;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        b = ActivityMainBinding.inflate(getLayoutInflater());
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        setContentView(b.getRoot());
+
+        controller = new MainController(this);
+
+        b.mainRecyclerView.showShimmerAdapter();
+
+//        ContinentArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_Continent);
+//        CountryArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_Country);
+//        StatesArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_States);
+//        CityArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_City);
+//        CulturalSitesArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_CulturalSites);
+//        NationalParksArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_NationalParks);
+//        AirportsArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_Airports);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ContinentArrayList = Stash.getArrayList(Constants.PARAMS_Continent, MainItemModel.class);
+                CountryArrayList = Stash.getArrayList(Constants.PARAMS_Country, MainItemModel.class);
+                StatesArrayList = Stash.getArrayList(Constants.PARAMS_States, MainItemModel.class);
+                CityArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);
+                CulturalSitesArrayList = Stash.getArrayList(Constants.PARAMS_CulturalSites, MainItemModel.class);
+                NationalParksArrayList = Stash.getArrayList(Constants.PARAMS_NationalParks, MainItemModel.class);
+                AirportsArrayList = Stash.getArrayList(Constants.PARAMS_Airports, MainItemModel.class);
+
+                mainItemModelArrayList = ContinentArrayList;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initRecyclerView();
+                    }
+                });
+            }
+        }).start();
+
+        b.optionContinent.setOnClickListener(view -> {
+            controller.changeDotTo(b.dotContinent);
+            b.mainRecyclerView.showShimmerAdapter();
+
+            mainItemModelArrayList = ContinentArrayList;
+            initRecyclerView();
+        });
+        b.optionCountry.setOnClickListener(view -> {
+            controller.changeDotTo(b.dotCountry);
+            b.mainRecyclerView.showShimmerAdapter();
+
+            mainItemModelArrayList = CountryArrayList;
+            initRecyclerView();
+        });
+        b.optionStates.setOnClickListener(view -> {
+            controller.changeDotTo(b.dotStates);
+            b.mainRecyclerView.showShimmerAdapter();
+
+            mainItemModelArrayList = StatesArrayList;
+            initRecyclerView();
+        });
+        b.optionCity.setOnClickListener(view -> {
+            controller.changeDotTo(b.dotCity);
+            b.mainRecyclerView.showShimmerAdapter();
+
+            mainItemModelArrayList = CityArrayList;
+            initRecyclerView();
+        });
+        b.optionCulturalSites.setOnClickListener(view -> {
+            controller.changeDotTo(b.dotCulturalSites);
+            b.mainRecyclerView.showShimmerAdapter();
+
+            mainItemModelArrayList = CulturalSitesArrayList;
+            initRecyclerView();
+        });
+        b.optionNationalParks.setOnClickListener(view -> {
+            controller.changeDotTo(b.dotNationalParks);
+            b.mainRecyclerView.showShimmerAdapter();
+
+            mainItemModelArrayList = NationalParksArrayList;
+            initRecyclerView();
+        });
+
+        b.optionAirports.setOnClickListener(view -> {
+            controller.changeDotTo(b.dotAirports);
+            b.mainRecyclerView.showShimmerAdapter();
+
+            mainItemModelArrayList = AirportsArrayList;
+            initRecyclerView();
+        });
+
+    }
 
     public void initRecyclerView() {
 

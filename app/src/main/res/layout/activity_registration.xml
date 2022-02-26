@@ -65,6 +65,7 @@
                             android:background="@drawable/bg_et_registration"
                             android:hint="Email"
                             android:paddingStart="20dp"
+                            android:inputType="textPersonName"
                             android:paddingTop="15dp"
                             android:paddingEnd="15dp"
                             android:paddingBottom="15dp" />
@@ -77,6 +78,7 @@
                             android:layout_marginTop="20dp"
                             android:background="@drawable/bg_et_registration"
                             android:hint="Password"
+                            android:inputType="textPersonName"
                             android:paddingStart="20dp"
                             android:paddingTop="15dp"
                             android:paddingEnd="15dp"

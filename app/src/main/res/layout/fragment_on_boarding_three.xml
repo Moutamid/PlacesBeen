@@ -11,11 +11,14 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <ImageView
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/error_layout_fragment_status"
             android:layout_width="match_parent"
             android:layout_height="350dp"
-            android:src="@drawable/ic_travel_together" />
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="map.json"
+            app:lottie_loop="true"
+            app:lottie_speed="1.25" />
 
         <TextView
             android:layout_width="match_parent"

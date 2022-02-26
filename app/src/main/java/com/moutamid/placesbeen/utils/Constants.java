@@ -15,6 +15,14 @@ public class Constants {
     public static final String AIRPORTS_JSON = "airports.json";
     public static final String CULTURAL_SITES_JSON = "cultural_sites.json";
     public static final String WORLD_CITIES_JSON = "worldcities.json";
+    public static final String PARAMS_Continent = "params_Continent";
+    public static final String PARAMS_Country = "params_Country";
+    public static final String PARAMS_States = "params_States";
+    public static final String PARAMS_City = "params_City";
+    public static final String PARAMS_CulturalSites = "params_CulturalSites";
+    public static final String PARAMS_NationalParks = "params_NationalParks";
+    public static final String PARAMS_Airports = "params_Airports";
+    public static final String IS_FIRST_TIME = "is_first_time";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";
@@ -28,7 +36,7 @@ public class Constants {
     }
 
     public static DatabaseReference databaseReference() {
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("PlacesBeenApp");
         db.keepSynced(true);
         return db;
     }

@@ -15,15 +15,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class MainController {
     private static final String TAG = "FUCKK";
     MainActivity mainActivity;
     Context context;
-    public String SELECTED_JSON = Constants.WORLD_CITIES_JSON;
+    //    public String SELECTED_JSON = Constants.WORLD_CITIES_JSON;
     public View currentDot;
 
     public MainController(MainActivity mainActivity) {
@@ -32,65 +30,220 @@ public class MainController {
         this.currentDot = mainActivity.b.dotContinent;
     }
 
-    public void getContinents(ArrayList<String> LIST) {
-        Log.d(TAG, "getContinents: ");
-        mainActivity.b.mainRecyclerView.showShimmerAdapter();
-        mainActivity.mainItemModelArrayList.clear();
+    public void changeDotTo(View dot) {
+        Log.d(TAG, "changeDotTo: ");
+        currentDot.setVisibility(View.GONE);
+        currentDot = dot;
+        currentDot.setVisibility(View.VISIBLE);
+    }
 
-        for (int i = 0; i < LIST.size() - 1; i++) {
-            Log.d(TAG, "getContinents: for loop: " + i);
-            MainItemModel model = new MainItemModel();
+    public JSONObject downloadJSON(String title, String desc) {
+        Log.d(TAG, "downloadJSON: ");
+        JSONObject jsonObject = null;
 
-            model.title = LIST.get(i);
-            model.desc = "";
-            model.lat = Constants.NULL;
-            model.lng = Constants.NULL;
+        try {
+            jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL((title))));
 
-            model.url = Constants.NULL;
-//            model.url = getImageUrl(model.title, model.title);
+            // IF ABOVE IS NULL
+            if (jsonObject.getInt("totalHits") == 0)
+                jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL(title + "+by+" + desc)));
 
-            mainActivity.mainItemModelArrayList.add(model);
+            // IF ABOVE IS NULL
+            if (jsonObject.getInt("totalHits") == 0)
+                jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL(desc)));
 
+        } catch (ExecutionException e) {
+            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
+            e.printStackTrace();
+        } catch (JSONException e) {
+            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
+            e.printStackTrace();
         }
 
-        mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+        return jsonObject;
+    }
+
+    public String getImageUrl(String tt, String dd) {
+        String link = "null";
+
+        try {
+            String title = URLEncoder.encode(tt, "utf-8");
+            String desc = URLEncoder.encode(dd, "utf-8");
+
+            JSONObject jsonObject;
+//            if (SELECTED_JSON.equals(Constants.AIRPORTS_JSON))
+//                jsonObject = downloadJSON("airport", "american airports");
+//            else
+            jsonObject = downloadJSON(title, desc);
+
+            JSONArray jsonArray = jsonObject.getJSONArray("hits");
+
+            JSONObject innerObject;
+//            if (SELECTED_JSON.equals(Constants.AIRPORTS_JSON))
+//                innerObject = jsonArray.getJSONObject(new Random().nextInt(200));
+//            else
+            innerObject = jsonArray.getJSONObject(0);
+
+            link = innerObject.getString("previewURL");
+//            link = innerObject.getString("webformatURL");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return link;
 
     }
 
-    public void getCountries() {
+    /*
+
+    public void getContinents(boolean b) {
+        Log.d(TAG, "getContinents: ");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mainActivity.ContinentArrayList.clear();
+                for (int i = 0; i < Constants.CONTINENTS_LIST.size() - 1; i++) {
+                    Log.d(TAG, "getContinents: for loop: " + i);
+                    MainItemModel model = new MainItemModel();
+
+                    model.title = Constants.CONTINENTS_LIST.get(i);
+                    model.desc = "";
+                    model.lat = Constants.NULL;
+                    model.lng = Constants.NULL;
+
+                    model.url = Constants.NULL;
+//            model.url = getImageUrl(model.title, model.title);
+
+                    mainActivity.ContinentArrayList.add(model);
+
+                }
+                if (b) {
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.mainItemModelArrayList = mainActivity.ContinentArrayList;
+                            mainActivity.initRecyclerView();
+                        }
+                    });
+                }
+            }
+        }).start();
+
+    }
+
+    public void getCountries(boolean b) {
         Log.d(TAG, "getCountries: ");
-        getContinents(Constants.COUNTRIES_LIST);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mainActivity.CountryArrayList.clear();
+
+                for (int i = 0; i < Constants.COUNTRIES_LIST.size() - 1; i++) {
+                    Log.d(TAG, "getContinents: for loop: " + i);
+                    MainItemModel model = new MainItemModel();
+
+                    model.title = Constants.COUNTRIES_LIST.get(i);
+                    model.desc = "";
+                    model.lat = Constants.NULL;
+                    model.lng = Constants.NULL;
+
+                    model.url = Constants.NULL;
+//            model.url = getImageUrl(model.title, model.title);
+
+                    mainActivity.CountryArrayList.add(model);
+
+                }
+
+//        mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+                if (b) {
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.mainItemModelArrayList = mainActivity.CountryArrayList;
+                            mainActivity.initRecyclerView();
+                        }
+                    });
+                }
+            }
+        }).start();
+
     }
 
-    public void getStates() {
+    public void getStates(boolean b) {
         Log.d(TAG, "getStates: ");
-        getContinents(Constants.STATES_LIST());
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                mainActivity.StatesArrayList.clear();
+
+                for (int i = 0; i < Constants.STATES_LIST().size() - 1; i++) {
+                    Log.d(TAG, "getContinents: for loop: " + i);
+                    MainItemModel model = new MainItemModel();
+
+                    model.title = Constants.STATES_LIST().get(i);
+                    model.desc = "";
+                    model.lat = Constants.NULL;
+                    model.lng = Constants.NULL;
+
+                    model.url = Constants.NULL;
+//            model.url = getImageUrl(model.title, model.title);
+
+                    mainActivity.StatesArrayList.add(model);
+
+                }
+
+//        mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+                if (b) {
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.mainItemModelArrayList = mainActivity.StatesArrayList;
+                            mainActivity.initRecyclerView();
+                        }
+                    });
+                }
+            }
+        }).start();
+
     }
 
-    public void getCities(String currentJson) {
+    public void getCities(boolean b) {
         Log.d(TAG, "getCities: ");
-        mainActivity.b.mainRecyclerView.showShimmerAdapter();
-        SELECTED_JSON = currentJson;
+
         new Thread(() -> {
             try {
                 Log.d(TAG, "getCities: try {");
-                JSONArray jsonArray = new JSONArray(loadJSONFromAsset());
+                JSONArray jsonArray = new JSONArray(loadJSONFromAsset(Constants.WORLD_CITIES_JSON));
                 Log.d(TAG, "getCities: jsonArray done");
-                mainActivity.mainItemModelArrayList.clear();
+                mainActivity.CityArrayList.clear();
                 for (int i = 0; i < jsonArray.length(); i++) {
                     Log.d(TAG, "getCities: for loop: " + i);
                     JSONObject jo_inside = jsonArray.getJSONObject(i);
 
                     MainItemModel model = new MainItemModel();
 
-                    fillModelClass(jo_inside, model, SELECTED_JSON);
+                    fillModelClass(jo_inside, model, Constants.WORLD_CITIES_JSON);
 
                     model.url = Constants.NULL;
 
-                    mainActivity.mainItemModelArrayList.add(model);
+                    mainActivity.CityArrayList.add(model);
                 }
 
-                mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+//                mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+                if (b) {
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.mainItemModelArrayList = mainActivity.CityArrayList;
+                            mainActivity.initRecyclerView();
+                        }
+                    });
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -101,26 +254,149 @@ public class MainController {
 
     }
 
-    public void getCulturalSites() {
+    public void getCulturalSites(boolean b) {
         Log.d(TAG, "getCulturalSites: ");
-        getCities(Constants.CULTURAL_SITES_JSON);
+        new Thread(() -> {
+            try {
+                Log.d(TAG, "getCities: try {");
+                JSONArray jsonArray = new JSONArray(loadJSONFromAsset(Constants.CULTURAL_SITES_JSON));
+                Log.d(TAG, "getCities: jsonArray done");
+                mainActivity.CulturalSitesArrayList.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Log.d(TAG, "getCities: for loop: " + i);
+                    JSONObject jo_inside = jsonArray.getJSONObject(i);
+
+                    MainItemModel model = new MainItemModel();
+
+                    fillModelClass(jo_inside, model, Constants.CULTURAL_SITES_JSON);
+
+                    model.url = Constants.NULL;
+
+                    mainActivity.CulturalSitesArrayList.add(model);
+                }
+
+//                mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+
+                if (b) {
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.mainItemModelArrayList = mainActivity.CulturalSitesArrayList;
+                            mainActivity.initRecyclerView();
+                        }
+                    });
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "getCities: ERROR: " + e.getMessage());
+            }
+
+        }).start();
+
     }
 
-    public void getNationalParks() {
+    public void getNationalParks(boolean b) {
         Log.d(TAG, "getNationalParks: ");
-        getCities(Constants.CULTURAL_SITES_JSON);
+        new Thread(() -> {
+            try {
+                Log.d(TAG, "getCities: try {");
+                JSONArray jsonArray = new JSONArray(loadJSONFromAsset(Constants.CULTURAL_SITES_JSON));
+                mainActivity.NationalParksArrayList.clear();
+                Log.d(TAG, "getCities: jsonArray done");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Log.d(TAG, "getCities: for loop: " + i);
+                    JSONObject jo_inside = jsonArray.getJSONObject(i);
+
+                    MainItemModel model = new MainItemModel();
+
+                    fillModelClass(jo_inside, model, Constants.CULTURAL_SITES_JSON);
+
+                    model.url = Constants.NULL;
+
+                    mainActivity.NationalParksArrayList.add(model);
+                }
+
+//                mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+
+                if (b) {
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.mainItemModelArrayList = mainActivity.NationalParksArrayList;
+                            mainActivity.initRecyclerView();
+                        }
+                    });
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "getCities: ERROR: " + e.getMessage());
+            }
+
+        }).start();
+
     }
 
-    public void getAirports() {
+    public void getAirports(boolean b) {
         Log.d(TAG, "getAirports: ");
-        getCities(Constants.AIRPORTS_JSON);
+        new Thread(() -> {
+            try {
+                Log.d(TAG, "getCities: try {");
+                JSONArray jsonArray = new JSONArray(loadJSONFromAsset(Constants.AIRPORTS_JSON));
+                Log.d(TAG, "getCities: jsonArray done");
+                mainActivity.AirportsArrayList.clear();
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Log.d(TAG, "getCities: for loop: " + i);
+                    JSONObject jo_inside = jsonArray.getJSONObject(i);
+
+                    MainItemModel model = new MainItemModel();
+
+                    fillModelClass(jo_inside, model, Constants.AIRPORTS_JSON);
+
+                    model.url = Constants.NULL;
+
+                    mainActivity.AirportsArrayList.add(model);
+                }
+
+//                mainActivity.runOnUiThread(() -> mainActivity.initRecyclerView());
+
+                if (b) {
+                    mainActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mainActivity.mainItemModelArrayList = mainActivity.AirportsArrayList;
+                            mainActivity.initRecyclerView();
+                        }
+                    });
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "getCities: ERROR: " + e.getMessage());
+            }
+
+        }).start();
+
     }
 
-    public void changeDotTo(View dot) {
-        Log.d(TAG, "changeDotTo: ");
-        currentDot.setVisibility(View.GONE);
-        currentDot = dot;
-        currentDot.setVisibility(View.VISIBLE);
+
+    private String loadJSONFromAsset(String currentJson) {
+        Log.d(TAG, "loadJSONFromAsset: SelectedJson: " + currentJson);
+        String json = null;
+        try {
+            InputStream is = context.getAssets().open(currentJson);
+//            InputStream is = context.getAssets().open("worldcities.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            Log.d(TAG, "loadJSONFromAsset: error: " + ex.getMessage());
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 
     private void fillModelClass(JSONObject jo_inside, MainItemModel model, String option) {
@@ -172,84 +448,5 @@ public class MainController {
         }
     }
 
-    public JSONObject downloadJSON(String title, String desc) {
-        Log.d(TAG, "downloadJSON: ");
-        JSONObject jsonObject = null;
-
-        try {
-            jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL((title))));
-
-            // IF ABOVE IS NULL
-            if (jsonObject.getInt("totalHits") == 0)
-                jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL(title + "+by+" + desc)));
-
-            // IF ABOVE IS NULL
-            if (jsonObject.getInt("totalHits") == 0)
-                jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL(desc)));
-
-        } catch (ExecutionException e) {
-            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
-            e.printStackTrace();
-        } catch (JSONException e) {
-            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return jsonObject;
-    }
-
-    private String loadJSONFromAsset() {
-        Log.d(TAG, "loadJSONFromAsset: SelectedJson: " + SELECTED_JSON);
-        String json = null;
-        try {
-            InputStream is = context.getAssets().open(SELECTED_JSON);
-//            InputStream is = context.getAssets().open("worldcities.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            Log.d(TAG, "loadJSONFromAsset: error: " + ex.getMessage());
-            ex.printStackTrace();
-            return null;
-        }
-        return json;
-    }
-
-    public String getImageUrl(String tt, String dd) {
-        String link = "null";
-
-        try {
-            String title = URLEncoder.encode(tt, "utf-8");
-            String desc = URLEncoder.encode(dd, "utf-8");
-
-            JSONObject jsonObject;
-            if (SELECTED_JSON.equals(Constants.AIRPORTS_JSON))
-                jsonObject = downloadJSON("airport", "american airports");
-            else
-                jsonObject = downloadJSON(title, desc);
-
-            JSONArray jsonArray = jsonObject.getJSONArray("hits");
-
-            JSONObject innerObject;
-            if (SELECTED_JSON.equals(Constants.AIRPORTS_JSON))
-                innerObject = jsonArray.getJSONObject(new Random().nextInt(200));
-            else
-                innerObject = jsonArray.getJSONObject(0);
-
-            link = innerObject.getString("previewURL");
-//            link = innerObject.getString("webformatURL");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return link;
-
-    }
-
+     */
 }

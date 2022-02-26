@@ -14,6 +14,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fxn.stash.Stash;
 import com.google.android.gms.tasks.OnCompleteListener;

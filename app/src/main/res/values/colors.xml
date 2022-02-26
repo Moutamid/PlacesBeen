@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="yellow">#FF3700B3</color>
+    <!--    <color name="yellow">#f6ad21</color>-->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -25,8 +27,6 @@
     <color name="darkBlackSpotify">#191919</color>
     <color name="lightBlackSpotify">#212121</color>
     <color name="lightWhite">#A9FFFFFF</color>
-    <color name="yellow">#f6ad21</color>
-    <color name="yellowDark">#C3850E</color>
     <color name="realYellow">#ffff00</color>
     <color name="transparent">#00ffffff</color>
     <color name="purple">#e203e2</color>
