@@ -93,6 +93,7 @@
                         <TextView
                             style="@style/options_txt_main"
                             android:textColor="@color/yellow"
+
                             android:id="@+id/textViewContinent"
                             android:text="Continents" />
 
