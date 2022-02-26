@@ -3,8 +3,22 @@ package com.moutamid.placesbeen.activities.main;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.dezlum.codelabs.getjson.GetJson;
+import com.fxn.stash.Stash;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 
@@ -15,6 +29,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class MainController {
@@ -74,18 +89,18 @@ public class MainController {
             String desc = URLEncoder.encode(dd, "utf-8");
 
             JSONObject jsonObject;
-//            if (SELECTED_JSON.equals(Constants.AIRPORTS_JSON))
-//                jsonObject = downloadJSON("airport", "american airports");
-//            else
-            jsonObject = downloadJSON(title, desc);
+            if (mainActivity.isAirport)
+                jsonObject = downloadJSON("airport", "american airports");
+            else
+                jsonObject = downloadJSON(title, desc);
 
             JSONArray jsonArray = jsonObject.getJSONArray("hits");
 
             JSONObject innerObject;
-//            if (SELECTED_JSON.equals(Constants.AIRPORTS_JSON))
-//                innerObject = jsonArray.getJSONObject(new Random().nextInt(200));
-//            else
-            innerObject = jsonArray.getJSONObject(0);
+            if (mainActivity.isAirport)
+                innerObject = jsonArray.getJSONObject(new Random().nextInt(jsonArray.length()) - 2);
+            else
+                innerObject = jsonArray.getJSONObject(0);
 
             link = innerObject.getString("previewURL");
 //            link = innerObject.getString("webformatURL");
@@ -96,6 +111,97 @@ public class MainController {
 
         return link;
 
+    }
+
+    public void saveUnSaveItem(MainItemModel model, ImageView saveBtn) {
+        if (model.title.equals("nullnull")) {
+            Toast.makeText(context, "NULL", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (Stash.getBoolean(model.title, false)) {
+            // IF ALREADY SAVED THEN REMOVE
+            saveBtn.setImageResource(R.drawable.ic_unsave_24);
+            YoYo.with(Techniques.Bounce).duration(700).playOn(saveBtn);
+            Constants.databaseReference()
+                    .child(Constants.auth().getUid())
+                    .child(Constants.SAVED_ITEMS_PATH)
+                    .child(model.title)
+                    .removeValue();
+
+            Stash.clear(model.title);
+        } else {
+            // IF NOT SAVED THEN SAVE
+            saveBtn.setImageResource(R.drawable.ic_save_24);
+            YoYo.with(Techniques.Bounce).duration(700).playOn(saveBtn);
+            Constants.databaseReference()
+                    .child(Constants.auth().getUid())
+                    .child(Constants.SAVED_ITEMS_PATH)
+                    .child(model.title)
+                    .setValue(model);
+
+            Stash.put(model.title, true);
+        }
+    }
+
+    public void isSaved(MainItemModel model, ImageView saveBtn) {
+        if (Stash.getBoolean(model.title, false)) {
+            Log.d("MFUCKER", "isSaved: " + model.title);
+            saveBtn.setImageResource(R.drawable.ic_save_24);
+        }
+    }
+
+    public void retrieveDatabaseItems() {
+        Constants.databaseReference()
+                .child(Constants.auth().getUid())
+                .child(Constants.SAVED_ITEMS_PATH)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        if (snapshot.exists()) {
+                            try {
+
+                                MainItemModel model = snapshot.getValue(MainItemModel.class);
+
+                                Stash.put(model.title, true);
+                            } catch (Exception e) {
+                                Log.e(TAG, "onChildAdded: ERROR: " + snapshot.getKey());
+                            }
+
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            try {
+
+                                MainItemModel model = snapshot.getValue(MainItemModel.class);
+
+                                Stash.clear(model.title);
+
+                            } catch (Exception e) {
+                                Log.e(TAG, "onChildRemoved: ERROR: " + snapshot.getKey());
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 
     /*

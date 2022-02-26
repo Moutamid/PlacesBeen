@@ -66,14 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         b.mainRecyclerView.showShimmerAdapter();
 
-//        ContinentArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_Continent);
-//        CountryArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_Country);
-//        StatesArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_States);
-//        CityArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_City);
-//        CulturalSitesArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_CulturalSites);
-//        NationalParksArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_NationalParks);
-//        AirportsArrayList = (ArrayList<MainItemModel>) getIntent().getSerializableExtra(Constants.PARAMS_Airports);
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -86,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
                 AirportsArrayList = Stash.getArrayList(Constants.PARAMS_Airports, MainItemModel.class);
 
                 mainItemModelArrayList = ContinentArrayList;
+
+                controller.retrieveDatabaseItems();
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -101,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
             mainItemModelArrayList = ContinentArrayList;
             initRecyclerView();
+            isAirport = false;
         });
         b.optionCountry.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCountry);
@@ -108,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
             mainItemModelArrayList = CountryArrayList;
             initRecyclerView();
+            isAirport = false;
         });
         b.optionStates.setOnClickListener(view -> {
             controller.changeDotTo(b.dotStates);
@@ -115,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
             mainItemModelArrayList = StatesArrayList;
             initRecyclerView();
+            isAirport = false;
         });
         b.optionCity.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCity);
@@ -122,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
             mainItemModelArrayList = CityArrayList;
             initRecyclerView();
+            isAirport = false;
         });
         b.optionCulturalSites.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCulturalSites);
@@ -129,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
             mainItemModelArrayList = CulturalSitesArrayList;
             initRecyclerView();
+            isAirport = false;
         });
         b.optionNationalParks.setOnClickListener(view -> {
             controller.changeDotTo(b.dotNationalParks);
@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
 
             mainItemModelArrayList = NationalParksArrayList;
             initRecyclerView();
+
+            isAirport = false;
         });
 
         b.optionAirports.setOnClickListener(view -> {
@@ -144,9 +146,13 @@ public class MainActivity extends AppCompatActivity {
 
             mainItemModelArrayList = AirportsArrayList;
             initRecyclerView();
+
+            isAirport = true;
         });
 
     }
+
+    public boolean isAirport = false;
 
     public void initRecyclerView() {
 
@@ -191,7 +197,13 @@ public class MainActivity extends AppCompatActivity {
             loadImage(holder.imageView, model.title, model.desc, holder.getAdapterPosition());
 
             holder.parenLayout.setOnClickListener(view -> {
-                Toast.makeText(MainActivity.this, "" + model.url + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "" + model.lat + "\n" + model.lng + "\n" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+            });
+
+            controller.isSaved(model, holder.saveBtn);
+
+            holder.saveBtn.setOnClickListener(view -> {
+                controller.saveUnSaveItem(model, holder.saveBtn);
             });
 
         }
@@ -202,14 +214,8 @@ public class MainActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-
                     try {
-
-                        link = mainItemModelArrayList.get(adapterPosition).getUrl();
-                        if (link.equals(Constants.NULL)) {
-                            link = controller.getImageUrl(title, desc);
-                            mainItemModelArrayList.get(adapterPosition).setUrl(link);
-                        }
+                        link = controller.getImageUrl(title, desc);
 
                         runOnUiThread(() -> {
                             with(MainActivity.this)
@@ -240,12 +246,13 @@ public class MainActivity extends AppCompatActivity {
 
             TextView title, desc, ratingText;
             AppCompatRatingBar ratingBar;
-            ImageView imageView;
+            ImageView imageView, saveBtn;
             MaterialCardView parenLayout;
 
             public ViewHolderRightMessage(@NonNull View v) {
                 super(v);
                 title = v.findViewById(R.id.title_main);
+                saveBtn = v.findViewById(R.id.saveBtn_item_main);
                 imageView = v.findViewById(R.id.imageview_main);
                 parenLayout = v.findViewById(R.id.parent_layout_main);
                 desc = v.findViewById(R.id.desc_main);
