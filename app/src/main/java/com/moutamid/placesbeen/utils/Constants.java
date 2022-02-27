@@ -24,6 +24,8 @@ public class Constants {
     public static final String PARAMS_Airports = "params_Airports";
     public static final String IS_FIRST_TIME = "is_first_time";
     public static final String SAVED_ITEMS_PATH = "saved_items_path";
+    public static final String BEEN_ITEMS_PATH = "been_items_path";
+    public static final String WANT_TO_ITEMS_PATH = "want_to_items_path";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";

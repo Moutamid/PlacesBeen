@@ -1,11 +1,16 @@
 package com.moutamid.placesbeen.utils;
 
 
+import static com.bumptech.glide.Glide.with;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
+import static com.moutamid.placesbeen.R.color.lighterGrey;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -15,17 +20,26 @@ import android.util.Log;
 import androidx.appcompat.app.AlertDialog;
 //import com.google.gson.Gson;
 //import com.google.gson.GsonBuilder;
+import com.bumptech.glide.request.RequestOptions;
+import com.dezlum.codelabs.getjson.GetJson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 public class Utils {
-
+    private static final String TAG = "UTILS";
     private static Utils utils;
     private static Context instance;
     private SharedPreferences sp;
@@ -45,6 +59,94 @@ public class Utils {
     private static void checkfornull() {
         if (utils == null)
             throw new NullPointerException("Call init() method in application context class for the manifest");
+    }
+
+
+    public static void loadImage(Activity context, ImageView view, String title, String desc, boolean isAirport) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String link;
+                    link = getImageUrl(title, desc, isAirport);
+
+                    context.runOnUiThread(() -> {
+                        with(context.getApplicationContext())
+                                .asBitmap()
+                                .load(link)
+                                .apply(new RequestOptions()
+                                        .placeholder(lighterGrey)
+                                        .error(lighterGrey)
+                                )
+                                .diskCacheStrategy(DATA)
+                                .into(view);
+                    });
+                } catch (Exception e) {
+                    Log.e("TAG", "run: ERROR: " + e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    public static JSONObject downloadJSON(String title, String desc) {
+        Log.d(TAG, "downloadJSON: ");
+        JSONObject jsonObject = null;
+
+        try {
+            jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL((title))));
+
+            // IF ABOVE IS NULL
+            if (jsonObject.getInt("totalHits") == 0)
+                jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL(title + "+by+" + desc)));
+
+            // IF ABOVE IS NULL
+            if (jsonObject.getInt("totalHits") == 0)
+                jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_PIXABAY_URL(desc)));
+
+        } catch (ExecutionException e) {
+            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
+            e.printStackTrace();
+        } catch (JSONException e) {
+            Log.d(TAG, "downloadJSON: error: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    public static String getImageUrl(String tt, String dd, boolean isAirport) {
+        String link = "null";
+
+        try {
+            String title = URLEncoder.encode(tt, "utf-8");
+            String desc = URLEncoder.encode(dd, "utf-8");
+
+            JSONObject jsonObject;
+            if (isAirport)
+                jsonObject = downloadJSON("airport", "american airports");
+            else
+                jsonObject = downloadJSON(title, desc);
+
+            JSONArray jsonArray = jsonObject.getJSONArray("hits");
+
+            JSONObject innerObject;
+            if (isAirport)
+                innerObject = jsonArray.getJSONObject(new Random().nextInt(jsonArray.length()) - 2);
+            else
+                innerObject = jsonArray.getJSONObject(0);
+
+            link = innerObject.getString("previewURL");
+//            link = innerObject.getString("webformatURL");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return link;
+
     }
 
     // toast

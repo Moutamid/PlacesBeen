@@ -30,6 +30,7 @@ import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.databinding.FragmentHomeBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
+import com.moutamid.placesbeen.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -200,7 +201,7 @@ public class HomeFragment extends Fragment {
             holder.ratingBar.setRating(nmbr);
             holder.ratingText.setText(nmbr + "");
 
-            loadImage(holder.imageView, model.title, model.desc, holder.getAdapterPosition());
+            Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport);
 
             holder.parenLayout.setOnClickListener(view -> {
                 Toast.makeText(requireContext(), "" + model.lat + "\n" + model.lng + "\n" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
@@ -212,33 +213,6 @@ public class HomeFragment extends Fragment {
                 controller.saveUnSaveItem(model, holder.saveBtn);
             });
 
-        }
-
-        String link;
-
-        private void loadImage(ImageView view, String title, String desc, int adapterPosition) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        link = controller.getImageUrl(title, desc);
-
-                        requireActivity().runOnUiThread(() -> {
-                            with(requireActivity().getApplicationContext())
-                                    .asBitmap()
-                                    .load(link)
-                                    .apply(new RequestOptions()
-                                            .placeholder(lighterGrey)
-                                            .error(lighterGrey)
-                                    )
-                                    .diskCacheStrategy(DATA)
-                                    .into(view);
-                        });
-                    } catch (Exception e) {
-                        Log.e("TAG", "run: ERROR: " + e.getMessage());
-                    }
-                }
-            }).start();
         }
 
         @Override
