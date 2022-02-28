@@ -29,12 +29,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -62,13 +64,13 @@ public class Utils {
     }
 
 
-    public static void loadImage(Activity context, ImageView view, String title, String desc, boolean isAirport) {
+    public static void loadImage(Activity context, ImageView view, String title, String desc, boolean isAirport, boolean inHighQuality) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     String link;
-                    link = getImageUrl(title, desc, isAirport);
+                    link = getImageUrl(title, desc, isAirport, inHighQuality);
 
                     context.runOnUiThread(() -> {
                         with(context.getApplicationContext())
@@ -86,6 +88,54 @@ public class Utils {
                 }
             }
         }).start();
+    }
+
+    public static ArrayList<String> getLatLng(Activity activity, String query) {
+        Log.d(TAG, "downloadJSON: ");
+        ArrayList<String> list = new ArrayList<>();
+
+        new Thread(() -> {
+            try {
+                Log.d(TAG, "getLatLng: try {");
+                String q = URLEncoder.encode(query, "utf-8");
+                Log.d(TAG, "getLatLng: encoded");
+                JSONObject jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_POSITION_URL((q))));
+                Log.d(TAG, "getLatLng: getted object as string");
+                JSONArray jsonArray = jsonObject.getJSONArray("data");
+                Log.d(TAG, "getLatLng: array get");
+                if (jsonArray.length() != 0) {
+                    Log.d(TAG, "getLatLng: if statement");
+                    JSONObject innerObject = jsonArray.getJSONObject(0);
+
+                    list.add(String.valueOf(innerObject.getDouble("latitude")));
+                    list.add(String.valueOf(innerObject.getDouble("longitude")));
+                } else {
+                    Log.d(TAG, "getLatLng: else ");
+                    list.add("NULL");
+                    list.add("NULL");
+                }
+
+            } catch (ExecutionException | InterruptedException e) {
+                list.add(Constants.NULL);
+                list.add(Constants.NULL);
+                Log.d(TAG, "downloadJSON: error: " + e.getMessage());
+                e.printStackTrace();
+            } catch (JSONException e) {
+                list.add(Constants.NULL);
+                list.add(Constants.NULL);
+                Log.d(TAG, "JSONException: error: " + e.getMessage());
+                Log.d(TAG, "JSONException: error: " + e.toString());
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                list.add(Constants.NULL);
+                list.add(Constants.NULL);
+                Log.d(TAG, "getLatLng: error: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+        }).start();
+
+        return list;
     }
 
     public static JSONObject downloadJSON(String title, String desc) {
@@ -117,7 +167,7 @@ public class Utils {
         return jsonObject;
     }
 
-    public static String getImageUrl(String tt, String dd, boolean isAirport) {
+    public static String getImageUrl(String tt, String dd, boolean isAirport, boolean inHighQuality) {
         String link = "null";
 
         try {
@@ -138,8 +188,10 @@ public class Utils {
             else
                 innerObject = jsonArray.getJSONObject(0);
 
-            link = innerObject.getString("previewURL");
-//            link = innerObject.getString("webformatURL");
+            if (inHighQuality)
+                link = innerObject.getString("webformatURL");
+            else
+                link = innerObject.getString("previewURL");
 
         } catch (Exception e) {
             e.printStackTrace();

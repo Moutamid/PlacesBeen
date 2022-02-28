@@ -28,6 +28,8 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 
 public class HomeController {
@@ -106,6 +108,7 @@ public class HomeController {
                                 MainItemModel model = snapshot.getValue(MainItemModel.class);
 
                                 Stash.put(model.title, true);
+                                Log.d(TAG, "onChildAdded: "+model.title);
                             } catch (Exception e) {
                                 Log.e(TAG, "onChildAdded: ERROR: " + snapshot.getKey());
                             }
@@ -128,6 +131,7 @@ public class HomeController {
 
                                 Stash.clear(model.title);
 
+                                Log.d(TAG, "onChildRemoved: "+model.title);
                             } catch (Exception e) {
                                 Log.e(TAG, "onChildRemoved: ERROR: " + snapshot.getKey());
                             }

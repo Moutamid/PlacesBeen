@@ -4,7 +4,10 @@ import static android.view.LayoutInflater.from;
 import static com.bumptech.glide.Glide.with;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
+import static com.moutamid.placesbeen.utils.Utils.toast;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,11 +30,19 @@ import com.fxn.stash.Stash;
 import com.google.android.material.card.MaterialCardView;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.activities.home.MainActivity;
+import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.databinding.FragmentHomeBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 import com.moutamid.placesbeen.utils.Utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -201,10 +212,15 @@ public class HomeFragment extends Fragment {
             holder.ratingBar.setRating(nmbr);
             holder.ratingText.setText(nmbr + "");
 
-            Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport);
+            Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
 
             holder.parenLayout.setOnClickListener(view -> {
-                Toast.makeText(requireContext(), "" + model.lat + "\n" + model.lng + "\n" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+//                toast("Please wait!");
+//                Utils.getLatLng(requireActivity(), model.title);
+
+                Stash.put(Constants.CURRENT_MODEL_CLASS, model);
+                startActivity(new Intent(requireContext(), PlaceItemActivity.class));
+
             });
 
             controller.isSaved(model, holder.saveBtn);

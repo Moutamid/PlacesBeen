@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/shimmerLayoutPlace"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.place.PlaceItemActivity">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_centerInParent="true"
+        app:lottie_autoPlay="true"
+        android:id="@+id/loadingView"
+        app:lottie_fileName="loading.json"
+        app:lottie_loop="true"
+        app:lottie_speed="1.25" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:id="@+id/parentLayoutPlace"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/topCardViewPlace"
+            android:layout_width="match_parent"
+            android:layout_height="480dp"
+            android:layout_marginTop="-30dp"
+            app:cardCornerRadius="40dp"
+            app:cardElevation="10dp">
+
+            <ImageView
+                android:id="@+id/imageMainPlace"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/test" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_image_places" />
+            <!--            android:background="#2E2E2E" />-->
+
+            <RelativeLayout
+                android:id="@+id/backBtnPlace"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="80dp"
+                android:background="@drawable/bg_btn_place"
+                android:elevation="20dp"
+                android:padding="7dp">
+
+                <ImageView
+                    android:id="@+id/saveBtn_item_main"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingStart="10dp"
+                    android:src="@drawable/ic_baseline_arrow_back_ios_24"
+                    app:tint="@color/black" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="80dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/bg_btn_place"
+                android:elevation="20dp"
+                android:padding="7dp">
+
+                <ImageView
+                    android:id="@+id/saveBtnPlace"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_unsave_24"
+                    app:tint="@color/black" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom">
+
+                <LinearLayout
+                    android:id="@+id/ytyty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="20dp"
+                    android:orientation="vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_marginEnd="30dp"
+                        android:background="@drawable/bg_btn_place"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="15dp">
+
+                        <ImageView
+                            android:id="@+id/imageItem1Place"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_marginVertical="15dp"
+                        android:layout_marginEnd="30dp"
+                        android:background="@drawable/bg_btn_place"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="15dp"
+                        app:cardElevation="50dp">
+
+                        <ImageView
+                            android:id="@+id/imageItem2Place"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test" />
+
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_marginEnd="20dp"
+                        android:background="@drawable/bg_btn_place"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="15dp">
+
+                        <ImageView
+                            android:id="@+id/imageItem3Place"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/test" />
+
+                    </androidx.cardview.widget.CardView>
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@id/ytyty"
+                    android:layout_marginStart="20dp"
+                    android:layout_toStartOf="@id/ytyty"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/titleTextViewPlace"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:text="Thiksey Monastery"
+                        android:textColor="@color/white"
+                        android:textSize="30sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/descTextViewPlace"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="America"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/topCardViewPlace">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/firstt"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/bg_btn_place"
+                    android:elevation="5dp"
+                    android:padding="7dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_location_24"
+                        app:tint="@color/yellow" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toStartOf="@+id/qwer"
+                    android:layout_toEndOf="@id/firstt"
+                    android:orientation="vertical">
+                    <!--TODO: IT CAN BE REGION, COUNTRY OR CONTINENT-->
+                    <TextView
+                        android:id="@+id/otherTextView1Place"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Manchester United"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/otherTextView2Place"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="UK"
+                        android:textSize="14sp" />
+
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:id="@+id/qwer"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_toStartOf="@id/secc"
+                    android:background="@drawable/bg_btn_place"
+                    android:elevation="5dp"
+                    android:padding="7dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_baseline_star_24"
+                        app:tint="@color/yellow2" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/secc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/ratingTextViewPlace"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="4.6"
+                        android:textColor="@color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Ratings"
+                        android:textSize="14sp" />
+
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/bg_bottom_bar_places"
+            android:elevation="60dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center"
+                android:text="ADD TO" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginBottom="70dp"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/beenCheckBoxPlace"
+                    style="@style/settings_check_box"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center_vertical"
+                    android:text="BEEN"
+                    android:textColor="@color/darkerGrey"
+                    android:textSize="9sp" />
+
+                <!--app:buttonTint="@color/yellow"-->
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/wantToCheckBoxPlace"
+                    style="@style/settings_check_box"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="30dp"
+                    android:gravity="center_vertical"
+                    android:text="WANT TO"
+                    android:textColor="@color/darkerGrey"
+                    android:textSize="9sp" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

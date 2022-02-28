@@ -77,7 +77,7 @@ public class SaveFragment extends Fragment {
     ArrayList<MainItemModel> wantToArrayList = new ArrayList<>();
 
     private RecyclerView conversationRecyclerView;
-    private RecyclerViewAdapterMessages adapter;
+    public RecyclerViewAdapterMessages adapter;
 
     public boolean isFirstTime = true;
 
@@ -129,11 +129,7 @@ public class SaveFragment extends Fragment {
             nmbr += 4;
             holder.rating.setText(nmbr + "");
 
-            Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, false);
-
-            holder.delBtn.setOnClickListener(view -> {
-                controller.deleteBtnClicked(model.title);
-            });
+            Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, false, true);
 
             holder.parentLayout.setOnClickListener(view -> {
                 Toast.makeText(requireContext(), "" + model.lat + "\n" + model.lng + "\n" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
@@ -151,7 +147,7 @@ public class SaveFragment extends Fragment {
         public class ViewHolderRightMessage extends RecyclerView.ViewHolder {
 
             TextView title, desc, rating;
-            ImageView imageView, delBtn;
+            ImageView imageView;
             LinearLayout parentLayout;
 
             public ViewHolderRightMessage(@NonNull View v) {
@@ -160,7 +156,6 @@ public class SaveFragment extends Fragment {
                 desc = v.findViewById(R.id.desc_item_saved_fragment);
                 rating = v.findViewById(R.id.rating_text_item_saved_fragment);
                 imageView = v.findViewById(R.id.image_item_saved_fragment);
-                delBtn = v.findViewById(R.id.delete_item_saved_fragment);
                 parentLayout = v.findViewById(R.id.parent_layout_item_saved_fragment);
 
             }

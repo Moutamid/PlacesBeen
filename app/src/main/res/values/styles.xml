@@ -22,4 +22,12 @@
         <item name="android:layout_marginTop">5dp</item>
         <item name="android:background">@drawable/bg_dot_main</item>
     </style>
+
+    <style name="settings_check_box">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleX">1.5</item>
+        <item name="android:scaleY">1.5</item>
+    </style>
+
 </resources>

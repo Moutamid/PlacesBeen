@@ -17,6 +17,8 @@ import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SaveController {
 
@@ -85,10 +87,6 @@ public class SaveController {
                 });
     }
 
-    //TODO: MAKE A TIMER TASK THAT WILL RUN ALL THE TIME AND REFRESH THE HOME RECYCLERVIEW
-    // BY CALLING NOTIFYADAPTERCHANGED() WHENEVER THE USER DELETES AN ITEM FROM THE SAVED FRAGMENT
-    // STORE A VARIABLE IN STASH WHICH WILL CHANGED EVERYTIME USER DELETES SOMETHING
-
     public void changeDotTo(View dot, TextView textView) {
         Log.d(TAG, "changeDotTo: ");
         currentDot.setVisibility(View.GONE);
@@ -98,16 +96,5 @@ public class SaveController {
         currentTextView.setTextColor(context.getResources().getColor(R.color.darkGrey));
         currentTextView = textView;
         currentTextView.setTextColor(context.getResources().getColor(R.color.yellow));
-    }
-
-
-    public void deleteBtnClicked(String title) {
-        Constants.databaseReference()
-                .child(Constants.auth().getUid())
-                .child(ITEMS_PATH)
-                .child(title)
-                .removeValue();
-
-        Stash.clear(title);
     }
 }

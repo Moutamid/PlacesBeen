@@ -26,6 +26,8 @@ public class Constants {
     public static final String SAVED_ITEMS_PATH = "saved_items_path";
     public static final String BEEN_ITEMS_PATH = "been_items_path";
     public static final String WANT_TO_ITEMS_PATH = "want_to_items_path";
+    public static final String ITEM_CHANGED = "item_changed";
+    public static final String CURRENT_MODEL_CLASS = "current_model_class";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";
@@ -42,6 +44,11 @@ public class Constants {
         DatabaseReference db = FirebaseDatabase.getInstance().getReference().child("PlacesBeenApp");
         db.keepSynced(true);
         return db;
+    }
+
+    public static String GET_POSITION_URL(String query) {
+        return "http://api.positionstack.com/v1/forward?access_key=ecd00653e072c8636fd32b0c7dcd6a67&limit=1&query="
+                + query;
     }
 
     public static String GET_PIXABAY_URL(String query) {

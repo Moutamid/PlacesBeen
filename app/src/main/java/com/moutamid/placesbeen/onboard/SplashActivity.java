@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fxn.stash.Stash;
 import com.moutamid.placesbeen.activities.home.MainActivity;
+import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 

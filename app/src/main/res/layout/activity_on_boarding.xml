@@ -33,8 +33,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
         android:text="Start"
-        android:visibility="gone"
         app:backgroundTint="@color/yellow"
-        app:cornerRadius="20dp" />
+        app:cornerRadius="10dp" />
 
 </RelativeLayout>
