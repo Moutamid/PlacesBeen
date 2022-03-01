@@ -127,6 +127,7 @@ public class PlaceController {
     }
 
     public void getLatLng() {
+
         Log.d(TAG, "downloadJSON: ");
 
         new Thread(() -> {
