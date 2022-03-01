@@ -1,13 +1,27 @@
 package com.moutamid.placesbeen.activities.place;
 
+import static com.bumptech.glide.Glide.with;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
+import static com.moutamid.placesbeen.R.color.lighterGrey;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.fxn.stash.Stash;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityPlaceItemBinding;
@@ -21,6 +35,15 @@ public class PlaceItemActivity extends AppCompatActivity {
     public ActivityPlaceItemBinding b;
     private PlaceController controller;
     public MainItemModel mainItemModel;
+
+    public String IMAGE_URL_1 = Constants.NULL;
+    public String IMAGE_URL_2 = Constants.NULL;
+    public String IMAGE_URL_3 = Constants.NULL;
+
+    public String LAT = Constants.NULL;
+    public String LONG = Constants.NULL;
+    public String COUNTRY = Constants.NULL;
+    public String CONTINENT = Constants.NULL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,26 +69,94 @@ public class PlaceItemActivity extends AppCompatActivity {
 
         controller.checkIsItemSaved();
 
+        controller.checkBeenWantTo();
+
+        b.saveBtnPlace.setOnClickListener(view -> {
+            controller.saveUnSaveItem();
+        });
+
         b.backBtnPlace.setOnClickListener(view -> finish());
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                b.loadingView.setVisibility(View.GONE);
-                b.parentLayoutPlace.setVisibility(View.VISIBLE);
-            }
-        }, 3000);
+        controller.getImageUrl(mainItemModel.title, mainItemModel.desc);
+
+        controller.getLatLng();
+
+        b.beenCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
+            Stash.put(mainItemModel.title + Constants.BEEN_ITEMS_PATH, b);
+        });
+
+        b.wantToCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
+            Stash.put(mainItemModel.title + Constants.WANT_TO_ITEMS_PATH, b);
+        });
 
     }
+
+    public void loadImages() {
+        with(PlaceItemActivity.this)
+                .asBitmap()
+                .load(IMAGE_URL_1)
+                .addListener(new RequestListener<Bitmap>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                        b.loadingView.setVisibility(View.GONE);
+                        b.parentLayoutPlace.setVisibility(View.VISIBLE);
+                        return false;
+                    }
+                })
+                .apply(new RequestOptions()
+                        .placeholder(lighterGrey)
+                        .error(lighterGrey)
+                )
+                .diskCacheStrategy(DATA)
+                .into(b.imageMainPlace);
+
+        with(PlaceItemActivity.this)
+                .asBitmap()
+                .load(IMAGE_URL_1)
+                .apply(new RequestOptions()
+                        .placeholder(lighterGrey)
+                        .error(lighterGrey)
+                )
+                .diskCacheStrategy(DATA)
+                .into(b.imageItem1Place);
+
+        with(PlaceItemActivity.this)
+                .asBitmap()
+                .load(IMAGE_URL_2)
+                .apply(new RequestOptions()
+                        .placeholder(lighterGrey)
+                        .error(lighterGrey)
+                )
+                .diskCacheStrategy(DATA)
+                .into(b.imageItem2Place);
+
+        with(PlaceItemActivity.this)
+                .asBitmap()
+                .load(IMAGE_URL_3)
+                .apply(new RequestOptions()
+                        .placeholder(lighterGrey)
+                        .error(lighterGrey)
+                )
+                .diskCacheStrategy(DATA)
+                .into(b.imageItem3Place);
+    }
+
+    public void loadAddress() {
+        if (COUNTRY.equals(Constants.NULL) || COUNTRY == null) {
+
+            if (CONTINENT.equals(Constants.NULL) || CONTINENT == null) {
+                b.otherTextView1Place.setText("World");
+            } else b.otherTextView1Place.setText(CONTINENT);
+
+        } else {
+            b.otherTextView1Place.setText(COUNTRY);
+            b.otherTextView2Place.setText(CONTINENT);
+        }
+    }
+
 }
-
-
-
-
-
-
-
-
-
-
-

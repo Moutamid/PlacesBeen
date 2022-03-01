@@ -93,7 +93,6 @@ public class Utils {
     public static ArrayList<String> getLatLng(Activity activity, String query) {
         Log.d(TAG, "downloadJSON: ");
         ArrayList<String> list = new ArrayList<>();
-
         new Thread(() -> {
             try {
                 Log.d(TAG, "getLatLng: try {");

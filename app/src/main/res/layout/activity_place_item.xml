@@ -12,6 +12,7 @@
         android:layout_height="350dp"
         android:layout_centerInParent="true"
         app:lottie_autoPlay="true"
+        android:visibility="gone"
         android:id="@+id/loadingView"
         app:lottie_fileName="loading.json"
         app:lottie_loop="true"
@@ -21,7 +22,7 @@
         android:layout_width="match_parent"
         android:id="@+id/parentLayoutPlace"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        >
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/topCardViewPlace"
@@ -36,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/test" />
+                 />
 
             <View
                 android:layout_width="match_parent"
@@ -110,7 +111,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/test" />
+                             />
 
                     </androidx.cardview.widget.CardView>
 
@@ -129,7 +130,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/test" />
+                             />
 
                     </androidx.cardview.widget.CardView>
 
@@ -146,7 +147,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/test" />
+                             />
 
                     </androidx.cardview.widget.CardView>
 
@@ -178,7 +179,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="America"
+                        android:text=""
                         android:textColor="@color/white"
                         android:textSize="20sp" />
 
@@ -231,7 +232,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Manchester United"
+                        android:text="Loading..."
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -242,7 +243,7 @@
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="UK"
+                        android:text=""
                         android:textSize="14sp" />
 
 
