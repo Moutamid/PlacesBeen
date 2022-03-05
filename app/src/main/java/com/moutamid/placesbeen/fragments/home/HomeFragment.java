@@ -66,6 +66,7 @@ public class HomeFragment extends Fragment {
     private RecyclerViewAdapterMessages adapter;
     LinearLayoutManager linearLayoutManager;
 
+    public String CURRENT_TYPE = Constants.PARAMS_Continent;
 
     @Nullable
     @Override
@@ -108,6 +109,7 @@ public class HomeFragment extends Fragment {
             mainItemModelArrayList = ContinentArrayList;
             initRecyclerView();
             isAirport = false;
+            CURRENT_TYPE = Constants.PARAMS_Continent;
         });
         b.optionCountry.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCountry, b.textViewCountry);
@@ -116,6 +118,7 @@ public class HomeFragment extends Fragment {
             mainItemModelArrayList = CountryArrayList;
             initRecyclerView();
             isAirport = false;
+            CURRENT_TYPE = Constants.PARAMS_Country;
         });
         b.optionStates.setOnClickListener(view -> {
             controller.changeDotTo(b.dotStates, b.textViewStates);
@@ -124,6 +127,7 @@ public class HomeFragment extends Fragment {
             mainItemModelArrayList = StatesArrayList;
             initRecyclerView();
             isAirport = false;
+            CURRENT_TYPE = Constants.PARAMS_States;
         });
         b.optionCity.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCity, b.textViewCity);
@@ -132,6 +136,7 @@ public class HomeFragment extends Fragment {
             mainItemModelArrayList = CityArrayList;
             initRecyclerView();
             isAirport = false;
+            CURRENT_TYPE = Constants.PARAMS_City;
         });
         b.optionCulturalSites.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCulturalSites, b.textViewCulturalSites);
@@ -140,6 +145,7 @@ public class HomeFragment extends Fragment {
             mainItemModelArrayList = CulturalSitesArrayList;
             initRecyclerView();
             isAirport = false;
+            CURRENT_TYPE = Constants.PARAMS_CulturalSites;
         });
         b.optionNationalParks.setOnClickListener(view -> {
             controller.changeDotTo(b.dotNationalParks, b.textViewNationalParks);
@@ -149,6 +155,7 @@ public class HomeFragment extends Fragment {
             initRecyclerView();
 
             isAirport = false;
+            CURRENT_TYPE = Constants.PARAMS_NationalParks;
         });
 
         b.optionAirports.setOnClickListener(view -> {
@@ -159,6 +166,7 @@ public class HomeFragment extends Fragment {
             initRecyclerView();
 
             isAirport = true;
+            CURRENT_TYPE = Constants.PARAMS_Airports;
         });
 
         b.profileImageMain.setOnClickListener(view -> {
@@ -201,7 +209,6 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position) {
-            Log.d("TAG", "onBindViewHolder: " + position);
             MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
 
             holder.title.setText(model.title);
@@ -215,12 +222,8 @@ public class HomeFragment extends Fragment {
             Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
 
             holder.parenLayout.setOnClickListener(view -> {
-//                toast("Please wait!");
-//                Utils.getLatLng(requireActivity(), model.title);
-
                 Stash.put(Constants.CURRENT_MODEL_CLASS, model);
                 startActivity(new Intent(requireContext(), PlaceItemActivity.class));
-
             });
 
             controller.isSaved(model, holder.saveBtn);
@@ -228,11 +231,11 @@ public class HomeFragment extends Fragment {
             holder.saveBtn.setOnClickListener(view -> {
                 controller.saveUnSaveItem(model, holder.saveBtn);
             });
-
         }
 
         @Override
         public int getItemCount() {
+            Log.d("fuckher", "getItemCount: " + CURRENT_TYPE + ": " + mainItemModelArrayList.size());
             if (mainItemModelArrayList == null)
                 return 0;
             return mainItemModelArrayList.size();
@@ -254,10 +257,7 @@ public class HomeFragment extends Fragment {
                 desc = v.findViewById(R.id.desc_main);
                 ratingBar = v.findViewById(R.id.ratingBarMain);
                 ratingText = v.findViewById(R.id.ratingTextMain);
-
             }
         }
-
     }
-
 }

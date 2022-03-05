@@ -36,7 +36,7 @@ public class HomeController {
     private static final String TAG = "FUCKK";
     HomeFragment mainActivity;
     Context context;
-    //    public String SELECTED_JSON = Constants.WORLD_CITIES_JSON;
+
     public View currentDot;
     public TextView currentTextView;
 
@@ -74,6 +74,12 @@ public class HomeController {
                     .removeValue();
 
             Stash.clear(model.title);
+            // DECREASE 1 FROM CURRENT QUANTITY FOR CHARTS
+            int count = Stash.getInt(mainActivity.CURRENT_TYPE + Constants.FOR_CHARTS, 0);
+            if (count != 0) {
+                count -= 1;
+                Stash.put(mainActivity.CURRENT_TYPE + Constants.FOR_CHARTS, count);
+            }
         } else {
             // IF NOT SAVED THEN SAVE
             saveBtn.setImageResource(R.drawable.ic_save_24);
@@ -85,6 +91,11 @@ public class HomeController {
                     .setValue(model);
 
             Stash.put(model.title, true);
+
+            // INCREASE 1 FROM CURRENT QUANTITY FOR CHARTS
+            int count = Stash.getInt(mainActivity.CURRENT_TYPE + Constants.FOR_CHARTS, 0);
+            count += 1;
+            Stash.put(mainActivity.CURRENT_TYPE + Constants.FOR_CHARTS, count);
         }
     }
 
@@ -108,7 +119,7 @@ public class HomeController {
                                 MainItemModel model = snapshot.getValue(MainItemModel.class);
 
                                 Stash.put(model.title, true);
-                                Log.d(TAG, "onChildAdded: "+model.title);
+                                Log.d(TAG, "onChildAdded: " + model.title);
                             } catch (Exception e) {
                                 Log.e(TAG, "onChildAdded: ERROR: " + snapshot.getKey());
                             }
@@ -131,7 +142,7 @@ public class HomeController {
 
                                 Stash.clear(model.title);
 
-                                Log.d(TAG, "onChildRemoved: "+model.title);
+                                Log.d(TAG, "onChildRemoved: " + model.title);
                             } catch (Exception e) {
                                 Log.e(TAG, "onChildRemoved: ERROR: " + snapshot.getKey());
                             }

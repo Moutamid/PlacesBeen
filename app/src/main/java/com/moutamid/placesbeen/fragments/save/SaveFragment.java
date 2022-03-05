@@ -2,7 +2,9 @@ package com.moutamid.placesbeen.fragments.save;
 
 import static android.view.LayoutInflater.from;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +19,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fxn.stash.Stash;
 import com.moutamid.placesbeen.R;
+import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.databinding.FragmentSaveBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
@@ -30,6 +34,12 @@ public class SaveFragment extends Fragment {
     public FragmentSaveBinding b;
 
     SaveController controller;
+
+    public ArrayList<MainItemModel> currentItemsList = new ArrayList<>();
+
+    ArrayList<MainItemModel> savedArrayList = new ArrayList<>();
+    ArrayList<MainItemModel> beenArrayList = new ArrayList<>();
+    ArrayList<MainItemModel> wantToArrayList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -69,12 +79,6 @@ public class SaveFragment extends Fragment {
         return b.getRoot();
 
     }
-
-    public ArrayList<MainItemModel> currentItemsList = new ArrayList<>();
-
-    ArrayList<MainItemModel> savedArrayList = new ArrayList<>();
-    ArrayList<MainItemModel> beenArrayList = new ArrayList<>();
-    ArrayList<MainItemModel> wantToArrayList = new ArrayList<>();
 
     private RecyclerView conversationRecyclerView;
     public RecyclerViewAdapterMessages adapter;
@@ -122,6 +126,7 @@ public class SaveFragment extends Fragment {
         public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position) {
             MainItemModel model = currentItemsList.get(holder.getAdapterPosition());
 
+//            try {
             holder.title.setText(model.title);
             holder.desc.setText(model.desc.replaceAll("\\R+", " "));
 
@@ -132,9 +137,12 @@ public class SaveFragment extends Fragment {
             Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, false, true);
 
             holder.parentLayout.setOnClickListener(view -> {
-                Toast.makeText(requireContext(), "" + model.lat + "\n" + model.lng + "\n" + holder.getAdapterPosition(), Toast.LENGTH_SHORT).show();
+                Stash.put(Constants.CURRENT_MODEL_CLASS, model);
+                startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
-
+            /*} catch (Exception e) {
+                Log.e("TAG", "onBindViewHolder: ERROR: " + e.getMessage());
+            }*/
         }
 
         @Override

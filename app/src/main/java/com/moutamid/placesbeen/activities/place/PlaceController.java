@@ -1,18 +1,37 @@
 package com.moutamid.placesbeen.activities.place;
 
+import static com.bumptech.glide.Glide.with;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
+import static com.moutamid.placesbeen.R.color.lighterGrey;
+
+import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.dezlum.codelabs.getjson.GetJson;
 import com.fxn.stash.Stash;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
+import com.moutamid.placesbeen.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +40,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +49,7 @@ public class PlaceController {
 
     PlaceItemActivity activity;
     Context context;
+    boolean IS_HIDDEN = false;
 
     public PlaceController(PlaceItemActivity placeItemActivity) {
         this.activity = placeItemActivity;
@@ -127,9 +148,7 @@ public class PlaceController {
     }
 
     public void getLatLng() {
-
         Log.d(TAG, "downloadJSON: ");
-
         new Thread(() -> {
             try {
                 Log.d(TAG, "getLatLng: try {");
@@ -150,7 +169,9 @@ public class PlaceController {
 
                     activity.CONTINENT = innerObject.getString("continent");
 
-                    activity.runOnUiThread(() -> activity.loadAddress());
+                    activity.runOnUiThread(() -> {
+                        activity.loadAddress();
+                    });
 
                 } else {
                     Log.d(TAG, "getLatLng: else ");
@@ -182,4 +203,174 @@ public class PlaceController {
         }
 
     }
+
+    public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
+        Stash.put(mainItemModel.title + itemsPath, b);
+
+        if (b) {
+            Constants.databaseReference()
+                    .child(Constants.auth().getUid())
+                    .child(itemsPath)
+                    .child(mainItemModel.title)
+                    .setValue(mainItemModel);
+        } else {
+            Constants.databaseReference()
+                    .child(Constants.auth().getUid())
+                    .child(itemsPath)
+                    .child(mainItemModel.title)
+                    .removeValue();
+        }
+    }
+
+    public void setImageOnMain(String URL) {
+        with(activity.getApplicationContext())
+                .asBitmap()
+                .load(URL)
+                .apply(new RequestOptions()
+                        .placeholder(lighterGrey)
+                        .error(lighterGrey)
+                )
+                .diskCacheStrategy(DATA)
+                .into(activity.b.imageMainPlace);
+    }
+
+    public void initMaps() {
+        SupportMapFragment mapFragment = (SupportMapFragment) activity.getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull GoogleMap googleMap) {
+                activity.mMap = googleMap;
+
+                double lat = Double.parseDouble(activity.LAT);
+                double lng = Double.parseDouble(activity.LONG);
+
+                LatLng sydney = new LatLng(lat, lng);
+//                LatLng sydney = new LatLng(-34, 151);
+                activity.mMap.addMarker(new MarkerOptions().position(sydney).title(activity.mainItemModel.title)
+//                        .snippet("Population: 4,627,300")
+//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+                );
+                activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+                activity.mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(@NonNull Marker marker) {
+                        activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                        triggerOnClick();
+                        return false;
+                    }
+                });
+
+                activity.mMap.setOnMapClickListener(latLng -> {
+                    activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                    triggerOnClick();
+                });
+
+                extractMarkers();
+
+            }
+        });
+    }
+
+    private void triggerOnClick() {
+
+        if (IS_HIDDEN) {
+            IS_HIDDEN = false;
+
+            activity.mMap.animateCamera(CameraUpdateFactory.zoomTo(1.0f));
+
+            activity.b.topLayoutForMaps.animate().alpha(1.0f).translationY(0).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+                    activity.b.bottomLayoutForMaps.animate().alpha(1.0f).translationY(0).start();
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    activity.b.topLayoutForMaps.setVisibility(View.VISIBLE);
+                    activity.b.bottomLayoutForMaps.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            }).start();
+        } else {
+            IS_HIDDEN = true;
+
+            activity.mMap.animateCamera(CameraUpdateFactory.zoomTo(4.0f));
+
+            activity.b.topLayoutForMaps.animate().alpha(0.0f).translationY(-activity.b.topLayoutForMaps.getHeight()).setListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animator) {
+                    activity.b.bottomLayoutForMaps.animate().alpha(0.0f).translationY(activity.b.bottomLayoutForMaps.getHeight()).start();
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animator) {
+                    activity.b.topLayoutForMaps.setVisibility(View.GONE);
+                    activity.b.bottomLayoutForMaps.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animator) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animator) {
+
+                }
+            }).start();
+        }
+    }
+
+    public ArrayList<MainItemModel> CityArrayList = new ArrayList<>();
+
+    public void extractMarkers() {
+
+        new Thread(() -> {
+            CityArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);
+
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    addMarkers(CityArrayList);
+                }
+            });
+
+        }).start();
+    }
+
+    boolean yes = true;
+
+    private void addMarkers(ArrayList<MainItemModel> LIST) {
+        /*for (int i = 0; i <= LIST.size() - 1; i += 2) {
+
+            MainItemModel model = LIST.get(i);
+            if (yes) {
+                yes = false;
+                double lat = Double.parseDouble(model.lat);
+                double lng = Double.parseDouble(model.lng);
+
+                LatLng sydney = new LatLng(lat, lng);
+
+                activity.mMap.addMarker(new MarkerOptions().position(sydney).title(model.title)
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker_small)));
+            } else {
+                yes = true;
+            }
+        }*/
+
+        activity.b.loadingView.setVisibility(View.GONE);
+        activity.b.parentLayoutPlace.setVisibility(View.VISIBLE);
+    }
+
 }

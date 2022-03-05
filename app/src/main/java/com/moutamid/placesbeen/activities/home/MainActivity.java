@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private View currentDot;
     private ImageView currentBtn;
 
-    public void openProfilePage(){
+    public void openProfilePage() {
         changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
         viewPager.setCurrentItem(3, true);
     }
@@ -111,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
                 if (position == 0) {
                     changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
                 } else if (position == 1) {
+                    ChartsFragment fragment = (ChartsFragment) adapter.getItem(1);
+                    fragment.refreshArcs();
                     changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
                 } else if (position == 2) {
                     changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_save_24);

@@ -12,6 +12,7 @@ public class Constants {
     public static final String IS_LOGGED_IN = "isloggedin";
     public static final String NULL = "null";
 
+    public static final String FOR_CHARTS = "for_charts";
     public static final String AIRPORTS_JSON = "airports.json";
     public static final String CULTURAL_SITES_JSON = "cultural_sites.json";
     public static final String WORLD_CITIES_JSON = "worldcities.json";

@@ -44,40 +44,37 @@ public class SaveController {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        ArrayList<MainItemModel> savedArrayList = new ArrayList<>();
-//                        ArrayList<MainItemModel> beenArrayList = new ArrayList<>();
-//                        ArrayList<MainItemModel> wantToArrayList = new ArrayList<>();
-
                         saveFragment.savedArrayList.clear();
-                                saveFragment.beenArrayList.clear();
+                        saveFragment.beenArrayList.clear();
                         saveFragment.wantToArrayList.clear();
 
                         if (snapshot.exists()) {
 
                             if (snapshot.hasChild(Constants.SAVED_ITEMS_PATH)) {
+                                saveFragment.b.textViewSaved.setText("Saved (" + snapshot.child(Constants.SAVED_ITEMS_PATH).getChildrenCount() + ")");
                                 for (DataSnapshot savedSnapShot : snapshot.child(Constants.SAVED_ITEMS_PATH).getChildren()) {
                                     MainItemModel model = savedSnapShot.getValue(MainItemModel.class);
                                     saveFragment.savedArrayList.add(model);
                                 }
                             }
                             if (snapshot.hasChild(Constants.BEEN_ITEMS_PATH)) {
+                                saveFragment.b.textViewBeen.setText("Been (" + snapshot.child(Constants.BEEN_ITEMS_PATH).getChildrenCount() + ")");
                                 for (DataSnapshot savedSnapShot : snapshot.child(Constants.BEEN_ITEMS_PATH).getChildren()) {
                                     MainItemModel model = savedSnapShot.getValue(MainItemModel.class);
                                     saveFragment.beenArrayList.add(model);
                                 }
                             }
                             if (snapshot.hasChild(Constants.WANT_TO_ITEMS_PATH)) {
+                                saveFragment.b.textViewWantTo.setText("Want to (" + snapshot.child(Constants.WANT_TO_ITEMS_PATH).getChildrenCount() + ")");
                                 for (DataSnapshot savedSnapShot : snapshot.child(Constants.WANT_TO_ITEMS_PATH).getChildren()) {
                                     MainItemModel model = savedSnapShot.getValue(MainItemModel.class);
                                     saveFragment.wantToArrayList.add(model);
                                 }
                             }
 
-                            saveFragment.initRecyclerView();
-
-                        } else {
-                            saveFragment.initRecyclerView();
                         }
+
+                        saveFragment.initRecyclerView();
                     }
 
                     @Override

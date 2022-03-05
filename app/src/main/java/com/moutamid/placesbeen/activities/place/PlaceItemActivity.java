@@ -4,25 +4,22 @@ import static com.bumptech.glide.Glide.with;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
 
-import com.bumptech.glide.Glide;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.fxn.stash.Stash;
+import com.google.android.gms.maps.GoogleMap;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityPlaceItemBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
@@ -31,6 +28,8 @@ import com.moutamid.placesbeen.utils.Constants;
 import java.util.Random;
 
 public class PlaceItemActivity extends AppCompatActivity {
+
+    public GoogleMap mMap;
 
     public ActivityPlaceItemBinding b;
     private PlaceController controller;
@@ -82,11 +81,21 @@ public class PlaceItemActivity extends AppCompatActivity {
         controller.getLatLng();
 
         b.beenCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
-            Stash.put(mainItemModel.title + Constants.BEEN_ITEMS_PATH, b);
+            controller.triggerCheckBox(mainItemModel, b, Constants.BEEN_ITEMS_PATH);
         });
 
         b.wantToCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
-            Stash.put(mainItemModel.title + Constants.WANT_TO_ITEMS_PATH, b);
+            controller.triggerCheckBox(mainItemModel, b, Constants.WANT_TO_ITEMS_PATH);
+        });
+
+        b.imageItem1Place.setOnClickListener(view -> {
+            controller.setImageOnMain(IMAGE_URL_1);
+        });
+        b.imageItem2Place.setOnClickListener(view -> {
+            controller.setImageOnMain(IMAGE_URL_2);
+        });
+        b.imageItem3Place.setOnClickListener(view -> {
+            controller.setImageOnMain(IMAGE_URL_3);
         });
 
     }
@@ -95,19 +104,6 @@ public class PlaceItemActivity extends AppCompatActivity {
         with(PlaceItemActivity.this)
                 .asBitmap()
                 .load(IMAGE_URL_1)
-                .addListener(new RequestListener<Bitmap>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
-                        b.loadingView.setVisibility(View.GONE);
-                        b.parentLayoutPlace.setVisibility(View.VISIBLE);
-                        return false;
-                    }
-                })
                 .apply(new RequestOptions()
                         .placeholder(lighterGrey)
                         .error(lighterGrey)
@@ -157,6 +153,9 @@ public class PlaceItemActivity extends AppCompatActivity {
             b.otherTextView1Place.setText(COUNTRY);
             b.otherTextView2Place.setText(CONTINENT);
         }
+
+        controller.initMaps();
+
     }
 
 }
