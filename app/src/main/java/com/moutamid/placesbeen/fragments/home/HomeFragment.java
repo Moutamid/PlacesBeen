@@ -1,13 +1,8 @@
 package com.moutamid.placesbeen.fragments.home;
 
 import static android.view.LayoutInflater.from;
-import static com.bumptech.glide.Glide.with;
-import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
-import static com.moutamid.placesbeen.R.color.lighterGrey;
-import static com.moutamid.placesbeen.utils.Utils.toast;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.request.RequestOptions;
 import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
 import com.fxn.stash.Stash;
 import com.google.android.material.card.MaterialCardView;
@@ -36,13 +29,6 @@ import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 import com.moutamid.placesbeen.utils.Utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -62,6 +48,8 @@ public class HomeFragment extends Fragment {
     public ArrayList<MainItemModel> NationalParksArrayList = new ArrayList<>();
     public ArrayList<MainItemModel> AirportsArrayList = new ArrayList<>();
 
+    public ArrayList<String> savedList = new ArrayList<>();
+
     private ShimmerRecyclerView conversationRecyclerView;
     private RecyclerViewAdapterMessages adapter;
     LinearLayoutManager linearLayoutManager;
@@ -75,8 +63,9 @@ public class HomeFragment extends Fragment {
 
         controller = new HomeController(this);
 
-        b.mainRecyclerView.showShimmerAdapter();
+        controller.getSavedList();
 
+        b.mainRecyclerView.showShimmerAdapter();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -93,12 +82,13 @@ public class HomeFragment extends Fragment {
 
                 controller.retrieveDatabaseItems();
 
-                requireActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initRecyclerView();
-                    }
-                });
+                if (isAdded())
+                    requireActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            initRecyclerView();
+                        }
+                    });
             }
         }).start();
 
@@ -173,6 +163,8 @@ public class HomeFragment extends Fragment {
             ((MainActivity) getActivity()).openProfilePage();
         });
 
+        controller.getImageProfileUrl();
+
         return b.getRoot();
 
     }
@@ -184,6 +176,7 @@ public class HomeFragment extends Fragment {
 
         conversationRecyclerView = b.mainRecyclerView;
         adapter = new RecyclerViewAdapterMessages();
+        if (isAdded())
         linearLayoutManager = new LinearLayoutManager(requireContext());
         conversationRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -219,10 +212,12 @@ public class HomeFragment extends Fragment {
             holder.ratingBar.setRating(nmbr);
             holder.ratingText.setText(nmbr + "");
 
+                if (isAdded())
             Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
 
             holder.parenLayout.setOnClickListener(view -> {
                 Stash.put(Constants.CURRENT_MODEL_CLASS, model);
+                if (isAdded())
                 startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
 
@@ -258,6 +253,15 @@ public class HomeFragment extends Fragment {
                 ratingBar = v.findViewById(R.id.ratingBarMain);
                 ratingText = v.findViewById(R.id.ratingTextMain);
             }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adapter != null) {
+            b.mainRecyclerView.showShimmerAdapter();
+            initRecyclerView();
         }
     }
 }

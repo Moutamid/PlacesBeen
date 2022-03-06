@@ -411,22 +411,7 @@ public class Utils {
     /*
     * dialog_background.xml
     *
-    * <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item>
-
-        <shape android:shape="rectangle">
-
-<!--            <solid android:color="#EA3030" />-->
-            <solid android:color="@color/white" />
-            <corners android:radius="15dp" />
-
-        </shape>
-
-    </item>
-
-</selector>
+    *
     * */
 
     /*
@@ -442,78 +427,7 @@ public class Utils {
     * */
 
     /*
-		<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="300dp"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="@drawable/bg_dialog"
-    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:layout_gravity="end"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="7dp"
-        android:text="x"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_info" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginEnd="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:id="@+id/title_offline_dialog"
-        android:layout_marginStart="12dp"
-        android:gravity="center"
-        android:maxLines="1"
-        android:text="Awww... Snap!"
-        android:textColor="@color/darkBlue"
-        android:textSize="18sp"
-        android:layout_marginTop="5dp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginEnd="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="You are not connected to Internet. Please make sure you have a working connection"
-        android:textColor="@color/greyishblue"
-        android:id="@+id/desc_offline_dialog"
-        android:textSize="15sp" />
-
-    <Button
-        android:id="@+id/okay_btn_offline_dialog"
-        android:layout_width="160dp"
-        android:layout_height="45dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="15dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/bg_dialog_offline_button"
-        android:gravity="center"
-        android:text="Okay"
-        android:textColor="@color/white" />
-
-</LinearLayout>
 		*/
 
 //        Button okayBtn;

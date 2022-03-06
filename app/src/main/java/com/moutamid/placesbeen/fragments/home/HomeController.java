@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.dezlum.codelabs.getjson.GetJson;
@@ -17,6 +19,7 @@ import com.fxn.stash.Stash;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
@@ -27,6 +30,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,7 +67,9 @@ public class HomeController {
             Toast.makeText(context, "NULL", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (Stash.getBoolean(model.title, false)) {
+
+        if (mainActivity.savedList.contains(model.title)) {
+//            if (Stash.getBoolean(model.title, false)) {
             // IF ALREADY SAVED THEN REMOVE
             saveBtn.setImageResource(R.drawable.ic_unsave_24);
             YoYo.with(Techniques.Bounce).duration(700).playOn(saveBtn);
@@ -73,7 +79,9 @@ public class HomeController {
                     .child(model.title)
                     .removeValue();
 
-            Stash.clear(model.title);
+            mainActivity.savedList.remove(model.title);
+            Stash.put(Constants.SAVED_LIST, mainActivity.savedList);
+//                Stash.clear(model.title);
             // DECREASE 1 FROM CURRENT QUANTITY FOR CHARTS
             int count = Stash.getInt(mainActivity.CURRENT_TYPE + Constants.FOR_CHARTS, 0);
             if (count != 0) {
@@ -90,7 +98,9 @@ public class HomeController {
                     .child(model.title)
                     .setValue(model);
 
-            Stash.put(model.title, true);
+            mainActivity.savedList.add(model.title);
+            Stash.put(Constants.SAVED_LIST, mainActivity.savedList);
+//                Stash.put(model.title, true);
 
             // INCREASE 1 FROM CURRENT QUANTITY FOR CHARTS
             int count = Stash.getInt(mainActivity.CURRENT_TYPE + Constants.FOR_CHARTS, 0);
@@ -100,7 +110,8 @@ public class HomeController {
     }
 
     public void isSaved(MainItemModel model, ImageView saveBtn) {
-        if (Stash.getBoolean(model.title, false)) {
+        if (mainActivity.savedList.contains(model.title)) {
+//        if (Stash.getBoolean(model.title, false)) {
             Log.d("MFUCKER", "isSaved: " + model.title);
             saveBtn.setImageResource(R.drawable.ic_save_24);
         }
@@ -160,6 +171,38 @@ public class HomeController {
 
                     }
                 });
+    }
+
+    public void getImageProfileUrl() {
+        Constants.databaseReference()
+                .child(Constants.auth().getUid())
+                .child(Constants.PROFILE_URL)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            Stash.put(Constants.PROFILE_URL, snapshot.getValue().toString());
+
+                            if (mainActivity.isAdded())
+                            Glide.with(mainActivity.requireActivity().getApplicationContext())
+                                    .load(snapshot.getValue().toString())
+                                    .apply(new RequestOptions()
+                                            .placeholder(R.color.grey)
+                                            .error(R.drawable.test)
+                                    )
+                                    .into(mainActivity.b.profileImageMain);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    public void getSavedList() {
+        mainActivity.savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
     }
 
     /*

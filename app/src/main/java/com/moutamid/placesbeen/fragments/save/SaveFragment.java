@@ -94,15 +94,16 @@ public class SaveFragment extends Fragment {
 
         conversationRecyclerView = b.savedRecyclerView;
         adapter = new RecyclerViewAdapterMessages();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
-        conversationRecyclerView.setLayoutManager(linearLayoutManager);
-        conversationRecyclerView.setHasFixedSize(true);
-        conversationRecyclerView.setNestedScrollingEnabled(false);
+        if (isAdded()){
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
+            conversationRecyclerView.setLayoutManager(linearLayoutManager);
+            conversationRecyclerView.setHasFixedSize(true);
+            conversationRecyclerView.setNestedScrollingEnabled(false);
 
-        conversationRecyclerView.setAdapter(adapter);
+            conversationRecyclerView.setAdapter(adapter);
 
-        b.savedRecyclerView.hideShimmerAdapter();
-
+            b.savedRecyclerView.hideShimmerAdapter();
+        }
         //    if (adapter.getItemCount() != 0) {
 
         //        noChatsLayout.setVisibility(View.GONE);
@@ -134,10 +135,12 @@ public class SaveFragment extends Fragment {
             nmbr += 4;
             holder.rating.setText(nmbr + "");
 
+            if (isAdded())
             Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, false, true);
 
             holder.parentLayout.setOnClickListener(view -> {
                 Stash.put(Constants.CURRENT_MODEL_CLASS, model);
+                if (isAdded())
                 startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
             /*} catch (Exception e) {

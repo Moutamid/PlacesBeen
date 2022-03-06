@@ -35,6 +35,7 @@ public class ChartsFragment extends Fragment {
         initArcViews(b.culturalSitesArcView, 1155, Stash.getInt(Constants.PARAMS_CulturalSites + Constants.FOR_CHARTS));
         initArcViews(b.nationalParksArcView, 1155, Stash.getInt(Constants.PARAMS_NationalParks + Constants.FOR_CHARTS));
         initArcViews(b.airportsArcView, 57421, Stash.getInt(Constants.PARAMS_Airports + Constants.FOR_CHARTS));
+
     }
 
     private void initArcViews(DecoView arcView, int totalValue, int currentValue) {

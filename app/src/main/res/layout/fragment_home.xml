@@ -37,7 +37,6 @@
                     android:id="@+id/profile_image_main"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#DCDADA"
                     android:scaleType="centerCrop"
                     android:src="@drawable/test" />
 

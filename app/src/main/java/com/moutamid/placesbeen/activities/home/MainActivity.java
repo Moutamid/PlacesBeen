@@ -117,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
                 } else if (position == 2) {
                     changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_save_24);
                 } else if (position == 3) {
+                    ProfileFragment fragment = (ProfileFragment) adapter.getItem(3);
+                    fragment.refreshData();
                     changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
                 }
             }

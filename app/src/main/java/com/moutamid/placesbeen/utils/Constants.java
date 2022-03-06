@@ -29,6 +29,8 @@ public class Constants {
     public static final String WANT_TO_ITEMS_PATH = "want_to_items_path";
     public static final String ITEM_CHANGED = "item_changed";
     public static final String CURRENT_MODEL_CLASS = "current_model_class";
+    public static final String PROFILE_URL = "profileUrl";
+    public static final String SAVED_LIST = "savedlist";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";

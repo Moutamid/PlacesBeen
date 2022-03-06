@@ -38,6 +38,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,7 +63,10 @@ public class PlaceController {
             Toast.makeText(context, "NULL", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (Stash.getBoolean(model.title, false)) {
+        ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
+
+        if (savedList.contains(model.title)) {
+//        if (Stash.getBoolean(model.title, false)) {
             // IF ALREADY SAVED THEN REMOVE
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_unsave_24);
             YoYo.with(Techniques.Bounce).duration(700).playOn(activity.b.saveBtnPlace);
@@ -72,7 +76,9 @@ public class PlaceController {
                     .child(model.title)
                     .removeValue();
 
-            Stash.clear(model.title);
+            savedList.remove(model.title);
+            Stash.put(Constants.SAVED_LIST, savedList);
+//            Stash.clear(model.title);
         } else {
             // IF NOT SAVED THEN SAVE
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_save_24);
@@ -83,12 +89,16 @@ public class PlaceController {
                     .child(model.title)
                     .setValue(model);
 
-            Stash.put(model.title, true);
+//            Stash.put(model.title, true);
+            savedList.add(model.title);
+            Stash.put(Constants.SAVED_LIST, savedList);
         }
     }
 
     public void checkIsItemSaved() {
-        if (Stash.getBoolean(activity.mainItemModel.title, false)) {
+        ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
+//        if (Stash.getBoolean(activity.mainItemModel.title, false)) {
+        if (savedList.contains(activity.mainItemModel.title)) {
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_save_24);
         }
     }
