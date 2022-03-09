@@ -4,6 +4,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,6 +60,19 @@ public class Constants {
         return "https://pixabay.com/api/?key=25707240-9c632bb3ee0bdb5ae65d78d7d&q=" +
                 query +
                 "&image_type=photo&pretty=true";
+    }
+
+    public static String GET_BOUNDARY_URL(String q) {
+        String query = null;
+        try {
+            query = URLEncoder.encode(q, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            query = "china";
+            e.printStackTrace();
+        }
+        return "https://nominatim.openstreetmap.org/search?country=" +
+                query +
+                "&polygon_geojson=1&format=json";
     }
 
 

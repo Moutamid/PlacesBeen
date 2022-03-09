@@ -7,6 +7,7 @@ import static com.moutamid.placesbeen.R.color.lighterGrey;
 import android.animation.Animator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
@@ -26,8 +27,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
@@ -37,6 +41,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -251,6 +257,9 @@ public class PlaceController {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 activity.mMap = googleMap;
+
+                MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle);
+                activity.mMap.setMapStyle(style);
 
                 double lat = Double.parseDouble(activity.LAT);
                 double lng = Double.parseDouble(activity.LONG);

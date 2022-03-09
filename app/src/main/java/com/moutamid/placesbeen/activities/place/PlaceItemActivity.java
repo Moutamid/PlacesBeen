@@ -101,7 +101,7 @@ public class PlaceItemActivity extends AppCompatActivity {
     }
 
     public void loadImages() {
-        with(PlaceItemActivity.this)
+        with(getApplicationContext())
                 .asBitmap()
                 .load(IMAGE_URL_1)
                 .apply(new RequestOptions()
