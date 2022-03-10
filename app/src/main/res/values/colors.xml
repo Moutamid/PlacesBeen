@@ -50,7 +50,9 @@
     <color name="red">#ea1414</color>
     <color name="lightRed">#de3131</color>
     <color name="lighterRed">#e39696</color>
-
+    <color name="text_color_light">#cfcfd3</color>
+    <color name="color_dark">#9E9E9F</color>
+    <color name="text_color_dark">#696b6f</color>
     <!-- Material Colors OTHER -->
 
     <color name="ivory">#fffff0</color>

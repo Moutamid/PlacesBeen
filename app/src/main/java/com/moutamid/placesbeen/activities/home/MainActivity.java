@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new ViewPagerFragmentAdapter(getSupportFragmentManager());
 
+        MainController.fetchAllPolygonBoundaries();
+
         // Setting up the view Pager
         setupViewPager(viewPager);
 

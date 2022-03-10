@@ -5,6 +5,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -81,10 +82,28 @@ public class PlaceItemActivity extends AppCompatActivity {
         controller.getLatLng();
 
         b.beenCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b) {
+                if (controller.polygon == null)
+                    controller.drawPolygon(mainItemModel.title, Color.argb(255, 50, 205, 50));
+            } else {
+                if (controller.polygon != null) {
+                    controller.polygon.remove();
+                    controller.polygon = null;
+                }
+            }
             controller.triggerCheckBox(mainItemModel, b, Constants.BEEN_ITEMS_PATH);
         });
 
         b.wantToCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b) {
+                if (controller.polygon == null)
+                    controller.drawPolygon(mainItemModel.title, Color.argb(255, 246, 173, 33));
+            } else {
+                if (controller.polygon != null) {
+                    controller.polygon.remove();
+                    controller.polygon = null;
+                }
+            }
             controller.triggerCheckBox(mainItemModel, b, Constants.WANT_TO_ITEMS_PATH);
         });
 

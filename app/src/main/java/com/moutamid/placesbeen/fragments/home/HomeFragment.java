@@ -4,10 +4,14 @@ import static android.view.LayoutInflater.from;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +27,7 @@ import com.fxn.stash.Stash;
 import com.google.android.material.card.MaterialCardView;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.activities.home.MainActivity;
+import com.moutamid.placesbeen.activities.home.MainController;
 import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.databinding.FragmentHomeBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
@@ -39,6 +44,7 @@ public class HomeFragment extends Fragment {
     HomeController controller;
 
     public ArrayList<MainItemModel> mainItemModelArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> mainItemModelArrayListAll = new ArrayList<>();
 
     public ArrayList<MainItemModel> ContinentArrayList = new ArrayList<>();
     public ArrayList<MainItemModel> CountryArrayList = new ArrayList<>();
@@ -79,6 +85,7 @@ public class HomeFragment extends Fragment {
                 AirportsArrayList = Stash.getArrayList(Constants.PARAMS_Airports, MainItemModel.class);
 
                 mainItemModelArrayList = ContinentArrayList;
+                mainItemModelArrayListAll = ContinentArrayList;
 
                 controller.retrieveDatabaseItems();
 
@@ -97,55 +104,67 @@ public class HomeFragment extends Fragment {
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = ContinentArrayList;
+            mainItemModelArrayListAll = ContinentArrayList;
             initRecyclerView();
             isAirport = false;
             CURRENT_TYPE = Constants.PARAMS_Continent;
+            adapter.getFilter().filter(currentSearchQuery);
         });
         b.optionCountry.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCountry, b.textViewCountry);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = CountryArrayList;
+            mainItemModelArrayListAll = CountryArrayList;
             initRecyclerView();
             isAirport = false;
             CURRENT_TYPE = Constants.PARAMS_Country;
+            adapter.getFilter().filter(currentSearchQuery);
         });
         b.optionStates.setOnClickListener(view -> {
             controller.changeDotTo(b.dotStates, b.textViewStates);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = StatesArrayList;
+            mainItemModelArrayListAll = StatesArrayList;
             initRecyclerView();
             isAirport = false;
             CURRENT_TYPE = Constants.PARAMS_States;
+            adapter.getFilter().filter(currentSearchQuery);
         });
         b.optionCity.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCity, b.textViewCity);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = CityArrayList;
+            mainItemModelArrayListAll = CityArrayList;
             initRecyclerView();
             isAirport = false;
             CURRENT_TYPE = Constants.PARAMS_City;
+            adapter.getFilter().filter(currentSearchQuery);
         });
         b.optionCulturalSites.setOnClickListener(view -> {
             controller.changeDotTo(b.dotCulturalSites, b.textViewCulturalSites);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = CulturalSitesArrayList;
+            mainItemModelArrayListAll = CulturalSitesArrayList;
             initRecyclerView();
             isAirport = false;
             CURRENT_TYPE = Constants.PARAMS_CulturalSites;
+            adapter.getFilter().filter(currentSearchQuery);
         });
         b.optionNationalParks.setOnClickListener(view -> {
             controller.changeDotTo(b.dotNationalParks, b.textViewNationalParks);
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = NationalParksArrayList;
+            mainItemModelArrayListAll = NationalParksArrayList;
             initRecyclerView();
 
             isAirport = false;
             CURRENT_TYPE = Constants.PARAMS_NationalParks;
+            adapter.getFilter().filter(currentSearchQuery);
         });
 
         b.optionAirports.setOnClickListener(view -> {
@@ -153,10 +172,12 @@ public class HomeFragment extends Fragment {
             b.mainRecyclerView.showShimmerAdapter();
 
             mainItemModelArrayList = AirportsArrayList;
+            mainItemModelArrayListAll = AirportsArrayList;
             initRecyclerView();
 
             isAirport = true;
             CURRENT_TYPE = Constants.PARAMS_Airports;
+            adapter.getFilter().filter(currentSearchQuery);
         });
 
         b.profileImageMain.setOnClickListener(view -> {
@@ -165,10 +186,31 @@ public class HomeFragment extends Fragment {
 
         controller.getImageProfileUrl();
 
+        b.searchEtHome.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (adapter != null) {
+                    currentSearchQuery = charSequence.toString();
+                    adapter.getFilter().filter(charSequence);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         return b.getRoot();
 
     }
 
+    String currentSearchQuery;
 
     public boolean isAirport = false;
 
@@ -177,7 +219,7 @@ public class HomeFragment extends Fragment {
         conversationRecyclerView = b.mainRecyclerView;
         adapter = new RecyclerViewAdapterMessages();
         if (isAdded())
-        linearLayoutManager = new LinearLayoutManager(requireContext());
+            linearLayoutManager = new LinearLayoutManager(requireContext());
         conversationRecyclerView.setLayoutManager(linearLayoutManager);
 
         conversationRecyclerView.setHasFixedSize(true);
@@ -191,7 +233,7 @@ public class HomeFragment extends Fragment {
     }
 
     private class RecyclerViewAdapterMessages extends RecyclerView.Adapter
-            <RecyclerViewAdapterMessages.ViewHolderRightMessage> {
+            <RecyclerViewAdapterMessages.ViewHolderRightMessage> implements Filterable {
 
         @NonNull
         @Override
@@ -212,13 +254,13 @@ public class HomeFragment extends Fragment {
             holder.ratingBar.setRating(nmbr);
             holder.ratingText.setText(nmbr + "");
 
-                if (isAdded())
-            Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
+            if (isAdded())
+                Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
 
             holder.parenLayout.setOnClickListener(view -> {
                 Stash.put(Constants.CURRENT_MODEL_CLASS, model);
                 if (isAdded())
-                startActivity(new Intent(requireContext(), PlaceItemActivity.class));
+                    startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
 
             controller.isSaved(model, holder.saveBtn);
@@ -234,6 +276,42 @@ public class HomeFragment extends Fragment {
             if (mainItemModelArrayList == null)
                 return 0;
             return mainItemModelArrayList.size();
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence charSequence) {
+                    String key = charSequence.toString();
+                    if (key.isEmpty()) {
+                        mainItemModelArrayList = mainItemModelArrayListAll;
+                    } else {
+                        ArrayList<MainItemModel> filtered = new ArrayList<>();
+
+                        for (MainItemModel model : mainItemModelArrayListAll) {
+                            if (model.title.toLowerCase().contains(key.toLowerCase())) {
+                                filtered.add(model);
+                            }
+//                            else if (model.getSongAlbumName().toLowerCase().contains(key.toLowerCase())) {
+//                                filtered.add(model);
+//                            } else if (model.getSongYTUrl().toLowerCase().contains(key.toLowerCase())) {
+//                                filtered.add(model);
+//                            }
+                        }
+                        mainItemModelArrayList = filtered;
+                    }
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = mainItemModelArrayList;
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                    mainItemModelArrayList = (ArrayList<MainItemModel>) filterResults.values;
+                    adapter.notifyDataSetChanged();
+                }
+            };
         }
 
         public class ViewHolderRightMessage extends RecyclerView.ViewHolder {

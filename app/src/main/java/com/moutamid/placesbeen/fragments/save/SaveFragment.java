@@ -65,6 +65,9 @@ public class SaveFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         b = FragmentSaveBinding.inflate(inflater, container, false);
 
+        if (!isAdded())
+            return b.getRoot();
+
         controller = new SaveController(this);
 
         b.optionSaved.setOnClickListener(view -> {
@@ -96,6 +99,8 @@ public class SaveFragment extends Fragment {
         mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapSaveFragment);
 
+        controller.initMaps();
+
         controller.retrieveDatabaseItems();
 
         return b.getRoot();
@@ -118,7 +123,7 @@ public class SaveFragment extends Fragment {
 
         conversationRecyclerView = b.savedRecyclerView;
         adapter = new RecyclerViewAdapterMessages();
-        if (isAdded()){
+        if (isAdded()) {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(requireContext());
             conversationRecyclerView.setLayoutManager(linearLayoutManager);
             conversationRecyclerView.setHasFixedSize(true);
@@ -160,12 +165,12 @@ public class SaveFragment extends Fragment {
             holder.rating.setText(nmbr + "");
 
             if (isAdded())
-            Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, false, true);
+                Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, false, true);
 
             holder.parentLayout.setOnClickListener(view -> {
                 Stash.put(Constants.CURRENT_MODEL_CLASS, model);
                 if (isAdded())
-                startActivity(new Intent(requireContext(), PlaceItemActivity.class));
+                    startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
             /*} catch (Exception e) {
                 Log.e("TAG", "onBindViewHolder: ERROR: " + e.getMessage());

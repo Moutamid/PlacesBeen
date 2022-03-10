@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.models.MainItemModel;
+import com.moutamid.placesbeen.models.PolygonModel;
 import com.moutamid.placesbeen.utils.Constants;
 import com.moutamid.placesbeen.utils.Utils;
 
@@ -72,7 +73,10 @@ public class PlaceController {
         ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
 
         if (savedList.contains(model.title)) {
-//        if (Stash.getBoolean(model.title, false)) {
+            if (polygon != null) {
+                polygon.remove();
+                polygon = null;
+            }
             // IF ALREADY SAVED THEN REMOVE
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_unsave_24);
             YoYo.with(Techniques.Bounce).duration(700).playOn(activity.b.saveBtnPlace);
@@ -84,8 +88,10 @@ public class PlaceController {
 
             savedList.remove(model.title);
             Stash.put(Constants.SAVED_LIST, savedList);
-//            Stash.clear(model.title);
         } else {
+            if (polygon == null)
+                drawPolygon(model.title, Color.argb(255, 55, 0, 179));
+
             // IF NOT SAVED THEN SAVE
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_save_24);
             YoYo.with(Techniques.Bounce).duration(700).playOn(activity.b.saveBtnPlace);
@@ -95,7 +101,6 @@ public class PlaceController {
                     .child(model.title)
                     .setValue(model);
 
-//            Stash.put(model.title, true);
             savedList.add(model.title);
             Stash.put(Constants.SAVED_LIST, savedList);
         }
@@ -290,6 +295,96 @@ public class PlaceController {
 
             }
         });
+    }
+
+    public Polygon polygon;
+
+    public void drawPolygon(String country, int colour) {
+        Log.e(TAG, "drawPolygon: COUNTRY: " + country);
+        new Thread(() -> {
+            try {
+                Log.d(TAG, "drawPolygon: try {");
+
+                String polyGonStr = Stash.getString(Constants.POLYGON + country, Constants.NULL);
+
+                if (polyGonStr.equals(Constants.NULL)) {
+                    polyGonStr = new GetJson().AsString(Constants.GET_BOUNDARY_URL((country)));
+                    Stash.put(Constants.POLYGON + country, polyGonStr);
+                }
+
+                JSONArray jsonArray = new JSONArray(polyGonStr);
+
+                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                JSONObject innerObject = jsonObject.getJSONObject("geojson");
+
+                String type = innerObject.getString("type");
+
+                JSONArray innerArray = innerObject.getJSONArray("coordinates");
+
+                if (type.equals("Polygon")) {
+                    JSONArray latlngArray = innerArray.getJSONArray(0);
+                    PolygonOptions polygonOptions = new PolygonOptions();
+                    polygonOptions.strokeColor(Color.WHITE);
+                    polygonOptions.strokeWidth((float) 0.80);
+//                polygonOptions.fillColor(Color.argb(255, 55, 0, 179));
+                    polygonOptions.fillColor(colour);
+
+                    for (int i = 0; i < latlngArray.length(); i++) {
+
+                        double lng = latlngArray.getJSONArray(i).getDouble(0);
+                        double lat = latlngArray.getJSONArray(i).getDouble(1);
+
+                        LatLng latLng = new LatLng(lat, lng);
+
+                        polygonOptions.add(latLng);
+                    }
+
+                    activity.runOnUiThread(() -> {
+                        polygon = activity.mMap.addPolygon(polygonOptions);
+                    });
+                } else {
+                    for (int i1 = 0; i1 < innerArray.length(); i1++) {
+                        JSONArray array1 = innerArray.getJSONArray(i1);
+
+                        JSONArray array2 = array1.getJSONArray(0);
+
+                        PolygonOptions polygonOptions = new PolygonOptions();
+                        polygonOptions.strokeColor(Color.WHITE);
+                        polygonOptions.strokeWidth((float) 0.80);
+                        polygonOptions.fillColor(colour);
+
+                        for (int i2 = 0; i2 < array2.length(); i2++) {
+
+                            JSONArray latlngArrray = array2.getJSONArray(i2);
+
+                            double lng = latlngArrray.getDouble(0);
+                            double lat = latlngArrray.getDouble(1);
+
+                            LatLng latLng = new LatLng(lat, lng);
+
+                            polygonOptions.add(latLng);
+
+                        }
+                        activity.runOnUiThread(() -> {
+                            polygon = activity.mMap.addPolygon(polygonOptions);
+                        });
+                    }
+                }
+
+                Log.d(TAG, "drawPolygon: jsonArray done");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "drawPolygon: ERROR: " + e.getMessage());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                Log.e(TAG, "drawPolygon: ERROR: " + e.getMessage());
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                Log.e(TAG, "drawPolygon: ERROR: " + e.getMessage());
+            }
+        }).start();
+
     }
 
     private void triggerOnClick() {

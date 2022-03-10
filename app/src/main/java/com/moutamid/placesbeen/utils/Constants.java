@@ -33,6 +33,7 @@ public class Constants {
     public static final String CURRENT_MODEL_CLASS = "current_model_class";
     public static final String PROFILE_URL = "profileUrl";
     public static final String SAVED_LIST = "savedlist";
+    public static final String POLYGON = "polygon";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";
