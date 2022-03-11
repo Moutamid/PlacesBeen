@@ -50,6 +50,7 @@
                             android:layout_height="match_parent" />
 
                         <TextView
+                            android:id="@+id/continentsTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -69,6 +70,7 @@
                             android:layout_height="match_parent" />
 
                         <TextView
+                            android:id="@+id/countriesTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -97,6 +99,7 @@
                             android:layout_height="match_parent" />
 
                         <TextView
+                            android:id="@+id/statesTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -116,6 +119,7 @@
                             android:layout_height="match_parent" />
 
                         <TextView
+                            android:id="@+id/citiesTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -144,6 +148,7 @@
                             android:layout_height="match_parent" />
 
                         <TextView
+                            android:id="@+id/culturalSitesTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -163,6 +168,7 @@
                             android:layout_height="match_parent" />
 
                         <TextView
+                            android:id="@+id/nationalParksTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
@@ -191,6 +197,7 @@
                             android:layout_height="match_parent" />
 
                         <TextView
+                            android:id="@+id/airportsTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"

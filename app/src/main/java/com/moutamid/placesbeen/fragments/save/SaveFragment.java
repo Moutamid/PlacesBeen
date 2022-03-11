@@ -1,64 +1,31 @@
 package com.moutamid.placesbeen.fragments.save;
 
-import static android.view.LayoutInflater.from;
-
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.dezlum.codelabs.getjson.GetJson;
-import com.fxn.stash.Stash;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
 import com.moutamid.placesbeen.R;
-import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.databinding.FragmentSaveBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
-import com.moutamid.placesbeen.utils.Constants;
-import com.moutamid.placesbeen.utils.Utils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
 public class SaveFragment extends Fragment {
     private static final String TAG = "SaveFragment";
     public FragmentSaveBinding b;
-    public SupportMapFragment mapFragment;
 
     SaveController controller;
 
-    public ArrayList<MainItemModel> currentItemsList = new ArrayList<>();
+//    public ArrayList<MainItemModel> currentItemsList = new ArrayList<>();
 
-    ArrayList<MainItemModel> savedArrayList = new ArrayList<>();
-    ArrayList<MainItemModel> beenArrayList = new ArrayList<>();
-    ArrayList<MainItemModel> wantToArrayList = new ArrayList<>();
+
 
     @Nullable
     @Override
@@ -70,7 +37,7 @@ public class SaveFragment extends Fragment {
 
         controller = new SaveController(this);
 
-        b.optionSaved.setOnClickListener(view -> {
+        /*b.optionSaved.setOnClickListener(view -> {
             controller.changeDotTo(b.dotSaved, b.textViewSaved);
             controller.ITEMS_PATH = Constants.SAVED_ITEMS_PATH;
             b.savedRecyclerView.showShimmerAdapter();
@@ -94,27 +61,22 @@ public class SaveFragment extends Fragment {
             initRecyclerView();
         });
 
-        b.savedRecyclerView.showShimmerAdapter();
+        b.savedRecyclerView.showShimmerAdapter();*/
 
-        mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.mapSaveFragment);
-
-        controller.initMaps();
-
-        controller.retrieveDatabaseItems();
 
         return b.getRoot();
 
     }
 
-    public GoogleMap mMap;
+/*
 
     private RecyclerView conversationRecyclerView;
     public RecyclerViewAdapterMessages adapter;
+*/
 
     public boolean isFirstTime = true;
 
-    public void initRecyclerView() {
+    /*public void initRecyclerView() {
 
         if (isFirstTime) {
             currentItemsList = savedArrayList;
@@ -172,9 +134,9 @@ public class SaveFragment extends Fragment {
                 if (isAdded())
                     startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
-            /*} catch (Exception e) {
+            *//*} catch (Exception e) {
                 Log.e("TAG", "onBindViewHolder: ERROR: " + e.getMessage());
-            }*/
+            }*//*
         }
 
         @Override
@@ -201,6 +163,6 @@ public class SaveFragment extends Fragment {
             }
         }
 
-    }
+    }*/
 
 }

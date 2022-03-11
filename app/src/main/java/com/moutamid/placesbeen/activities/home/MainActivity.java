@@ -1,7 +1,8 @@
 package com.moutamid.placesbeen.activities.home;
 
-import static com.bumptech.glide.Glide.with;
+import static com.moutamid.placesbeen.utils.Utils.toast;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -21,14 +22,15 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityMainBinding;
 import com.moutamid.placesbeen.fragments.charts.ChartsFragment;
 import com.moutamid.placesbeen.fragments.home.HomeFragment;
 import com.moutamid.placesbeen.fragments.profile.ProfileFragment;
 import com.moutamid.placesbeen.fragments.save.SaveFragment;
-import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingThree;
-import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingTwo;
+import com.moutamid.placesbeen.models.MainItemModel;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -41,12 +43,29 @@ public class MainActivity extends AppCompatActivity {
     private ViewPagerFragmentAdapter adapter;
     private ViewPager viewPager;
 
+    MainController controller;
+
+    public SupportMapFragment mapFragment;
+
+    ArrayList<MainItemModel> savedArrayListCities = new ArrayList<>();
+    ArrayList<MainItemModel> beenArrayListCities = new ArrayList<>();
+    ArrayList<MainItemModel> wantToArrayListCities = new ArrayList<>();
+
+    ArrayList<MainItemModel> savedArrayListCountries = new ArrayList<>();
+    ArrayList<MainItemModel> beenArrayListCountries = new ArrayList<>();
+    ArrayList<MainItemModel> wantToArrayListCountries = new ArrayList<>();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         b = ActivityMainBinding.inflate(getLayoutInflater());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(b.getRoot());
+        b.citiesBtnForMaps.setOnClickListener(view -> {
+            toast("Coming soon!");
+        });
+        controller = new MainController(this);
 
         viewPager = findViewById(R.id.main_view_pager);
 
@@ -71,17 +90,102 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setCurrentItem(1, true);
         });
         b.saveLayoutMain.setOnClickListener(view -> {
-            changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_save_24);
-            viewPager.setCurrentItem(2, true);
+//            changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
+//            viewPager.setCurrentItem(2, true);
+            hideMainLayout();
 
         });
         b.profileLayoutMain.setOnClickListener(view -> {
             changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
             viewPager.setCurrentItem(3, true);
-
         });
 
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.mapSaveFragment);
+
+        controller.initMaps();
+
+        controller.retrieveDatabaseItems();
+
+        b.mapsLayout.animate().setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+//                b.mapsLayout.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        }).translationY(b.mapsLayout.getHeight()).setDuration(100).start();
     }
+
+    boolean IS_HIDDEN = false;
+
+    private void showMainLayout() {
+        IS_HIDDEN = false;
+        b.mainLayout.animate().alpha(1.0f).translationY(0).setDuration(700).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                b.mainLayout.setVisibility(View.VISIBLE);
+                b.mapsLayout.animate().alpha(1.0f).translationY(b.mainLayout.getHeight()).setDuration(700).start();
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                b.mapsLayout.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        }).start();
+    }
+
+    private void hideMainLayout() {
+        IS_HIDDEN = true;
+        b.mainLayout.animate().alpha(0.0f).translationY(-b.mainLayout.getHeight()).setDuration(700).setListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animator) {
+                b.mapsLayout.setVisibility(View.VISIBLE);
+                b.mapsLayout.animate().alpha(1.0f).translationY(0).setDuration(700).start();
+//                    b.mapsLayout.animate().alpha(1.0f).translationY(b.mainLayout.getHeight()).start();
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                b.mainLayout.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+
+            }
+        }).start();
+    }
+
+    public GoogleMap mMap;
 
     private View currentDot;
     private ImageView currentBtn;
@@ -117,13 +221,23 @@ public class MainActivity extends AppCompatActivity {
                     fragment.refreshArcs();
                     changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
                 } else if (position == 2) {
-                    changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_save_24);
+//                    changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
+                    if (lastPosition == 1) {
+                        lastPosition = 3;
+                        viewPager.setCurrentItem(3, true);
+                    } else if (lastPosition == 3) {
+                        lastPosition = 1;
+                        viewPager.setCurrentItem(1, true);
+                    } else lastPosition = position;
+
                 } else if (position == 3) {
                     ProfileFragment fragment = (ProfileFragment) adapter.getItem(3);
                     fragment.refreshData();
                     changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
                 }
             }
+
+            int lastPosition = 0;
 
             @Override
             public void onPageScrollStateChanged(int i) {
@@ -138,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         currentDot.setVisibility(View.GONE);
         b.homeBtnNavMain.setImageResource(R.drawable.ic_unselected_home_24);
         b.chartsBtnNavMain.setImageResource(R.drawable.ic_charts_unselected_24);
-        b.saveBtnNavMain.setImageResource(R.drawable.ic_unsave_24);
+        b.saveBtnNavMain.setImageResource(R.drawable.ic_unselected_map_24);
         b.profileBtnNavMain.setImageResource(R.drawable.ic_profile_24);
 
 
@@ -152,10 +266,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (IS_HIDDEN) {
+            showMainLayout();
+            return;
+        }
 
-        if (viewPager.getCurrentItem() == 0) super.onBackPressed();
-
-        else viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        if (viewPager.getCurrentItem() == 0) {
+            super.onBackPressed();
+        } else
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
 
     }
 

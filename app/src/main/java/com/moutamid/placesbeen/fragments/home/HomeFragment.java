@@ -206,11 +206,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        controller.setvaluesOnTextviews();
+
         return b.getRoot();
 
     }
 
-    String currentSearchQuery;
+    String currentSearchQuery = "";
 
     public boolean isAirport = false;
 
@@ -231,6 +233,8 @@ public class HomeFragment extends Fragment {
         b.mainRecyclerView.hideShimmerAdapter();
 
     }
+
+    public int CURRENT_COUNT = 0;
 
     private class RecyclerViewAdapterMessages extends RecyclerView.Adapter
             <RecyclerViewAdapterMessages.ViewHolderRightMessage> implements Filterable {
@@ -267,12 +271,12 @@ public class HomeFragment extends Fragment {
 
             holder.saveBtn.setOnClickListener(view -> {
                 controller.saveUnSaveItem(model, holder.saveBtn);
+                controller.setvaluesOnTextviews();
             });
         }
 
         @Override
         public int getItemCount() {
-            Log.d("fuckher", "getItemCount: " + CURRENT_TYPE + ": " + mainItemModelArrayList.size());
             if (mainItemModelArrayList == null)
                 return 0;
             return mainItemModelArrayList.size();

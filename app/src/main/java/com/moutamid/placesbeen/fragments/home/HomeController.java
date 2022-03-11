@@ -111,9 +111,9 @@ public class HomeController {
 
     public void isSaved(MainItemModel model, ImageView saveBtn) {
         if (mainActivity.savedList.contains(model.title)) {
-//        if (Stash.getBoolean(model.title, false)) {
             Log.d("MFUCKER", "isSaved: " + model.title);
             saveBtn.setImageResource(R.drawable.ic_save_24);
+            mainActivity.CURRENT_COUNT++;
         }
     }
 
@@ -184,13 +184,13 @@ public class HomeController {
                             Stash.put(Constants.PROFILE_URL, snapshot.getValue().toString());
 
                             if (mainActivity.isAdded())
-                            Glide.with(mainActivity.requireActivity().getApplicationContext())
-                                    .load(snapshot.getValue().toString())
-                                    .apply(new RequestOptions()
-                                            .placeholder(R.color.grey)
-                                            .error(R.drawable.test)
-                                    )
-                                    .into(mainActivity.b.profileImageMain);
+                                Glide.with(mainActivity.requireActivity().getApplicationContext())
+                                        .load(snapshot.getValue().toString())
+                                        .apply(new RequestOptions()
+                                                .placeholder(R.color.grey)
+                                                .error(R.drawable.test)
+                                        )
+                                        .into(mainActivity.b.profileImageMain);
                         }
                     }
 
@@ -203,6 +203,16 @@ public class HomeController {
 
     public void getSavedList() {
         mainActivity.savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
+    }
+
+    public void setvaluesOnTextviews() {
+        mainActivity.b.textViewContinent.setText("Continents (" + Stash.getInt(Constants.PARAMS_Continent + Constants.FOR_CHARTS) + ")");
+        mainActivity.b.textViewCountry.setText("Countries (" + Stash.getInt(Constants.PARAMS_Country + Constants.FOR_CHARTS) + ")");
+        mainActivity.b.textViewStates.setText("States (" + Stash.getInt(Constants.PARAMS_States + Constants.FOR_CHARTS) + ")");
+        mainActivity.b.textViewCity.setText("Cities (" + Stash.getInt(Constants.PARAMS_City + Constants.FOR_CHARTS) + ")");
+        mainActivity.b.textViewCulturalSites.setText("Cultural Sites (" + Stash.getInt(Constants.PARAMS_CulturalSites + Constants.FOR_CHARTS) + ")");
+        mainActivity.b.textViewNationalParks.setText("National Parks (" + Stash.getInt(Constants.PARAMS_NationalParks + Constants.FOR_CHARTS) + ")");
+        mainActivity.b.textViewAirports.setText("Airports (" + Stash.getInt(Constants.PARAMS_Airports + Constants.FOR_CHARTS) + ")");
     }
 
     /*
