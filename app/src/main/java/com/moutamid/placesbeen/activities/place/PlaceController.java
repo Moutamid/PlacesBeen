@@ -5,13 +5,10 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
 
 import android.animation.Animator;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,7 +22,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
@@ -34,22 +30,15 @@ import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.models.MainItemModel;
-import com.moutamid.placesbeen.models.PolygonModel;
 import com.moutamid.placesbeen.utils.Constants;
-import com.moutamid.placesbeen.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class PlaceController {
@@ -65,6 +54,7 @@ public class PlaceController {
     }
 
     public void saveUnSaveItem() {
+        Log.d(TAG, "saveUnSaveItem: ");
         MainItemModel model = activity.mainItemModel;
         if (model.title.equals("nullnull")) {
             Toast.makeText(context, "NULL", Toast.LENGTH_SHORT).show();
@@ -107,6 +97,7 @@ public class PlaceController {
     }
 
     public void checkIsItemSaved() {
+        Log.d(TAG, "checkIsItemSaved: ");
         ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
 //        if (Stash.getBoolean(activity.mainItemModel.title, false)) {
         if (savedList.contains(activity.mainItemModel.title)) {
@@ -144,6 +135,7 @@ public class PlaceController {
     }
 
     public void getImageUrl(String tt, String dd) {
+        Log.d(TAG, "getImageUrl: ");
         String link = "null";
         new Thread(() -> {
             try {
@@ -345,6 +337,7 @@ public class PlaceController {
                     });
                 } else {
                     for (int i1 = 0; i1 < innerArray.length(); i1++) {
+                        Log.d(TAG, "drawPolygon: looping");
                         JSONArray array1 = innerArray.getJSONArray(i1);
 
                         JSONArray array2 = array1.getJSONArray(0);

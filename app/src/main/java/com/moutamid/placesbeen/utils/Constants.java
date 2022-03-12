@@ -34,6 +34,8 @@ public class Constants {
     public static final String PROFILE_URL = "profileUrl";
     public static final String SAVED_LIST = "savedlist";
     public static final String POLYGON = "polygon";
+    public static final String CURRENT_QUERY_LAT = "current_query_lat";
+    public static final String CURRENT_QUERY_LONG = "current_query_long";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";
@@ -72,6 +74,19 @@ public class Constants {
             e.printStackTrace();
         }
         return "https://nominatim.openstreetmap.org/search?country=" +
+                query +
+                "&polygon_geojson=1&format=json";
+    }
+
+    public static String GET_BOUNDARY_URL_FOR_CITY(String q) {
+        String query = null;
+        try {
+            query = URLEncoder.encode(q, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            query = "china";
+            e.printStackTrace();
+        }
+        return "https://nominatim.openstreetmap.org/search?city=" +
                 query +
                 "&polygon_geojson=1&format=json";
     }

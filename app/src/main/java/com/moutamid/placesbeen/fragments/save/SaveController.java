@@ -1,42 +1,6 @@
 package com.moutamid.placesbeen.fragments.save;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.dezlum.codelabs.getjson.GetJson;
-import com.fxn.stash.Stash;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polygon;
-import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.moutamid.placesbeen.R;
-import com.moutamid.placesbeen.models.MainItemModel;
-import com.moutamid.placesbeen.models.MarkerModel;
-import com.moutamid.placesbeen.models.PolygonModel;
-import com.moutamid.placesbeen.utils.Constants;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 public class SaveController {
 

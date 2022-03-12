@@ -1,9 +1,9 @@
 package com.moutamid.placesbeen.activities.home;
 
-import static com.moutamid.placesbeen.utils.Utils.toast;
-
 import android.animation.Animator;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -62,9 +62,7 @@ public class MainActivity extends AppCompatActivity {
         b = ActivityMainBinding.inflate(getLayoutInflater());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(b.getRoot());
-        b.citiesBtnForMaps.setOnClickListener(view -> {
-            toast("Coming soon!");
-        });
+
         controller = new MainController(this);
 
         viewPager = findViewById(R.id.main_view_pager);
@@ -72,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ViewPagerFragmentAdapter(getSupportFragmentManager());
 
         MainController.fetchAllPolygonBoundaries();
+        controller.fetchAllLatLngsOfCities();
 
         // Setting up the view Pager
         setupViewPager(viewPager);
@@ -128,6 +127,53 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }).translationY(b.mapsLayout.getHeight()).setDuration(100).start();
+
+        b.citiesBtnForMaps.setOnClickListener(view -> {
+            b.citiesBtnForMaps.setBackgroundColor(getResources().getColor(R.color.yellow));
+            b.citiesBtnForMaps.setTextColor(getResources().getColor(R.color.white));
+
+            b.countryBtnForMaps.setBackgroundColor(getResources().getColor(R.color.white));
+            b.countryBtnForMaps.setTextColor(getResources().getColor(R.color.yellow));
+            b.countryBtnForMaps.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#3700B3")));
+
+            for (int i = 0; i < controller.markers.size(); i++) {
+                // IF DESC IS NOT NULL THEN ITS A CITY
+                if (!controller.markers.get(i).descNull) {
+                    controller.markers.get(i).marker.setVisible(true);
+                } else controller.markers.get(i).marker.setVisible(false);
+            }
+            for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
+                if (!controller.polygonModelArrayList.get(i).descNull) {
+                    controller.polygonModelArrayList.get(i).polygon.setVisible(true);
+                } else controller.polygonModelArrayList.get(i).polygon.setVisible(false);
+            }
+        });
+
+        b.countryBtnForMaps.setOnClickListener(view -> {
+            b.countryBtnForMaps.setBackgroundColor(getResources().getColor(R.color.yellow));
+            b.countryBtnForMaps.setTextColor(getResources().getColor(R.color.white));
+
+            b.citiesBtnForMaps.setBackgroundColor(getResources().getColor(R.color.white));
+            b.citiesBtnForMaps.setTextColor(getResources().getColor(R.color.yellow));
+            b.citiesBtnForMaps.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#3700B3")));
+
+            if (controller.markers.size() > 0)
+                for (int i = 0; i < controller.markers.size(); i++) {
+                    // IF DESC IS NULL THEN ITS A COUNTRY
+                    if (controller.markers.get(i).descNull) {
+                        controller.markers.get(i).marker.setVisible(true);
+                    } else controller.markers.get(i).marker.setVisible(false);
+                }
+
+            if (controller.polygonModelArrayList.size() > 0)
+                for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
+                    if (controller.polygonModelArrayList.get(i).descNull) {
+                        controller.polygonModelArrayList.get(i).polygon.setVisible(true);
+                    } else controller.polygonModelArrayList.get(i).polygon.setVisible(false);
+                }
+        });
+
+
     }
 
     boolean IS_HIDDEN = false;
