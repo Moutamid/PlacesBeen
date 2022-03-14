@@ -36,6 +36,10 @@ public class Constants {
     public static final String POLYGON = "polygon";
     public static final String CURRENT_QUERY_LAT = "current_query_lat";
     public static final String CURRENT_QUERY_LONG = "current_query_long";
+    public static final String PARAMS = "params";
+    public static final String PARAMS_WORLD_MAP = "map";
+    public static final String PARAMS_CHARTS = "params_charts";
+    public static final String PARAMS_PROFILE = "params_profile";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";

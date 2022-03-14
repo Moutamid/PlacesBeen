@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activities.home.HomeActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#c7e5f0">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/error_layout_fragment_status"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="registration.json"
+            app:lottie_loop="true"
+            app:lottie_speed="1.25" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:elevation="70dp"
+                    android:orientation="vertical"
+                    android:paddingBottom="50dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="200dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardElevation="10dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/white">
+
+                                <ImageView
+                                    android:id="@+id/tetete1"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/img" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_above="@id/continentsListBtn"
+                                    android:layout_below="@+id/tetete1"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginTop="10dp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/continentsTag"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="5 Continents" />
+
+                                    <TextView
+                                        android:id="@+id/countriesTag"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="3dp"
+                                        android:text="5 Countries" />
+
+                                    <TextView
+                                        android:id="@+id/statesTag"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="3dp"
+                                        android:text="5 States" />
+
+                                    <TextView
+                                        android:id="@+id/citiesTag"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="3dp"
+                                        android:text="5 Cities" />
+
+
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/continentsListBtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="See list"
+                                    android:textColor="@color/yellow"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="200dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardElevation="10dp"
+                            app:strokeColor="@color/grey"
+                            app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/white">
+
+                                <ImageView
+                                    android:id="@+id/tetete2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="70dp"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/img_1" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_above="@id/culturalSitesListBtn"
+                                    android:layout_below="@+id/tetete2"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginTop="10dp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/culturalSitesTag"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="5 Cultural sites" />
+
+                                    <TextView
+                                        android:id="@+id/nationalParksTag"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="5 National parks" />
+
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/culturalSitesListBtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="See list"
+                                    android:textColor="@color/yellow"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:layout_width="0dp"
+                            android:layout_height="200dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            android:elevation="20dp"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardElevation="20dp"
+                            app:strokeColor="@color/grey"
+                            app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/tetete3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="120dp"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/img_3" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_above="@id/airportsListBtn"
+                                    android:layout_below="@+id/tetete3"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginTop="10dp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/airportsTag"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:text="5 Airports" />
+
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/airportsListBtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="See list"
+                                    android:textColor="@color/yellow"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="200dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardElevation="10dp"
+                            app:strokeColor="@color/grey"
+                            app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/tetete4"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="150dp"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/img_2" />
+
+                                <TextView
+                                    android:id="@+id/worldMapListBtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="World map"
+                                    android:textColor="@color/yellow"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="200dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardElevation="10dp"
+                            app:strokeColor="@color/grey"
+                            app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/tetete5"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="150dp"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/img_4" />
+
+                                <TextView
+                                    android:id="@+id/seeChartsBtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="See charts"
+                                    android:textColor="@color/yellow"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="0dp"
+                            android:layout_height="200dp"
+                            android:layout_margin="10dp"
+                            android:layout_weight="1"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardElevation="10dp"
+                            app:strokeColor="@color/grey"
+                            app:strokeWidth="1dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent">
+
+                                <ImageView
+                                    android:id="@+id/profileImg"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="150dp"
+                                    android:background="@color/grey"
+                                    android:scaleType="centerCrop" />
+
+                                <TextView
+                                    android:id="@+id/viewProfileBtn"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentBottom="true"
+                                    android:layout_marginHorizontal="20dp"
+                                    android:layout_marginBottom="5dp"
+                                    android:text="View profile"
+                                    android:textColor="@color/yellow"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#c7e5f0"
+            android:gravity="center"
+            android:paddingVertical="20dp"
+            android:text="Places Been"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+</RelativeLayout>

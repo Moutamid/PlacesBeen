@@ -216,6 +216,29 @@ public class HomeFragment extends Fragment {
 
     public boolean isAirport = false;
 
+    public void triggerCulturalClick(){
+        controller.changeDotTo(b.dotCulturalSites, b.textViewCulturalSites);
+        b.mainRecyclerView.showShimmerAdapter();
+
+        mainItemModelArrayList = CulturalSitesArrayList;
+        mainItemModelArrayListAll = CulturalSitesArrayList;
+        initRecyclerView();
+        isAirport = false;
+        CURRENT_TYPE = Constants.PARAMS_CulturalSites;
+    }
+
+    public void triggerAirportClick(){
+        controller.changeDotTo(b.dotAirports, b.textViewAirports);
+        b.mainRecyclerView.showShimmerAdapter();
+
+        mainItemModelArrayList = AirportsArrayList;
+        mainItemModelArrayListAll = AirportsArrayList;
+        initRecyclerView();
+
+        isAirport = true;
+        CURRENT_TYPE = Constants.PARAMS_Airports;
+    }
+
     public void initRecyclerView() {
 
         conversationRecyclerView = b.mainRecyclerView;

@@ -31,6 +31,7 @@ import com.moutamid.placesbeen.fragments.home.HomeFragment;
 import com.moutamid.placesbeen.fragments.profile.ProfileFragment;
 import com.moutamid.placesbeen.fragments.save.SaveFragment;
 import com.moutamid.placesbeen.models.MainItemModel;
+import com.moutamid.placesbeen.utils.Constants;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -173,6 +174,27 @@ public class MainActivity extends AppCompatActivity {
                 }
         });
 
+        String PARAMS = getIntent().getStringExtra(Constants.PARAMS);
+
+        /*if (PARAMS.equals(Constants.PARAMS_CulturalSites)){
+            HomeFragment fragment = (HomeFragment) adapter.getItem(0);
+            fragment.triggerCulturalClick();
+        }
+        if (PARAMS.equals(Constants.PARAMS_Airports)){
+            HomeFragment fragment = (HomeFragment) adapter.getItem(0);
+            fragment.triggerAirportClick();
+        }*/
+        if (PARAMS.equals(Constants.PARAMS_WORLD_MAP)){
+            hideMainLayout();
+        }
+        if (PARAMS.equals(Constants.PARAMS_CHARTS)){
+            changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
+            viewPager.setCurrentItem(1, true);
+        }
+        if (PARAMS.equals(Constants.PARAMS_PROFILE)){
+            changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
+            viewPager.setCurrentItem(3, true);
+        }
 
     }
 

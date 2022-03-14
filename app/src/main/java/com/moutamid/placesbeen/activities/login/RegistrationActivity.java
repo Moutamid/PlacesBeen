@@ -72,6 +72,10 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
+        b.forgotPasswordBtn.setOnClickListener(view -> {
+            startActivity(new Intent(RegistrationActivity.this, ForgotPasswordActivity.class));
+        });
+
     }
 
     private void registerUser(String emailStr, String passwordStr) {

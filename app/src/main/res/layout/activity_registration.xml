@@ -64,8 +64,8 @@
                             android:layout_marginTop="40dp"
                             android:background="@drawable/bg_et_registration"
                             android:hint="Email"
-                            android:paddingStart="20dp"
                             android:inputType="textPersonName"
+                            android:paddingStart="20dp"
                             android:paddingTop="15dp"
                             android:paddingEnd="15dp"
                             android:paddingBottom="15dp" />
@@ -83,6 +83,19 @@
                             android:paddingTop="15dp"
                             android:paddingEnd="15dp"
                             android:paddingBottom="15dp" />
+
+                        <TextView
+                            android:id="@+id/forgotPasswordBtn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="20dp"
+                            android:layout_marginTop="30dp"
+                            android:gravity="end"
+                            android:text="Forgot password"
+                            android:textColor="@color/yellow"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
 
                     </LinearLayout>
 
