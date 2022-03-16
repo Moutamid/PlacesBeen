@@ -1,6 +1,5 @@
 package com.moutamid.placesbeen.activities.home;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -29,7 +28,6 @@ import com.moutamid.placesbeen.databinding.ActivityMainBinding;
 import com.moutamid.placesbeen.fragments.charts.ChartsFragment;
 import com.moutamid.placesbeen.fragments.home.HomeFragment;
 import com.moutamid.placesbeen.fragments.profile.ProfileFragment;
-import com.moutamid.placesbeen.fragments.save.SaveFragment;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
 
@@ -80,24 +78,29 @@ public class MainActivity extends AppCompatActivity {
         currentBtn = b.homeBtnNavMain;
 
         b.homeLayoutMain.setOnClickListener(view -> {
-            changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
+            viewPager.setVisibility(View.GONE);
+            // TODO: SHOW VIEWPAGER
+//            changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
+
+//            viewPager.setCurrentItem(0, true);
+        });
+        b.chartsLayoutMain.setOnClickListener(view -> {
+            viewPager.setVisibility(View.VISIBLE);
+            changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
 
             viewPager.setCurrentItem(0, true);
         });
-        b.chartsLayoutMain.setOnClickListener(view -> {
-            changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
-
-            viewPager.setCurrentItem(1, true);
-        });
         b.saveLayoutMain.setOnClickListener(view -> {
-//            changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
-//            viewPager.setCurrentItem(2, true);
-            hideMainLayout();
+            viewPager.setVisibility(View.VISIBLE);
+            changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
+            viewPager.setCurrentItem(1, true);
+//            hideMainLayout();
 
         });
         b.profileLayoutMain.setOnClickListener(view -> {
+            viewPager.setVisibility(View.VISIBLE);
             changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
-            viewPager.setCurrentItem(3, true);
+            viewPager.setCurrentItem(2, true);
         });
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -107,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
         controller.retrieveDatabaseItems();
 
-        b.mapsLayout.animate().setListener(new Animator.AnimatorListener() {
+        /*b.mapsLayout.animate().setListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animator) {
 
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAnimationRepeat(Animator animator) {
 
             }
-        }).translationY(b.mapsLayout.getHeight()).setDuration(100).start();
+        }).translationY(b.mapsLayout.getHeight()).setDuration(100).start();*/
 
         b.citiesBtnForMaps.setOnClickListener(view -> {
             b.citiesBtnForMaps.setBackgroundColor(getResources().getColor(R.color.yellow));
@@ -184,23 +187,31 @@ public class MainActivity extends AppCompatActivity {
             HomeFragment fragment = (HomeFragment) adapter.getItem(0);
             fragment.triggerAirportClick();
         }*/
-        if (PARAMS.equals(Constants.PARAMS_WORLD_MAP)){
-            hideMainLayout();
+        if (PARAMS.equals(Constants.PARAMS_WORLD_MAP)) {
+//            hideMainLayout();
         }
-        if (PARAMS.equals(Constants.PARAMS_CHARTS)){
+        if (PARAMS.equals(Constants.PARAMS_CHARTS)) {
             changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
-            viewPager.setCurrentItem(1, true);
+            viewPager.setCurrentItem(0, true);
         }
-        if (PARAMS.equals(Constants.PARAMS_PROFILE)){
+        if (PARAMS.equals(Constants.PARAMS_PROFILE)) {
             changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
-            viewPager.setCurrentItem(3, true);
+            viewPager.setCurrentItem(2, true);
         }
+
+        b.backBtnMain.setOnClickListener(view -> {
+            finish();
+        });
+
+        b.searchBtnMain.setOnClickListener(view -> {
+
+        });
 
     }
 
     boolean IS_HIDDEN = false;
 
-    private void showMainLayout() {
+    /*private void showMainLayout() {
         IS_HIDDEN = false;
         b.mainLayout.animate().alpha(1.0f).translationY(0).setDuration(700).setListener(new Animator.AnimatorListener() {
             @Override
@@ -251,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }).start();
-    }
+    }*/
 
     public GoogleMap mMap;
 
@@ -260,17 +271,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void openProfilePage() {
         changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
-        viewPager.setCurrentItem(3, true);
+        viewPager.setCurrentItem(2, true);
     }
 
     private void setupViewPager(ViewPager viewPager) {
         // Adding Fragments to Adapter
-        adapter.addFragment(new HomeFragment());
+//        adapter.addFragment(new SaveFragment());
         adapter.addFragment(new ChartsFragment());
-        adapter.addFragment(new SaveFragment());
+        adapter.addFragment(new HomeFragment());
         adapter.addFragment(new ProfileFragment());
 
-        viewPager.setOffscreenPageLimit(4);
+        viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(adapter);
 
         Log.d(TAG, "setupViewPager: adapter attached");
@@ -282,24 +293,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+//                if (position == 0) {
+//                    changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
+//                } else
                 if (position == 0) {
-                    changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
-                } else if (position == 1) {
-                    ChartsFragment fragment = (ChartsFragment) adapter.getItem(1);
+                    ChartsFragment fragment = (ChartsFragment) adapter.getItem(0);
                     fragment.refreshArcs();
                     changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
+                } else if (position == 1) {
+                    changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
                 } else if (position == 2) {
-//                    changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
-                    if (lastPosition == 1) {
-                        lastPosition = 3;
-                        viewPager.setCurrentItem(3, true);
-                    } else if (lastPosition == 3) {
-                        lastPosition = 1;
-                        viewPager.setCurrentItem(1, true);
-                    } else lastPosition = position;
-
-                } else if (position == 3) {
-                    ProfileFragment fragment = (ProfileFragment) adapter.getItem(3);
+                    ProfileFragment fragment = (ProfileFragment) adapter.getItem(2);
                     fragment.refreshData();
                     changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
                 }
@@ -334,10 +338,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (IS_HIDDEN) {
+        /*if (IS_HIDDEN) {
             showMainLayout();
             return;
-        }
+        }*/
 
         if (viewPager.getCurrentItem() == 0) {
             super.onBackPressed();

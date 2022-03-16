@@ -9,13 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.FragmentSaveBinding;
-import com.moutamid.placesbeen.models.MainItemModel;
-
-import java.util.ArrayList;
 
 public class SaveFragment extends Fragment {
     private static final String TAG = "SaveFragment";
