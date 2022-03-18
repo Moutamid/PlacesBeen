@@ -42,14 +42,14 @@ public class MainController {
     private static final String TAG = "MainController";
 
     Context context;
-    MainActivity saveFragment;
+    MainActivity activity;
 
     public ArrayList<MarkerModel> markers = new ArrayList<>();
     public ArrayList<PolygonModel> polygonModelArrayList = new ArrayList<>();
 
     public MainController(MainActivity saveFragment) {
         this.context = saveFragment;
-        this.saveFragment = saveFragment;
+        this.activity = saveFragment;
     }
 
     public static void fetchAllPolygonBoundaries() {
@@ -163,7 +163,7 @@ public class MainController {
                 .child(Constants.auth().getUid()).child(Constants.SAVED_ITEMS_PATH)
                 .addChildEventListener(itemsChildValueListener(
                         Constants.SAVED_ITEMS_PATH,
-                        saveFragment.savedArrayListCountries,
+                        activity.savedArrayListCountries,
                         R.drawable.save_marker,
                         Color.argb(255, 55, 0, 179),
                         "Saved"));
@@ -171,7 +171,7 @@ public class MainController {
                 .child(Constants.auth().getUid()).child(Constants.BEEN_ITEMS_PATH)
                 .addChildEventListener(itemsChildValueListener(
                         Constants.BEEN_ITEMS_PATH,
-                        saveFragment.beenArrayListCountries,
+                        activity.beenArrayListCountries,
                         R.drawable.save_marker,
                         Color.argb(255, 50, 205, 50),
                         "Been"));
@@ -179,7 +179,7 @@ public class MainController {
                 .child(Constants.auth().getUid()).child(Constants.WANT_TO_ITEMS_PATH)
                 .addChildEventListener(itemsChildValueListener(
                         Constants.WANT_TO_ITEMS_PATH,
-                        saveFragment.wantToArrayListCountries,
+                        activity.wantToArrayListCountries,
                         R.drawable.save_marker,
                         Color.argb(255, 246, 173, 33),
                         "Want to"));
@@ -202,8 +202,8 @@ public class MainController {
                     new DrawPolygonTask(model.title, colour, model).execute();
 
 //                        if (saveFragment.isAdded())
-                    saveFragment.runOnUiThread(() -> {
-                        saveFragment.mMap.setOnMapClickListener(latLng -> {
+                    activity.runOnUiThread(() -> {
+                        activity.mMap.setOnMapClickListener(latLng -> {
                             triggerOnClick(latLng);
                         });
                     });
@@ -232,13 +232,13 @@ public class MainController {
 
                     LatLng sydney = new LatLng(lat, lng);
 //                if (saveFragment.isAdded())
-                    saveFragment.runOnUiThread(() -> {
+                    activity.runOnUiThread(() -> {
                         boolean descNull = false;
                         if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {
                             descNull = true;
                         }
 
-                        Marker marker1 = saveFragment.mMap.addMarker(new MarkerOptions().position(sydney)
+                        Marker marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
                                 .title(title)
                                 .icon(BitmapDescriptorFactory.fromResource(marker)));
 
@@ -271,7 +271,7 @@ public class MainController {
 
                         if (title.equals(model.title)) {
 //                            if (saveFragment.isAdded())
-                            saveFragment.runOnUiThread(() -> {
+                            activity.runOnUiThread(() -> {
                                 marker.remove();
                             });
                             markers.remove(i);
@@ -288,7 +288,7 @@ public class MainController {
 
                         if (title.equals(model.title)) {
 //                            if (saveFragment.isAdded())
-                            saveFragment.runOnUiThread(() -> {
+                            activity.runOnUiThread(() -> {
                                 polygon.remove();
                             });
                             polygonModelArrayList.remove(i);
@@ -321,15 +321,15 @@ public class MainController {
 
     public void initMaps() {
         Log.d(TAG, "initMaps: ");
-        saveFragment.runOnUiThread(() -> {
-            saveFragment.mapFragment.getMapAsync(new OnMapReadyCallback() {
+        activity.runOnUiThread(() -> {
+            activity.mapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(@NonNull GoogleMap googleMap) {
                     Log.d(TAG, "onMapReady: ");
-                    saveFragment.mMap = googleMap;
+                    activity.mMap = googleMap;
 
                     MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle);
-                    saveFragment.mMap.setMapStyle(style);
+                    activity.mMap.setMapStyle(style);
 
                 }
             });
@@ -341,6 +341,39 @@ public class MainController {
 //        saveFragment.mMap.addMarker(new MarkerOptions().position(latLng)
 //                .title(title)
 //                .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+    }
+
+    public void retrieveSearchListItems() {
+        new Thread(() -> {
+            ArrayList<MainItemModel> mainItemModelArrayList = new ArrayList<>();
+
+            ArrayList<MainItemModel> CountryArrayList = new ArrayList<>();
+            ArrayList<MainItemModel> CityArrayList = new ArrayList<>();
+            ArrayList<MainItemModel> CulturalSitesArrayList = new ArrayList<>();
+            ArrayList<MainItemModel> AirportsArrayList = new ArrayList<>();
+
+            CountryArrayList = Stash.getArrayList(Constants.PARAMS_Country, MainItemModel.class);
+            CityArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);
+            CulturalSitesArrayList = Stash.getArrayList(Constants.PARAMS_CulturalSites, MainItemModel.class);
+            AirportsArrayList = Stash.getArrayList(Constants.PARAMS_Airports, MainItemModel.class);
+
+            mainItemModelArrayList.addAll(CountryArrayList);
+            mainItemModelArrayList.addAll(CityArrayList);
+            mainItemModelArrayList.addAll(CulturalSitesArrayList);
+            mainItemModelArrayList.addAll(AirportsArrayList);
+
+            activity.mainItemModelArrayListAll.addAll(mainItemModelArrayList);
+
+            activity.mainItemModelArrayList.add(CountryArrayList.get(0));
+
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.initRecyclerView();
+                }
+            });
+
+        }).start();
     }
 
     public class DrawPolygonTask extends AsyncTask<Void, Void, Void> {
@@ -391,7 +424,7 @@ public class MainController {
                     polygonOptions.fillColor(colour);
 
                     for (int i = 0; i < latlngArray.length(); i++) {
-                        Log.d(TAG, "drawPolygon: iteration polygon: " + i);
+//                        Log.d(TAG, "drawPolygon: iteration polygon: " + i);
 
                         double lng = latlngArray.getJSONArray(i).getDouble(0);
                         double lat = latlngArray.getJSONArray(i).getDouble(1);
@@ -402,7 +435,7 @@ public class MainController {
                     }
 
 //                if (saveFragment.isAdded())
-                    saveFragment.runOnUiThread(() -> {
+                    activity.runOnUiThread(() -> {
                         boolean descNull = false;
                         if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {
                             descNull = true;
@@ -410,7 +443,7 @@ public class MainController {
                         Log.d(TAG, "drawPolygon: title: " + model.title + " descIsNull: " + descNull);
                         PolygonModel polygonModel = new PolygonModel();
                         polygonModel.title = country;
-                        polygonModel.polygon = saveFragment.mMap.addPolygon(polygonOptions);
+                        polygonModel.polygon = activity.mMap.addPolygon(polygonOptions);
 
                         polygonModel.polygon.setVisible(descNull);
 
@@ -420,7 +453,7 @@ public class MainController {
                     });
                 } else {
                     for (int i1 = 0; i1 < innerArray.length(); i1++) {
-                        Log.d(TAG, "drawPolygon: iteration multipolygon: " + i1);
+//                        Log.d(TAG, "drawPolygon: iteration multipolygon: " + i1);
                         JSONArray array1 = innerArray.getJSONArray(i1);
 
                         JSONArray array2 = array1.getJSONArray(0);
@@ -431,7 +464,7 @@ public class MainController {
                         polygonOptions.fillColor(colour);
 
                         for (int i2 = 0; i2 < array2.length(); i2++) {
-                            Log.d(TAG, "drawPolygon: iteration2 multipolygon: " + i2);
+//                            Log.d(TAG, "drawPolygon: iteration2 multipolygon: " + i2);
 
                             JSONArray latlngArrray = array2.getJSONArray(i2);
 
@@ -445,11 +478,11 @@ public class MainController {
                         }
 
 //                    if (saveFragment.isAdded())
-                        saveFragment.runOnUiThread(() -> {
+                        activity.runOnUiThread(() -> {
                             Log.d(TAG, "drawPolygon: added");
                             PolygonModel polygonModel = new PolygonModel();
                             polygonModel.title = country;
-                            polygonModel.polygon = saveFragment.mMap.addPolygon(polygonOptions);
+                            polygonModel.polygon = activity.mMap.addPolygon(polygonOptions);
 
                             boolean descNull = false;
                             if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {

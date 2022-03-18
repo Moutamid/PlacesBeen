@@ -18,7 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fxn.stash.Stash;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.moutamid.placesbeen.activities.home.HomeActivity;
 import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.databinding.ActivityRegistrationBinding;
 import com.moutamid.placesbeen.utils.Constants;
@@ -81,7 +84,19 @@ public class RegistrationActivity extends AppCompatActivity {
     private void registerUser(String emailStr, String passwordStr) {
         progressDialog.show();
 
-        Constants.auth().createUserWithEmailAndPassword(emailStr, passwordStr).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        if (Constants.auth().getCurrentUser().isAnonymous()) {
+            AuthCredential credential = EmailAuthProvider.getCredential(emailStr, passwordStr);
+            Constants.auth().getCurrentUser().linkWithCredential(credential)
+                    .addOnCompleteListener(onCompleteListener());
+            return;
+        }
+
+        Constants.auth().createUserWithEmailAndPassword(emailStr, passwordStr)
+                .addOnCompleteListener(onCompleteListener());
+    }
+
+    private OnCompleteListener<AuthResult> onCompleteListener() {
+        return new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 progressDialog.dismiss();
@@ -91,7 +106,7 @@ public class RegistrationActivity extends AppCompatActivity {
 //                    toast("Success");
                     Stash.put(Constants.IS_LOGGED_IN, true);
 
-                    Intent intent = new Intent(context, MainActivity.class);
+                    Intent intent = new Intent(context, HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     finish();
                     startActivity(intent);
@@ -103,11 +118,16 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 }
             }
-        });
+        };
     }
 
     private void loginUser(String emailStr, String passwordStr) {
         progressDialog.show();
+
+        if (Constants.auth().getCurrentUser().isAnonymous()) {
+            Stash.clearAll();
+            Constants.auth().signOut();
+        }
 
         Constants.auth().signInWithEmailAndPassword(emailStr, passwordStr).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -119,7 +139,7 @@ public class RegistrationActivity extends AppCompatActivity {
 //                    toast("Success");
                     Stash.put(Constants.IS_LOGGED_IN, true);
 
-                    Intent intent = new Intent(context, MainActivity.class);
+                    Intent intent = new Intent(context, HomeActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     finish();
                     startActivity(intent);

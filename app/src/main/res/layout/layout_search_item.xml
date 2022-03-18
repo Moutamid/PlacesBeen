@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/parentLayoutSearchItem"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/nameTextViewSearchItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginHorizontal="20dp"
+        android:layout_toStartOf="@+id/etetet"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Lahore"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:id="@+id/etetet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/saveCheckBoxSearchItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/yellow" />
+
+        <CheckBox
+            android:id="@+id/beenCheckBoxSearchItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/yellow2" />
+
+        <CheckBox
+            android:id="@+id/wantToCheckBoxSearchItem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/red" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

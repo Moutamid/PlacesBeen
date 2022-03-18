@@ -1,5 +1,8 @@
 package com.moutamid.placesbeen.onboard;
 
+import static com.moutamid.placesbeen.utils.Utils.toast;
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,11 +22,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.fxn.stash.Stash;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.moutamid.placesbeen.R;
+import com.moutamid.placesbeen.activities.home.HomeActivity;
+import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.activities.login.RegistrationActivity;
 import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingOne;
 import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingThree;
 import com.moutamid.placesbeen.onboard.fragments.FragmentOnBoardingTwo;
+import com.moutamid.placesbeen.utils.Constants;
 import com.moutamid.placesbeen.utils.Utils;
 import com.tbuonomo.viewpagerdotsindicator.SpringDotsIndicator;
 
@@ -52,12 +62,37 @@ public class OnBoardingActivity extends AppCompatActivity {
         // Setting up the view Pager
         setupViewPager(viewPager);
 
-        findViewById(R.id.startBtnOnBoard).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.loginSignUpBtnOnBoard).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(OnBoardingActivity.this, RegistrationActivity.class));
                 finish();
             }
+        });
+
+        findViewById(R.id.guestBtnOnBoard).setOnClickListener(view -> {
+            ProgressDialog progressDialog;
+
+            progressDialog = new ProgressDialog(OnBoardingActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+            Constants.auth().signInAnonymously().addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    progressDialog.dismiss();
+                    if (task.isSuccessful()) {
+                        Stash.put(Constants.IS_LOGGED_IN, true);
+
+                        Intent intent = new Intent(OnBoardingActivity.this, HomeActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        finish();
+                        startActivity(intent);
+                    } else {
+                        toast(task.getException().getMessage());
+                    }
+                }
+            });
         });
 
     }
@@ -107,10 +142,10 @@ public class OnBoardingActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 if (position == 0) {
 //                    forwardBtn.setProgress(0.2f);
-                    findViewById(R.id.startBtnOnBoard).setVisibility(View.GONE);
+                    findViewById(R.id.loginSignUpBtnOnBoard).setVisibility(View.GONE);
                 } else if (position == 1) {
 //                    forwardBtn.setProgress(0.4f);
-                    findViewById(R.id.startBtnOnBoard).setVisibility(View.GONE);
+                    findViewById(R.id.loginSignUpBtnOnBoard).setVisibility(View.GONE);
                 } else if (position == 2) {
 //                    forwardBtn.resumeAnimation();
 //                    YoYo.with(Techniques.FadeIn)
@@ -119,7 +154,7 @@ public class OnBoardingActivity extends AppCompatActivity {
 //                            .onStart(new YoYo.AnimatorCallback() {
 //                                @Override
 //                                public void call(Animator animator) {
-                    findViewById(R.id.startBtnOnBoard).setVisibility(View.VISIBLE);
+                    findViewById(R.id.loginSignUpBtnOnBoard).setVisibility(View.VISIBLE);
 //                                }
 //                            })
 //                            .playOn(findViewById(R.id.startBtnOnBoard));

@@ -17,23 +17,40 @@
         android:id="@+id/dotsIndicatorOnBoard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/startBtnOnBoard"
         android:layout_alignWithParentIfMissing="true"
+        android:layout_above="@id/layoutBtnOnBoard"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         app:dotsColor="@color/yellow"
         app:dotsStrokeColor="@color/yellow" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/startBtnOnBoard"
-        android:textColor="@color/white"
+    <LinearLayout
+        android:id="@+id/layoutBtnOnBoard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="20dp"
         android:layout_marginBottom="20dp"
-        android:text="Start"
-        app:backgroundTint="@color/yellow"
-        app:cornerRadius="10dp" />
+        android:orientation="vertical">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/loginSignUpBtnOnBoard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login / Sign up"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/yellow"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/guestBtnOnBoard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Guest"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/yellow"
+            app:cornerRadius="10dp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

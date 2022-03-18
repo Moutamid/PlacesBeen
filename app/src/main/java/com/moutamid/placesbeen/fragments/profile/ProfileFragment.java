@@ -25,6 +25,7 @@ import com.fxn.stash.Stash;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.moutamid.placesbeen.R;
+import com.moutamid.placesbeen.activities.login.RegistrationActivity;
 import com.moutamid.placesbeen.databinding.FragmentProfileBinding;
 import com.moutamid.placesbeen.utils.Constants;
 
@@ -70,9 +71,22 @@ public class ProfileFragment extends Fragment {
                     .into(b.profileCircleImageView);
 
         b.profileCircleImageView.setOnClickListener(view -> {
+            if (Constants.auth().getCurrentUser().isAnonymous()) {
+                toast("You need to sign up first!");
+                startActivity(new Intent(requireActivity(), RegistrationActivity.class));
+                return;
+            }
+
             Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
             galleryIntent.setType("image/*");
             startActivityForResult(galleryIntent, 1234);
+        });
+
+        b.editNameBtnProfile.setOnClickListener(view -> {
+            if (Constants.auth().getCurrentUser().isAnonymous()) {
+                toast("You need to sign up first!");
+                startActivity(new Intent(requireActivity(), RegistrationActivity.class));
+            }
         });
 
         b.resetSavedListBtnProfile.setOnClickListener(view -> {

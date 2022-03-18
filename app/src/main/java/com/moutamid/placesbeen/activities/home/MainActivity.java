@@ -1,16 +1,28 @@
 package com.moutamid.placesbeen.activities.home;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Scroller;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,16 +31,28 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+import com.fxn.stash.Stash;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityMainBinding;
 import com.moutamid.placesbeen.fragments.charts.ChartsFragment;
 import com.moutamid.placesbeen.fragments.home.HomeFragment;
 import com.moutamid.placesbeen.fragments.profile.ProfileFragment;
 import com.moutamid.placesbeen.models.MainItemModel;
+import com.moutamid.placesbeen.models.MarkerModel;
 import com.moutamid.placesbeen.utils.Constants;
 
 import java.lang.reflect.Field;
@@ -39,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     public ActivityMainBinding b;
 
-    private ViewPagerFragmentAdapter adapter;
+    private ViewPagerFragmentAdapter viewPagerFragmentAdapter;
     private ViewPager viewPager;
 
     MainController controller;
@@ -66,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager = findViewById(R.id.main_view_pager);
 
-        adapter = new ViewPagerFragmentAdapter(getSupportFragmentManager());
+        viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager());
 
         MainController.fetchAllPolygonBoundaries();
         controller.fetchAllLatLngsOfCities();
@@ -186,9 +210,9 @@ public class MainActivity extends AppCompatActivity {
         if (PARAMS.equals(Constants.PARAMS_Airports)){
             HomeFragment fragment = (HomeFragment) adapter.getItem(0);
             fragment.triggerAirportClick();
-        }*/
+        }
         if (PARAMS.equals(Constants.PARAMS_WORLD_MAP)) {
-//            hideMainLayout();
+            hideMainLayout();
         }
         if (PARAMS.equals(Constants.PARAMS_CHARTS)) {
             changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
@@ -197,16 +221,242 @@ public class MainActivity extends AppCompatActivity {
         if (PARAMS.equals(Constants.PARAMS_PROFILE)) {
             changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
             viewPager.setCurrentItem(2, true);
-        }
+        }*/
 
         b.backBtnMain.setOnClickListener(view -> {
             finish();
         });
 
         b.searchBtnMain.setOnClickListener(view -> {
-
+            b.searchBtnLayout.setVisibility(View.GONE);
+            b.searchEtLayoutMain.setVisibility(View.VISIBLE);
         });
 
+        b.backBtnSearchEt.setOnClickListener(view -> {
+            b.searchEtLayoutMain.setVisibility(View.GONE);
+            b.searchBtnLayout.setVisibility(View.VISIBLE);
+        });
+
+        b.searchQueryBtnMain.setOnClickListener(view -> {
+            if (adapter != null) {
+                b.searchProgressBarMain.setVisibility(View.VISIBLE);
+                adapter.getFilter().filter(b.searchEtMain.getText().toString().trim());
+            }
+        });
+
+        controller.retrieveSearchListItems();
+
+    }
+
+    public ArrayList<MainItemModel> mainItemModelArrayList = new ArrayList<>();
+    public ArrayList<MainItemModel> mainItemModelArrayListAll = new ArrayList<>();
+
+    private RecyclerView conversationRecyclerView;
+    private RecyclerViewAdapterMessages adapter;
+
+    public void initRecyclerView() {
+        conversationRecyclerView = b.searchRecyclerViewMain;
+        conversationRecyclerView.addItemDecoration(new DividerItemDecoration(conversationRecyclerView.getContext(), DividerItemDecoration.VERTICAL));
+        adapter = new RecyclerViewAdapterMessages();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        conversationRecyclerView.setLayoutManager(linearLayoutManager);
+        conversationRecyclerView.setHasFixedSize(true);
+        conversationRecyclerView.setNestedScrollingEnabled(false);
+
+        conversationRecyclerView.setAdapter(adapter);
+
+    }
+
+    private class RecyclerViewAdapterMessages extends RecyclerView.Adapter
+            <RecyclerViewAdapterMessages.ViewHolderRightMessage> implements Filterable {
+
+        @NonNull
+        @Override
+        public ViewHolderRightMessage onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_search_item, parent, false);
+            return new ViewHolderRightMessage(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position) {
+            MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
+
+            holder.title.setText(model.title);
+
+            if (savedList.contains(model.title)) {
+                holder.saveCB.setChecked(true);
+            }
+
+            // IF USER BEEN
+            if (Stash.getBoolean(model.title + Constants.BEEN_ITEMS_PATH, false)) {
+                holder.beenCB.setChecked(true);
+            }
+            // IF WANT TO SAVED
+            if (Stash.getBoolean(model.title + Constants.WANT_TO_ITEMS_PATH, false)) {
+                holder.wantToCB.setChecked(true);
+            }
+
+            holder.saveCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                saveUnSaveItem(model, holder.saveCB);
+            });
+
+            holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
+            });
+
+            holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                triggerCheckBox(model, b1, Constants.WANT_TO_ITEMS_PATH);
+            });
+
+            holder.parentLayout.setOnClickListener(view -> {
+                b.searchEtLayoutMain.setVisibility(View.GONE);
+                b.searchBtnLayout.setVisibility(View.VISIBLE);
+
+                addMarkerOnMaps(model);
+            });
+
+        }
+        ProgressDialog progressDialog;
+
+        private void addMarkerOnMaps(MainItemModel model) {
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Loading...");
+            progressDialog.show();
+            new Thread(() -> {
+                Log.d(TAG, "addMarkerOnMaps: ");
+                double lat;
+                double lng;
+
+                if (model.lat.equals(Constants.NULL)) {
+                    lat = controller.getLat(model.title);
+                    lng = controller.LONG;
+                } else {
+                    lat = Double.parseDouble(model.lat);
+                    lng = Double.parseDouble(model.lng);
+                }
+
+                LatLng sydney = new LatLng(lat, lng);
+//                if (saveFragment.isAdded())
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    mMap.addMarker(new MarkerOptions().position(sydney)
+                            .title(model.title));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(6.0f));
+
+                });
+
+            }).start();
+        }
+
+        public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
+            Stash.put(mainItemModel.title + itemsPath, b);
+
+            if (b) {
+                Constants.databaseReference()
+                        .child(Constants.auth().getUid())
+                        .child(itemsPath)
+                        .child(mainItemModel.title)
+                        .setValue(mainItemModel);
+            } else {
+                Constants.databaseReference()
+                        .child(Constants.auth().getUid())
+                        .child(itemsPath)
+                        .child(mainItemModel.title)
+                        .removeValue();
+            }
+        }
+
+        ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
+
+        public void saveUnSaveItem(MainItemModel model, CheckBox checkBox) {
+            if (savedList.contains(model.title)) {
+//            if (Stash.getBoolean(model.title, false)) {
+                // IF ALREADY SAVED THEN REMOVE
+                checkBox.setChecked(false);
+                Constants.databaseReference()
+                        .child(Constants.auth().getUid())
+                        .child(Constants.SAVED_ITEMS_PATH)
+                        .child(model.title)
+                        .removeValue();
+
+                savedList.remove(model.title);
+                Stash.put(Constants.SAVED_LIST, savedList);
+
+            } else {
+                // IF NOT SAVED THEN SAVE
+                checkBox.setChecked(true);
+                Constants.databaseReference()
+                        .child(Constants.auth().getUid())
+                        .child(Constants.SAVED_ITEMS_PATH)
+                        .child(model.title)
+                        .setValue(model);
+
+                savedList.add(model.title);
+                Stash.put(Constants.SAVED_LIST, savedList);
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            if (mainItemModelArrayList == null)
+                return 0;
+            return mainItemModelArrayList.size();
+        }
+
+        public class ViewHolderRightMessage extends RecyclerView.ViewHolder {
+
+            TextView title;
+            CheckBox saveCB, beenCB, wantToCB;
+            RelativeLayout parentLayout;
+
+            public ViewHolderRightMessage(@NonNull View v) {
+                super(v);
+                title = v.findViewById(R.id.nameTextViewSearchItem);
+                saveCB = v.findViewById(R.id.saveCheckBoxSearchItem);
+                beenCB = v.findViewById(R.id.beenCheckBoxSearchItem);
+                wantToCB = v.findViewById(R.id.wantToCheckBoxSearchItem);
+                parentLayout = v.findViewById(R.id.parentLayoutSearchItem);
+
+            }
+        }
+
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence charSequence) {
+                    String key = charSequence.toString();
+                    if (key.isEmpty()) {
+                        mainItemModelArrayList = mainItemModelArrayListAll;
+                    } else {
+                        ArrayList<MainItemModel> filtered = new ArrayList<>();
+
+                        for (MainItemModel model : mainItemModelArrayListAll) {
+                            if (model.title.toLowerCase().contains(key.toLowerCase())) {
+                                filtered.add(model);
+                            } else if (model.desc.toLowerCase().contains(key.toLowerCase())) {
+                                filtered.add(model);
+                            }
+//                            else if (model.getSongYTUrl().toLowerCase().contains(key.toLowerCase())) {
+//                                filtered.add(model);
+//                            }
+                        }
+                        mainItemModelArrayList = filtered;
+                    }
+                    FilterResults filterResults = new FilterResults();
+                    filterResults.values = mainItemModelArrayList;
+                    return filterResults;
+                }
+
+                @Override
+                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                    b.searchProgressBarMain.setVisibility(View.GONE);
+                    mainItemModelArrayList = (ArrayList<MainItemModel>) filterResults.values;
+                    adapter.notifyDataSetChanged();
+                }
+            };
+        }
     }
 
     boolean IS_HIDDEN = false;
@@ -277,12 +527,12 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         // Adding Fragments to Adapter
 //        adapter.addFragment(new SaveFragment());
-        adapter.addFragment(new ChartsFragment());
-        adapter.addFragment(new HomeFragment());
-        adapter.addFragment(new ProfileFragment());
+        viewPagerFragmentAdapter.addFragment(new ChartsFragment());
+        viewPagerFragmentAdapter.addFragment(new HomeFragment());
+        viewPagerFragmentAdapter.addFragment(new ProfileFragment());
 
         viewPager.setOffscreenPageLimit(3);
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(viewPagerFragmentAdapter);
 
         Log.d(TAG, "setupViewPager: adapter attached");
 
@@ -297,13 +547,13 @@ public class MainActivity extends AppCompatActivity {
 //                    changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
 //                } else
                 if (position == 0) {
-                    ChartsFragment fragment = (ChartsFragment) adapter.getItem(0);
+                    ChartsFragment fragment = (ChartsFragment) viewPagerFragmentAdapter.getItem(0);
                     fragment.refreshArcs();
                     changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
                 } else if (position == 1) {
                     changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
                 } else if (position == 2) {
-                    ProfileFragment fragment = (ProfileFragment) adapter.getItem(2);
+                    ProfileFragment fragment = (ProfileFragment) viewPagerFragmentAdapter.getItem(2);
                     fragment.refreshData();
                     changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
                 }
