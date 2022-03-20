@@ -37,12 +37,10 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         b.culturalSitesListBtn.setOnClickListener(view -> {
-            toast("Under process");
             openActivity(Constants.PARAMS_CulturalSites);
         });
 
         b.airportsListBtn.setOnClickListener(view -> {
-            toast("Under process");
             openActivity(Constants.PARAMS_Airports);
         });
 

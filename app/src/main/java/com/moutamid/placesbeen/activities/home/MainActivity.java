@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -102,11 +104,8 @@ public class MainActivity extends AppCompatActivity {
         currentBtn = b.homeBtnNavMain;
 
         b.homeLayoutMain.setOnClickListener(view -> {
+            changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
             viewPager.setVisibility(View.GONE);
-            // TODO: SHOW VIEWPAGER
-//            changeNavTo(b.homeDotBtnNav, b.homeBtnNavMain, R.drawable.ic_selected_home_24);
-
-//            viewPager.setCurrentItem(0, true);
         });
         b.chartsLayoutMain.setOnClickListener(view -> {
             viewPager.setVisibility(View.VISIBLE);
@@ -118,7 +117,6 @@ public class MainActivity extends AppCompatActivity {
             viewPager.setVisibility(View.VISIBLE);
             changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
             viewPager.setCurrentItem(1, true);
-//            hideMainLayout();
 
         });
         b.profileLayoutMain.setOnClickListener(view -> {
@@ -134,29 +132,10 @@ public class MainActivity extends AppCompatActivity {
 
         controller.retrieveDatabaseItems();
 
-        /*b.mapsLayout.animate().setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animator) {
-//                b.mapsLayout.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animator) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animator) {
-
-            }
-        }).translationY(b.mapsLayout.getHeight()).setDuration(100).start();*/
-
         b.citiesBtnForMaps.setOnClickListener(view -> {
+            b.searchEtLayoutMain.setVisibility(View.GONE);
+            b.searchBtnLayout.setVisibility(View.VISIBLE);
+
             b.citiesBtnForMaps.setBackgroundColor(getResources().getColor(R.color.yellow));
             b.citiesBtnForMaps.setTextColor(getResources().getColor(R.color.white));
 
@@ -178,6 +157,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         b.countryBtnForMaps.setOnClickListener(view -> {
+            b.searchEtLayoutMain.setVisibility(View.GONE);
+            b.searchBtnLayout.setVisibility(View.VISIBLE);
+
             b.countryBtnForMaps.setBackgroundColor(getResources().getColor(R.color.yellow));
             b.countryBtnForMaps.setTextColor(getResources().getColor(R.color.white));
 
@@ -202,27 +184,37 @@ public class MainActivity extends AppCompatActivity {
         });
 
         String PARAMS = getIntent().getStringExtra(Constants.PARAMS);
-
-        /*if (PARAMS.equals(Constants.PARAMS_CulturalSites)){
-            HomeFragment fragment = (HomeFragment) adapter.getItem(0);
-            fragment.triggerCulturalClick();
+        if (PARAMS != null) {
+            if (PARAMS.equals(Constants.PARAMS_CulturalSites)) {
+                viewPager.setVisibility(View.VISIBLE);
+                changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
+                viewPager.setCurrentItem(1, true);
+//                HomeFragment fragment = (HomeFragment) viewPagerFragmentAdapter.getItem(1);
+//                fragment.triggerCulturalClick();
+            }
+            if (PARAMS.equals(Constants.PARAMS_Airports)) {
+                viewPager.setVisibility(View.VISIBLE);
+                changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
+                viewPager.setCurrentItem(1, true);
+//                HomeFragment fragment = (HomeFragment) viewPagerFragmentAdapter.getItem(1);
+//                fragment.triggerAirportClick();
+            }
+            if (PARAMS.equals(Constants.PARAMS_Continent)) {
+                viewPager.setVisibility(View.VISIBLE);
+                changeNavTo(b.saveDotBtnNav, b.saveBtnNavMain, R.drawable.ic_selected_map_24);
+                viewPager.setCurrentItem(1, true);
+            }
+            if (PARAMS.equals(Constants.PARAMS_CHARTS)) {
+                viewPager.setVisibility(View.VISIBLE);
+                changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
+                viewPager.setCurrentItem(0, true);
+            }
+            if (PARAMS.equals(Constants.PARAMS_PROFILE)) {
+                viewPager.setVisibility(View.VISIBLE);
+                changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
+                viewPager.setCurrentItem(2, true);
+            }
         }
-        if (PARAMS.equals(Constants.PARAMS_Airports)){
-            HomeFragment fragment = (HomeFragment) adapter.getItem(0);
-            fragment.triggerAirportClick();
-        }
-        if (PARAMS.equals(Constants.PARAMS_WORLD_MAP)) {
-            hideMainLayout();
-        }
-        if (PARAMS.equals(Constants.PARAMS_CHARTS)) {
-            changeNavTo(b.chartsDotBtnNav, b.chartsBtnNavMain, R.drawable.ic_charts_selected_24);
-            viewPager.setCurrentItem(0, true);
-        }
-        if (PARAMS.equals(Constants.PARAMS_PROFILE)) {
-            changeNavTo(b.profileDotBtnNav, b.profileBtnNavMain, R.drawable.ic_profile_selected_24);
-            viewPager.setCurrentItem(2, true);
-        }*/
-
         b.backBtnMain.setOnClickListener(view -> {
             finish();
         });
@@ -243,6 +235,24 @@ public class MainActivity extends AppCompatActivity {
                 adapter.getFilter().filter(b.searchEtMain.getText().toString().trim());
             }
         });
+
+        /*b.searchEtMain.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                b.searchProgressBarMain.setVisibility(View.VISIBLE);
+                adapter.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });*/
 
         controller.retrieveSearchListItems();
 
@@ -277,6 +287,8 @@ public class MainActivity extends AppCompatActivity {
             return new ViewHolderRightMessage(view);
         }
 
+        boolean shouldColor = false;
+
         @Override
         public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position) {
             MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
@@ -284,27 +296,45 @@ public class MainActivity extends AppCompatActivity {
             holder.title.setText(model.title);
 
             if (savedList.contains(model.title)) {
+                holder.title.setTextColor(getResources().getColor(R.color.yellow));
                 holder.saveCB.setChecked(true);
             }
 
             // IF USER BEEN
             if (Stash.getBoolean(model.title + Constants.BEEN_ITEMS_PATH, false)) {
+                holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 holder.beenCB.setChecked(true);
             }
             // IF WANT TO SAVED
             if (Stash.getBoolean(model.title + Constants.WANT_TO_ITEMS_PATH, false)) {
+                holder.title.setTextColor(getResources().getColor(R.color.red));
                 holder.wantToCB.setChecked(true);
             }
 
             holder.saveCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                if (b1) {
+                    holder.title.setTextColor(getResources().getColor(R.color.yellow));
+                } else {
+                    holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                }
                 saveUnSaveItem(model, holder.saveCB);
             });
 
             holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                if (b1) {
+                    holder.title.setTextColor(getResources().getColor(R.color.yellow2));
+                } else {
+                    holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                }
                 triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
             });
 
             holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                if (b1) {
+                    holder.title.setTextColor(getResources().getColor(R.color.red));
+                } else {
+                    holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                }
                 triggerCheckBox(model, b1, Constants.WANT_TO_ITEMS_PATH);
             });
 
@@ -316,6 +346,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
         }
+
         ProgressDialog progressDialog;
 
         private void addMarkerOnMaps(MainItemModel model) {
@@ -384,6 +415,13 @@ public class MainActivity extends AppCompatActivity {
                 savedList.remove(model.title);
                 Stash.put(Constants.SAVED_LIST, savedList);
 
+                // DECREASE 1 FROM CURRENT QUANTITY FOR CHARTS
+                int count = Stash.getInt(Constants.PARAMS_City + Constants.FOR_CHARTS, 0);
+                if (count != 0) {
+                    count -= 1;
+                    Stash.put(Constants.PARAMS_City + Constants.FOR_CHARTS, count);
+                }
+
             } else {
                 // IF NOT SAVED THEN SAVE
                 checkBox.setChecked(true);
@@ -395,6 +433,11 @@ public class MainActivity extends AppCompatActivity {
 
                 savedList.add(model.title);
                 Stash.put(Constants.SAVED_LIST, savedList);
+
+                // INCREASE 1 FROM CURRENT QUANTITY FOR CHARTS
+                int count = Stash.getInt(Constants.PARAMS_City + Constants.FOR_CHARTS, 0);
+                count += 1;
+                Stash.put(Constants.PARAMS_City + Constants.FOR_CHARTS, count);
             }
         }
 

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fxn.stash.Stash;
+import com.moutamid.placesbeen.activities.home.HomeActivity;
 import com.moutamid.placesbeen.activities.home.MainActivity;
 import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
@@ -56,7 +57,7 @@ public class SplashActivity extends AppCompatActivity {
                     progressDialog.dismiss();
 
                 if (Stash.getBoolean(Constants.IS_LOGGED_IN, false))
-                    startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                    startActivity(new Intent(SplashActivity.this, HomeActivity.class));
 
                 else startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
             }

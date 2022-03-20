@@ -84,7 +84,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private void registerUser(String emailStr, String passwordStr) {
         progressDialog.show();
 
-        if (Constants.auth().getCurrentUser().isAnonymous()) {
+        if (Constants.auth().getCurrentUser() != null) {
             AuthCredential credential = EmailAuthProvider.getCredential(emailStr, passwordStr);
             Constants.auth().getCurrentUser().linkWithCredential(credential)
                     .addOnCompleteListener(onCompleteListener());
@@ -124,7 +124,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private void loginUser(String emailStr, String passwordStr) {
         progressDialog.show();
 
-        if (Constants.auth().getCurrentUser().isAnonymous()) {
+        if (Constants.auth().getCurrentUser() != null) {
             Stash.clearAll();
             Constants.auth().signOut();
         }

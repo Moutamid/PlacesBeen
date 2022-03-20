@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginHorizontal="20dp"
+        android:textColor="@color/default_text_color"
         android:layout_toStartOf="@+id/etetet"
         android:ellipsize="end"
         android:maxLines="1"
