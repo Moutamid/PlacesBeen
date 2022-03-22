@@ -22,6 +22,9 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.moutamid.placesbeen.R;
@@ -51,10 +54,28 @@ public class ProfileFragment extends Fragment {
 
         setOnClickOnProfileImage();
 
-        if (isAdded())
+        if (isAdded()) {
             progressDialog = new ProgressDialog(requireContext());
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Loading...");
+        }
+
+        Constants.databaseReference()
+                .child(Constants.auth().getUid())
+                .child(Constants.USER_NAME)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            b.userNameProfile.setText(snapshot.getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
         return b.getRoot();
 
@@ -86,7 +107,27 @@ public class ProfileFragment extends Fragment {
             if (Constants.auth().getCurrentUser().isAnonymous()) {
                 toast("You need to sign up first!");
                 startActivity(new Intent(requireActivity(), RegistrationActivity.class));
+                return;
             }
+
+            b.nameLayout.setVisibility(View.GONE);
+            b.userNameETLayout.setVisibility(View.VISIBLE);
+        });
+
+        b.userNameEtBtn.setOnClickListener(view -> {
+            if (b.userNameEtProfile.getText().toString().isEmpty())
+                return;
+
+            Stash.put(Constants.USER_NAME, b.userNameEtProfile.getText().toString());
+            Constants.databaseReference()
+                    .child(Constants.auth().getUid())
+                    .child(Constants.USER_NAME)
+                    .setValue(b.userNameEtProfile.getText().toString());
+
+            b.nameLayout.setVisibility(View.VISIBLE);
+            b.userNameETLayout.setVisibility(View.GONE);
+            toast("Done");
+
         });
 
         b.resetSavedListBtnProfile.setOnClickListener(view -> {

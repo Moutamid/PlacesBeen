@@ -22,6 +22,8 @@ import androidx.appcompat.app.AlertDialog;
 //import com.google.gson.GsonBuilder;
 import com.bumptech.glide.request.RequestOptions;
 import com.dezlum.codelabs.getjson.GetJson;
+import com.fxn.stash.Stash;
+import com.moutamid.placesbeen.models.MainItemModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -164,6 +166,67 @@ public class Utils {
         }
 
         return jsonObject;
+    }
+
+    private static void increaseFromChart(String VALUE) {
+        // INCREASE 1 FROM CURRENT QUANTITY FOR CHARTS
+        int count = Stash.getInt(VALUE + Constants.FOR_CHARTS, 0);
+        count += 1;
+        Stash.put(VALUE + Constants.FOR_CHARTS, count);
+    }
+
+    private static void decreaseFromChart(String VALUE) {
+        // DECREASE 1 FROM CURRENT QUANTITY FOR CHARTS
+        int count = Stash.getInt(VALUE + Constants.FOR_CHARTS, 0);
+        if (count != 0) {
+            count -= 1;
+            Stash.put(VALUE + Constants.FOR_CHARTS, count);
+        }
+    }
+
+    private static final ArrayList<MainItemModel> CountryArrayList = Stash.getArrayList(Constants.PARAMS_Country, MainItemModel.class);
+    private static final ArrayList<MainItemModel> CityArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);
+    private static final ArrayList<MainItemModel> CulturalSitesArrayList = Stash.getArrayList(Constants.PARAMS_CulturalSites, MainItemModel.class);
+    private static final ArrayList<MainItemModel> AirportsArrayList = Stash.getArrayList(Constants.PARAMS_Airports, MainItemModel.class);
+
+    public static void changeChartsValue(String title, boolean increase) {
+        new Thread(() -> {
+            for (MainItemModel m : CountryArrayList) {
+                if (title.equals(m.title)) {
+                    // EXIST IN HERE
+                    if (increase) {
+                        increaseFromChart(Constants.PARAMS_Country);
+                    } else decreaseFromChart(Constants.PARAMS_Country);
+                    return;
+                }
+            }
+            for (MainItemModel m : CityArrayList) {
+                if (title.equals(m.title)) {
+                    // EXIST IN HERE
+                    if (increase) {
+                        increaseFromChart(Constants.PARAMS_City);
+                    } else decreaseFromChart(Constants.PARAMS_City);
+                    return;
+                }
+            }
+            for (MainItemModel m : CulturalSitesArrayList) {
+                if (title.equals(m.title)) {
+                    // EXIST IN HERE
+                    if (increase) {
+                        increaseFromChart(Constants.PARAMS_CulturalSites);
+                    } else decreaseFromChart(Constants.PARAMS_CulturalSites);
+                    return;
+                }
+            }
+            for (MainItemModel m : AirportsArrayList) {
+                if (title.equals(m.title)) {
+                    // EXIST IN HERE
+                    if (increase) {
+                        increaseFromChart(Constants.PARAMS_Airports);
+                    } else decreaseFromChart(Constants.PARAMS_Airports);
+                }
+            }
+        }).start();
     }
 
     public static String getImageUrl(String tt, String dd, boolean isAirport, boolean inHighQuality) {
@@ -409,10 +472,10 @@ public class Utils {
 //
 
     /*
-    * dialog_background.xml
-    *
-    *
-    * */
+     * dialog_background.xml
+     *
+     *
+     * */
 
     /*
     * ic_info.xml
@@ -428,7 +491,7 @@ public class Utils {
 
     /*
 
-		*/
+     */
 
 //        Button okayBtn;
 //

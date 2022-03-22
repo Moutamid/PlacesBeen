@@ -25,6 +25,7 @@ import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityPlaceItemBinding;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
+import com.moutamid.placesbeen.utils.Utils;
 
 import java.util.Random;
 
@@ -83,9 +84,11 @@ public class PlaceItemActivity extends AppCompatActivity {
 
         b.beenCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) {
+                Utils.changeChartsValue(mainItemModel.title, true);
                 if (controller.polygon == null)
                     controller.drawPolygon(mainItemModel.title, Color.argb(255, 50, 205, 50));
             } else {
+                Utils.changeChartsValue(mainItemModel.title, false);
                 if (controller.polygon != null) {
                     controller.polygon.remove();
                     controller.polygon = null;

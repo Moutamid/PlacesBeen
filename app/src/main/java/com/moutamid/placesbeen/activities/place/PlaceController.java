@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.PolygonOptions;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
+import com.moutamid.placesbeen.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -182,10 +183,6 @@ public class PlaceController {
 
                     activity.CONTINENT = innerObject.getString("continent");
 
-                    activity.runOnUiThread(() -> {
-                        activity.loadAddress();
-                    });
-
                 } else {
                     Log.d(TAG, "getLatLng: else ");
                 }
@@ -201,6 +198,10 @@ public class PlaceController {
                 Log.d(TAG, "getLatLng: error: " + e.getMessage());
                 e.printStackTrace();
             }
+
+            activity.runOnUiThread(() -> {
+                activity.loadAddress();
+            });
 
         }).start();
     }
@@ -219,7 +220,6 @@ public class PlaceController {
 
     public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
         Stash.put(mainItemModel.title + itemsPath, b);
-
         if (b) {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())

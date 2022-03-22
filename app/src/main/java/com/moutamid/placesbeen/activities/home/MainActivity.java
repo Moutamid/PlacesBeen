@@ -56,6 +56,7 @@ import com.moutamid.placesbeen.fragments.profile.ProfileFragment;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.models.MarkerModel;
 import com.moutamid.placesbeen.utils.Constants;
+import com.moutamid.placesbeen.utils.Utils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -321,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                Utils.changeChartsValue(model.title, b1);
                 if (b1) {
                     holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 } else {
@@ -403,7 +405,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void saveUnSaveItem(MainItemModel model, CheckBox checkBox) {
             if (savedList.contains(model.title)) {
-//            if (Stash.getBoolean(model.title, false)) {
+
                 // IF ALREADY SAVED THEN REMOVE
                 checkBox.setChecked(false);
                 Constants.databaseReference()
@@ -414,14 +416,6 @@ public class MainActivity extends AppCompatActivity {
 
                 savedList.remove(model.title);
                 Stash.put(Constants.SAVED_LIST, savedList);
-
-                // DECREASE 1 FROM CURRENT QUANTITY FOR CHARTS
-                int count = Stash.getInt(Constants.PARAMS_City + Constants.FOR_CHARTS, 0);
-                if (count != 0) {
-                    count -= 1;
-                    Stash.put(Constants.PARAMS_City + Constants.FOR_CHARTS, count);
-                }
-
             } else {
                 // IF NOT SAVED THEN SAVE
                 checkBox.setChecked(true);
@@ -433,11 +427,6 @@ public class MainActivity extends AppCompatActivity {
 
                 savedList.add(model.title);
                 Stash.put(Constants.SAVED_LIST, savedList);
-
-                // INCREASE 1 FROM CURRENT QUANTITY FOR CHARTS
-                int count = Stash.getInt(Constants.PARAMS_City + Constants.FOR_CHARTS, 0);
-                count += 1;
-                Stash.put(Constants.PARAMS_City + Constants.FOR_CHARTS, count);
             }
         }
 
@@ -495,6 +484,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                     b.searchProgressBarMain.setVisibility(View.GONE);
+                    if (!mainItemModelArrayList.isEmpty())
+                        mainItemModelArrayList.clear();
                     mainItemModelArrayList = (ArrayList<MainItemModel>) filterResults.values;
                     adapter.notifyDataSetChanged();
                 }

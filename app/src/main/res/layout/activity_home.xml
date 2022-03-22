@@ -63,7 +63,7 @@
                                 <ImageView
                                     android:id="@+id/tetete1"
                                     android:layout_width="match_parent"
-                                    android:layout_height="50dp"
+                                    android:layout_height="90dp"
                                     android:scaleType="centerCrop"
                                     android:src="@drawable/img" />
 
@@ -76,11 +76,11 @@
                                     android:layout_marginTop="10dp"
                                     android:orientation="vertical">
 
-                                    <TextView
+                                    <!--<TextView
                                         android:id="@+id/continentsTag"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="5 Continents" />
+                                        android:text="5 Continents" />-->
 
                                     <TextView
                                         android:id="@+id/countriesTag"
@@ -89,12 +89,12 @@
                                         android:layout_marginTop="3dp"
                                         android:text="5 Countries" />
 
-                                    <TextView
+                                    <!--<TextView
                                         android:id="@+id/statesTag"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="3dp"
-                                        android:text="5 States" />
+                                        android:text="5 States" />-->
 
                                     <TextView
                                         android:id="@+id/citiesTag"
@@ -140,7 +140,7 @@
                                 <ImageView
                                     android:id="@+id/tetete2"
                                     android:layout_width="match_parent"
-                                    android:layout_height="70dp"
+                                    android:layout_height="90dp"
                                     android:scaleType="centerCrop"
                                     android:src="@drawable/img_1" />
 
@@ -159,11 +159,11 @@
                                         android:layout_height="wrap_content"
                                         android:text="5 Cultural sites" />
 
-                                    <TextView
+                                    <!--<TextView
                                         android:id="@+id/nationalParksTag"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:text="5 National parks" />
+                                        android:text="5 National parks" />-->
 
                                 </LinearLayout>
 

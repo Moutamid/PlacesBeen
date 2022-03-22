@@ -1,13 +1,11 @@
 package com.moutamid.placesbeen.activities.home;
 
-import static com.moutamid.placesbeen.utils.Utils.toast;
+import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-
-import android.content.Intent;
-import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -18,6 +16,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityHomeBinding;
 import com.moutamid.placesbeen.utils.Constants;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -56,11 +57,20 @@ public class HomeActivity extends AppCompatActivity {
             openActivity(Constants.PARAMS_PROFILE);
         });
 
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(() -> {
+                    setvaluesOnTextviews();
+                });
+            }
+        }, 1000, 1000);
+
     }
 
     private void openActivity(String params) {
         startActivity(new Intent(HomeActivity.this, MainActivity.class)
-        .putExtra(Constants.PARAMS, params));
+                .putExtra(Constants.PARAMS, params));
     }
 
     public void getImageProfileUrl() {
@@ -91,12 +101,14 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void setvaluesOnTextviews() {
-        b.continentsTag.setText(Stash.getInt(Constants.PARAMS_Continent + Constants.FOR_CHARTS) + " Continents");
+        if (b == null)
+            return;
+//        b.continentsTag.setText(Stash.getInt(Constants.PARAMS_Continent + Constants.FOR_CHARTS) + " Continents");
         b.countriesTag.setText(Stash.getInt(Constants.PARAMS_Country + Constants.FOR_CHARTS) + " Countries");
-        b.statesTag.setText(Stash.getInt(Constants.PARAMS_States + Constants.FOR_CHARTS) + " States");
+//        b.statesTag.setText(Stash.getInt(Constants.PARAMS_States + Constants.FOR_CHARTS) + " States");
         b.citiesTag.setText(Stash.getInt(Constants.PARAMS_City + Constants.FOR_CHARTS) + " Cities");
         b.culturalSitesTag.setText(Stash.getInt(Constants.PARAMS_CulturalSites + Constants.FOR_CHARTS) + " Cultural Sites");
-        b.nationalParksTag.setText(Stash.getInt(Constants.PARAMS_NationalParks + Constants.FOR_CHARTS) + " National Parks");
+//        b.nationalParksTag.setText(Stash.getInt(Constants.PARAMS_NationalParks + Constants.FOR_CHARTS) + " National Parks");
         b.airportsTag.setText(Stash.getInt(Constants.PARAMS_Airports + Constants.FOR_CHARTS) + " Airports");
     }
 
