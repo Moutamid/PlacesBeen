@@ -78,10 +78,6 @@ public class SplashController {
 
     public void getStates() {
         Log.d(TAG, "getStates: ");
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-
         mainActivity.StatesArrayList.clear();
 
         for (int i = 0; i < Constants.STATES_LIST().size() - 1; i++) {

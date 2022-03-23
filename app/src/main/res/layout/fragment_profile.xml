@@ -124,7 +124,7 @@
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:id="@+id/userNameProfile"
-                    android:text="David"
+                    android:text="Traveller"
                     android:textColor="@color/black"
                     android:textSize="25sp"
                     android:textStyle="bold" />

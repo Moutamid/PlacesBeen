@@ -364,7 +364,8 @@ public class MainController {
 
             activity.mainItemModelArrayListAll.addAll(mainItemModelArrayList);
 
-            activity.mainItemModelArrayList.add(CountryArrayList.get(0));
+            if (CountryArrayList.size() > 0)
+                activity.mainItemModelArrayList.add(CountryArrayList.get(0));
 
             activity.runOnUiThread(new Runnable() {
                 @Override

@@ -442,18 +442,20 @@ public class PlaceController {
     public ArrayList<MainItemModel> CityArrayList = new ArrayList<>();
 
     public void extractMarkers() {
+        activity.b.loadingView.setVisibility(View.GONE);
+        activity.b.parentLayoutPlace.setVisibility(View.VISIBLE);
 
-        new Thread(() -> {
-            CityArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);
+        /*new Thread(() -> {
+            CityArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);*/
 
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    addMarkers(CityArrayList);
-                }
-            });
+//        activity.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                addMarkers(CityArrayList);
+//            }
+//        });
 
-        }).start();
+//        }).start();
     }
 
     boolean yes = true;
@@ -476,8 +478,8 @@ public class PlaceController {
             }
         }*/
 
-        activity.b.loadingView.setVisibility(View.GONE);
-        activity.b.parentLayoutPlace.setVisibility(View.VISIBLE);
+        /*activity.b.loadingView.setVisibility(View.GONE);
+        activity.b.parentLayoutPlace.setVisibility(View.VISIBLE);*/
     }
 
 }

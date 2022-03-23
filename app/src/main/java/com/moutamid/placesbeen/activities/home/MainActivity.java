@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -233,7 +234,9 @@ public class MainActivity extends AppCompatActivity {
         b.searchQueryBtnMain.setOnClickListener(view -> {
             if (adapter != null) {
                 b.searchProgressBarMain.setVisibility(View.VISIBLE);
-                adapter.getFilter().filter(b.searchEtMain.getText().toString().trim());
+                adapter.performFiltering(b.searchEtMain.getText().toString().trim());
+//                new PerformFiltering(b.searchEtMain.getText().toString().trim()).execute();
+//                adapter.getFilter().filter(b.searchEtMain.getText().toString().trim());
             }
         });
 
@@ -278,8 +281,30 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*public class PerformFiltering extends AsyncTask<Void, Void, Void> {
+        String key;
+
+        public PerformFiltering(String key) {
+            this.key = key;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            super.onPostExecute(unused);
+
+
+        }
+    }*/
+
     private class RecyclerViewAdapterMessages extends RecyclerView.Adapter
-            <RecyclerViewAdapterMessages.ViewHolderRightMessage> implements Filterable {
+            <RecyclerViewAdapterMessages.ViewHolderRightMessage> {// implements Filterable {
 
         @NonNull
         @Override
@@ -454,7 +479,38 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public Filter getFilter() {
+        private void performFiltering(String key) {
+            new Thread(() -> {
+                if (key.isEmpty()) {
+                    mainItemModelArrayList = mainItemModelArrayListAll;
+                } else {
+                    ArrayList<MainItemModel> filtered = new ArrayList<>();
+
+                    for (MainItemModel model : mainItemModelArrayListAll) {
+                        if (model.title.toLowerCase().contains(key.toLowerCase())) {
+                            filtered.add(model);
+                        }
+//                        else if (model.desc.toLowerCase().contains(key.toLowerCase())) {
+//                            filtered.add(model);
+//                        }
+//                            else if (model.getSongYTUrl().toLowerCase().contains(key.toLowerCase())) {
+//                                filtered.add(model);
+//                            }
+                    }
+
+                    mainItemModelArrayList.clear();
+                    mainItemModelArrayList = filtered;
+                }
+                runOnUiThread(() -> {
+//                    initRecyclerView();
+                    b.searchProgressBarMain.setVisibility(View.GONE);
+                    adapter.notifyDataSetChanged();
+                });
+
+            }).start();
+        }
+
+        /*public Filter getFilter() {
             return new Filter() {
                 @Override
                 protected FilterResults performFiltering(CharSequence charSequence) {
@@ -474,6 +530,8 @@ public class MainActivity extends AppCompatActivity {
 //                                filtered.add(model);
 //                            }
                         }
+
+                        mainItemModelArrayList.clear();
                         mainItemModelArrayList = filtered;
                     }
                     FilterResults filterResults = new FilterResults();
@@ -484,13 +542,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                     b.searchProgressBarMain.setVisibility(View.GONE);
-                    if (!mainItemModelArrayList.isEmpty())
-                        mainItemModelArrayList.clear();
                     mainItemModelArrayList = (ArrayList<MainItemModel>) filterResults.values;
                     adapter.notifyDataSetChanged();
                 }
             };
-        }
+        }*/
     }
 
     boolean IS_HIDDEN = false;

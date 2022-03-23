@@ -58,10 +58,10 @@
             android:id="@+id/searchEtLayoutMain"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             android:layout_above="@id/switchBtnsLayout"
             android:layout_marginBottom="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -113,48 +113,44 @@
 
             </RelativeLayout>
 
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:background="@color/white">
 
-                <LinearLayout
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:background="@color/yellow"
+                    android:gravity="end"
+                    android:paddingVertical="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="10dp"
+                    android:text="SAVE | BEEN | WANT"
+                    android:textColor="@color/white" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/yellow"
-                        android:gravity="end"
-                        android:paddingVertical="5dp"
-                        android:paddingStart="5dp"
-                        android:paddingEnd="10dp"
-                        android:text="SAVE | BEEN | WANT"
-                        android:textColor="@color/white" />
+                <ProgressBar
+                    android:id="@+id/searchProgressBarMain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="40dp"
+                    android:visibility="gone" />
 
-                    <ProgressBar
-                        android:id="@+id/searchProgressBarMain"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="40dp"
-                        android:visibility="gone" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/searchRecyclerViewMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/searchRecyclerViewMain"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                <!--<View
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />-->
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp" />
+            </LinearLayout>
 
-                </LinearLayout>
-
-            </androidx.core.widget.NestedScrollView>
 
         </LinearLayout>
 
@@ -164,8 +160,7 @@
             android:layout_height="90dp"
             android:layout_alignParentTop="true"
             android:background="@drawable/topsearchbgmain"
-            android:paddingHorizontal="20dp"
-            >
+            android:paddingHorizontal="20dp">
 
             <ImageView
                 android:id="@+id/backBtnMain"
@@ -233,8 +228,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:visibility="gone"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/charts_btn_nav_main"
