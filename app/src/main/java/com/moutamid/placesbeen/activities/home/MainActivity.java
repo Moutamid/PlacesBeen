@@ -1,15 +1,18 @@
 package com.moutamid.placesbeen.activities.home;
 
-import android.app.Activity;
+import static com.bumptech.glide.Glide.with;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
+import static com.moutamid.placesbeen.R.color.greyishblue;
+import static com.moutamid.placesbeen.R.color.red;
+import static com.moutamid.placesbeen.utils.Constants.GET_COUNTRY_FLAG;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,15 +20,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Scroller;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,15 +38,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
 import com.fxn.stash.Stash;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityMainBinding;
@@ -55,7 +55,6 @@ import com.moutamid.placesbeen.fragments.charts.ChartsFragment;
 import com.moutamid.placesbeen.fragments.home.HomeFragment;
 import com.moutamid.placesbeen.fragments.profile.ProfileFragment;
 import com.moutamid.placesbeen.models.MainItemModel;
-import com.moutamid.placesbeen.models.MarkerModel;
 import com.moutamid.placesbeen.utils.Constants;
 import com.moutamid.placesbeen.utils.Utils;
 
@@ -319,7 +318,13 @@ public class MainActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position) {
             MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
 
+            loadFlagOnImage(model, holder.flagImg);
+
             holder.title.setText(model.title);
+            if (!model.desc.equals(Constants.NULL)) {
+                holder.desc.setVisibility(View.VISIBLE);
+                holder.desc.setText(model.desc);
+            }
 
             if (savedList.contains(model.title)) {
                 holder.title.setTextColor(getResources().getColor(R.color.yellow));
@@ -372,6 +377,66 @@ public class MainActivity extends AppCompatActivity {
                 addMarkerOnMaps(model);
             });
 
+        }
+
+        private void loadFlagOnImage(MainItemModel model, ImageView flagImg) {
+            String desc = model.desc;
+            String title = model.title;
+            Log.d("FISH", "loadFlagOnImage: desc: " + desc + " title: " + title);
+            if (desc.equals(Constants.NULL) || desc.isEmpty()) {
+                Log.d("FISH", "loadFlagOnImage: desc is null. Title: " + title);
+                // DOWNLOAD FLAG OF TITLE
+                with(getApplicationContext())
+                        .asBitmap()
+                        .load(GET_COUNTRY_FLAG(title))
+                        .apply(new RequestOptions()
+                                .placeholder(R.drawable.ic_outline_info_24)
+                                .error(R.drawable.ic_outline_info_24)
+                        )
+                        .diskCacheStrategy(DATA)
+                        .into(flagImg);
+
+            } else {
+                with(getApplicationContext())
+                        .asBitmap()
+                        .load(GET_COUNTRY_FLAG(desc))
+                        .addListener(new RequestListener<Bitmap>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                                // TRY WITH A SINGLE PART OF THE DESC
+                                new Handler().post(() -> {
+                                    // EXTRACTING THE COUNTRY CODE
+                                    String[] splitted = desc.split(",");
+                                    if (splitted.length > 1) {
+                                        String finall = splitted[1].trim();
+                                        String finalfinal = finall.substring(0, 2);
+
+                                        with(getApplicationContext())
+                                                .asBitmap()
+                                                .load(GET_COUNTRY_FLAG(finalfinal))
+                                                .apply(new RequestOptions()
+                                                        .placeholder(R.drawable.ic_outline_info_24)
+                                                        .error(R.drawable.ic_outline_info_24)
+                                                )
+                                                .diskCacheStrategy(DATA)
+                                                .into(flagImg);
+                                    }
+                                });
+                                return false;
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                                return false;
+                            }
+                        })
+                        .apply(new RequestOptions()
+                                .placeholder(R.drawable.ic_outline_info_24)
+                                .error(R.drawable.ic_outline_info_24)
+                        )
+                        .diskCacheStrategy(DATA)
+                        .into(flagImg);
+            }
         }
 
         ProgressDialog progressDialog;
@@ -464,13 +529,16 @@ public class MainActivity extends AppCompatActivity {
 
         public class ViewHolderRightMessage extends RecyclerView.ViewHolder {
 
-            TextView title;
+            TextView title, desc;
+            ImageView flagImg;
             CheckBox saveCB, beenCB, wantToCB;
             RelativeLayout parentLayout;
 
             public ViewHolderRightMessage(@NonNull View v) {
                 super(v);
+                flagImg = v.findViewById(R.id.flagImageviewSearchItem);
                 title = v.findViewById(R.id.nameTextViewSearchItem);
+                desc = v.findViewById(R.id.descTextViewSearchItem);
                 saveCB = v.findViewById(R.id.saveCheckBoxSearchItem);
                 beenCB = v.findViewById(R.id.beenCheckBoxSearchItem);
                 wantToCB = v.findViewById(R.id.wantToCheckBoxSearchItem);

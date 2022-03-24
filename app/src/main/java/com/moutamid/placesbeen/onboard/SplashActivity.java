@@ -49,18 +49,14 @@ public class SplashActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     public void openActivity() {
+        runOnUiThread(() -> {
+            if (progressDialog.isShowing())
+                progressDialog.dismiss();
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (progressDialog.isShowing())
-                    progressDialog.dismiss();
+            if (Stash.getBoolean(Constants.IS_LOGGED_IN, false))
+                startActivity(new Intent(SplashActivity.this, HomeActivity.class));
 
-                if (Stash.getBoolean(Constants.IS_LOGGED_IN, false))
-                    startActivity(new Intent(SplashActivity.this, HomeActivity.class));
-
-                else startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
-            }
+            else startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
         });
 
     }

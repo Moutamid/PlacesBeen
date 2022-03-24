@@ -1,5 +1,7 @@
 package com.moutamid.placesbeen.utils;
 
+import android.util.Log;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -81,6 +83,19 @@ public class Constants {
         return "https://nominatim.openstreetmap.org/search?country=" +
                 query +
                 "&polygon_geojson=1&format=json";
+    }
+
+    public static String GET_COUNTRY_FLAG(String q) {
+        String query = null;
+        try {
+            query = URLEncoder.encode(q, "utf-8").replace("+", "%20");
+        } catch (UnsupportedEncodingException e) {
+            query = "china";
+            e.printStackTrace();
+        }
+        Log.d("FISH", "GET_COUNTRY_FLAG: QUERY: " + query);
+        return "https://countryflagsapi.com/png/" +
+                query;
     }
 
     public static String GET_BOUNDARY_URL_FOR_CITY(String q) {
