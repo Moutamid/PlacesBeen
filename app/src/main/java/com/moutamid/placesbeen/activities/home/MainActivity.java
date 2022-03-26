@@ -5,6 +5,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.greyishblue;
 import static com.moutamid.placesbeen.R.color.red;
 import static com.moutamid.placesbeen.utils.Constants.GET_COUNTRY_FLAG;
+import static com.moutamid.placesbeen.utils.Utils.toast;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -315,10 +316,17 @@ public class MainActivity extends AppCompatActivity {
         boolean shouldColor = false;
 
         @Override
-        public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position) {
+        public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position1) {
             MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
 
             loadFlagOnImage(model, holder.flagImg);
+
+            holder.beenCB.setChecked(false);
+            holder.saveCB.setChecked(false);
+            holder.wantToCB.setChecked(false);
+            holder.beenCB.setOnCheckedChangeListener(null);
+            holder.saveCB.setOnCheckedChangeListener(null);
+            holder.wantToCB.setOnCheckedChangeListener(null);
 
             holder.title.setText(model.title);
             if (!model.desc.equals(Constants.NULL)) {
@@ -326,18 +334,18 @@ public class MainActivity extends AppCompatActivity {
                 holder.desc.setText(model.desc);
             }
 
-            if (savedList.contains(model.title)) {
+            if (savedList.contains(model.title + model.desc)) {
                 holder.title.setTextColor(getResources().getColor(R.color.yellow));
                 holder.saveCB.setChecked(true);
             }
 
             // IF USER BEEN
-            if (Stash.getBoolean(model.title + Constants.BEEN_ITEMS_PATH, false)) {
+            if (Stash.getBoolean(model.title + model.desc + Constants.BEEN_ITEMS_PATH, false)) {
                 holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 holder.beenCB.setChecked(true);
             }
             // IF WANT TO SAVED
-            if (Stash.getBoolean(model.title + Constants.WANT_TO_ITEMS_PATH, false)) {
+            if (Stash.getBoolean(model.title + model.desc + Constants.WANT_TO_ITEMS_PATH, false)) {
                 holder.title.setTextColor(getResources().getColor(R.color.red));
                 holder.wantToCB.setChecked(true);
             }
@@ -354,8 +362,21 @@ public class MainActivity extends AppCompatActivity {
             holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
                 Utils.changeChartsValue(model.title, b1);
                 if (b1) {
+                    // ADDING CITY NAME TO EXTRA LIST
+                    if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
+                        extraCitiesList.add(model.title);
+                        Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
+                    }
+
                     holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 } else {
+                    // REMOVING CITY NAME TO EXTRA LIST
+                    if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
+                        extraCitiesList.remove(model.title);
+                        Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
+                    }
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
                 }
                 triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
@@ -474,19 +495,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
-            Stash.put(mainItemModel.title + itemsPath, b);
+            toast(mainItemModel.title + mainItemModel.desc);
+            Stash.put(mainItemModel.title + mainItemModel.desc + itemsPath, b);
 
             if (b) {
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(itemsPath)
-                        .child(mainItemModel.title)
+                        .child(mainItemModel.title + mainItemModel.desc)
                         .setValue(mainItemModel);
             } else {
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(itemsPath)
-                        .child(mainItemModel.title)
+                        .child(mainItemModel.title + mainItemModel.desc)
                         .removeValue();
             }
         }
@@ -494,17 +516,17 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
 
         public void saveUnSaveItem(MainItemModel model, CheckBox checkBox) {
-            if (savedList.contains(model.title)) {
+            if (savedList.contains(model.title + model.desc)) {
 
                 // IF ALREADY SAVED THEN REMOVE
                 checkBox.setChecked(false);
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(Constants.SAVED_ITEMS_PATH)
-                        .child(model.title)
+                        .child(model.title + model.desc)
                         .removeValue();
 
-                savedList.remove(model.title);
+                savedList.remove(model.title + model.desc);
                 Stash.put(Constants.SAVED_LIST, savedList);
             } else {
                 // IF NOT SAVED THEN SAVE
@@ -512,10 +534,10 @@ public class MainActivity extends AppCompatActivity {
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(Constants.SAVED_ITEMS_PATH)
-                        .child(model.title)
+                        .child(model.title + model.desc)
                         .setValue(model);
 
-                savedList.add(model.title);
+                savedList.add(model.title + model.desc);
                 Stash.put(Constants.SAVED_LIST, savedList);
             }
         }
@@ -536,6 +558,7 @@ public class MainActivity extends AppCompatActivity {
 
             public ViewHolderRightMessage(@NonNull View v) {
                 super(v);
+                this.setIsRecyclable(false);
                 flagImg = v.findViewById(R.id.flagImageviewSearchItem);
                 title = v.findViewById(R.id.nameTextViewSearchItem);
                 desc = v.findViewById(R.id.descTextViewSearchItem);
@@ -570,9 +593,9 @@ public class MainActivity extends AppCompatActivity {
                     mainItemModelArrayList = filtered;
                 }
                 runOnUiThread(() -> {
-//                    initRecyclerView();
+                    initRecyclerView();
                     b.searchProgressBarMain.setVisibility(View.GONE);
-                    adapter.notifyDataSetChanged();
+//                    adapter.notifyDataSetChanged();
                 });
 
             }).start();

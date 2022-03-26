@@ -33,6 +33,7 @@
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/activity_on_boarding.xml" value="0.2" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/activity_place_item.xml" value="0.22" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/activity_registration.xml" value="0.2" />
+        <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/activity_saved_lists.xml" value="0.2" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/dialog_delete.xml" value="0.2" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/fragment_charts.xml" value="0.2" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/fragment_home.xml" value="0.2" />
@@ -46,6 +47,8 @@
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/layout_item_main.xml" value="0.18518518518518517" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/layout_item_saved.xml" value="0.2" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/layout_item_saved_demo.xml" value="0.2" />
+        <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/layout_saved_list_item.xml" value="0.2" />
+        <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/layout_saved_list_item_mini.xml" value="0.2" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/layout/layout_search_item.xml" value="0.2" />
         <entry key="..\:/Users/Azan Comp/AndroidStudioProjects/PlacesBeen/app/src/main/res/xml/network_security_config.xml" value="0.2" />
       </map>

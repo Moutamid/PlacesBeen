@@ -14,6 +14,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.moutamid.placesbeen.R;
+import com.moutamid.placesbeen.activities.saved.SavedListsActivity;
 import com.moutamid.placesbeen.databinding.ActivityHomeBinding;
 import com.moutamid.placesbeen.utils.Constants;
 
@@ -49,8 +50,8 @@ public class HomeActivity extends AppCompatActivity {
             openActivity(Constants.PARAMS_WORLD_MAP);
         });
 
-        b.seeChartsBtn.setOnClickListener(view -> {
-            openActivity(Constants.PARAMS_CHARTS);
+        b.seeShowSavedBtn.setOnClickListener(view -> {
+            startActivity(new Intent(HomeActivity.this, SavedListsActivity.class));
         });
 
         b.viewProfileBtn.setOnClickListener(view -> {

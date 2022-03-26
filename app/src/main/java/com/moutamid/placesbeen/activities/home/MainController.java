@@ -209,7 +209,7 @@ public class MainController {
                     });
 
                     if (ITEMS_PATH.equals(Constants.SAVED_ITEMS_PATH) && !savedList.contains(model.title)) {
-                        savedList.add(model.title);
+                        savedList.add(model.title+model.desc);
                         Stash.put(Constants.SAVED_LIST, savedList);
                     }
 //                    }).start();
@@ -299,7 +299,7 @@ public class MainController {
 
                     // REMOVING ITEM FROM SAVED LIST
                     if (ITEMS_PATH.equals(Constants.SAVED_ITEMS_PATH) && savedList.contains(model.title)) {
-                        savedList.remove(model.title);
+                        savedList.remove(model.title+model.desc);
                         Stash.put(Constants.SAVED_LIST, savedList);
                     }
                 }

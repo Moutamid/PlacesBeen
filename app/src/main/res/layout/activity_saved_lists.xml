@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.saved.SavedListsActivity">
+
+    <TextView
+        android:id="@+id/profileTopHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp"
+        android:text="Been list"
+        android:textColor="@color/lightBlackSpotify"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ViewSwitcher
+        android:id="@+id/viewSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/profileTopHeader">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/savedlistrecyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/savedAirportListRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </ViewSwitcher>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/switchRecyclerViewBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:rotation="180"
+        android:src="@drawable/ic_baseline_arrow_back_24"
+        app:fabSize="mini"
+        app:tint="@color/white" />
+
+</RelativeLayout>

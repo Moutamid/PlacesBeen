@@ -43,6 +43,7 @@ public class Constants {
     public static final String PARAMS_CHARTS = "params_charts";
     public static final String PARAMS_PROFILE = "params_profile";
     public static final String USER_NAME = "username";
+    public static final String EXTRA_LIST = "extra_list";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";

@@ -331,7 +331,6 @@
                             android:layout_height="200dp"
                             android:layout_margin="10dp"
                             android:layout_weight="1"
-                            android:visibility="invisible"
                             app:cardBackgroundColor="@color/white"
                             app:cardElevation="10dp"
                             app:strokeColor="@color/grey"
@@ -346,16 +345,16 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="150dp"
                                     android:scaleType="centerCrop"
-                                    android:src="@drawable/img_4" />
+                                    android:src="@drawable/img_saved_list" />
 
                                 <TextView
-                                    android:id="@+id/seeChartsBtn"
+                                    android:id="@+id/seeShowSavedBtn"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentBottom="true"
                                     android:layout_marginHorizontal="20dp"
                                     android:layout_marginBottom="5dp"
-                                    android:text="See charts"
+                                    android:text="See list"
                                     android:textColor="@color/yellow"
                                     android:textSize="20sp"
                                     android:textStyle="bold" />

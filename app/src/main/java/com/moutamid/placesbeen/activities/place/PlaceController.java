@@ -208,7 +208,7 @@ public class PlaceController {
 
     public void checkBeenWantTo() {
         // IF USER BEEN
-        if (Stash.getBoolean(activity.mainItemModel.title + Constants.BEEN_ITEMS_PATH, false)) {
+        if (Stash.getBoolean(activity.mainItemModel.title +activity.mainItemModel.desc + Constants.BEEN_ITEMS_PATH, false)) {
             activity.b.beenCheckBoxPlace.setChecked(true);
         }
         // IF WANT TO SAVED
@@ -219,7 +219,7 @@ public class PlaceController {
     }
 
     public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
-        Stash.put(mainItemModel.title + itemsPath, b);
+        Stash.put(mainItemModel.title+mainItemModel.desc + itemsPath, b);
         if (b) {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())

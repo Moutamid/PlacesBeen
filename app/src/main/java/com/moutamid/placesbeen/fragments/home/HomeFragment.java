@@ -283,9 +283,9 @@ public class HomeFragment extends Fragment {
                 Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
 
             holder.parenLayout.setOnClickListener(view -> {
-                Stash.put(Constants.CURRENT_MODEL_CLASS, model);
-                if (isAdded())
-                    startActivity(new Intent(requireContext(), PlaceItemActivity.class));
+//                Stash.put(Constants.CURRENT_MODEL_CLASS, model);
+//                if (isAdded())
+//                    startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
 
             controller.isSaved(model, holder.saveBtn);
