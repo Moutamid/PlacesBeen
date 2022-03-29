@@ -39,7 +39,7 @@ public class SavedListController {
 
     public void checkBeenStatus(ImageView flag, String title) {
         // IF USER BEEN
-        if (Stash.getBoolean(title + Constants.BEEN_ITEMS_PATH, false)) {
+        if (Stash.getBoolean(title + activity.CURRENT_PATH, false)) {
             setUnlocked(flag);
         }
     }

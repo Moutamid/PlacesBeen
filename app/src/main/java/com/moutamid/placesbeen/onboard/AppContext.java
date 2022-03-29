@@ -59,5 +59,41 @@ public class AppContext extends Application {
                     }
                 });
 
+        Constants.databaseReference()
+                .child(Constants.auth().getUid())
+                .child(Constants.WANT_TO_ITEMS_PATH)
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        if (snapshot.exists()) {
+                            MainItemModel model = snapshot.getValue(MainItemModel.class);
+                            Stash.put(model.title + model.desc + Constants.WANT_TO_ITEMS_PATH, true);
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            MainItemModel model = snapshot.getValue(MainItemModel.class);
+                            Stash.put(model.title + model.desc + Constants.WANT_TO_ITEMS_PATH, false);
+                        }
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
     }
 }

@@ -44,6 +44,8 @@ public class Constants {
     public static final String PARAMS_PROFILE = "params_profile";
     public static final String USER_NAME = "username";
     public static final String EXTRA_LIST = "extra_list";
+    public static final String CURRENT_PATH_FOR_SAVED_LIST = "CURENT_PATH_FOR_SAVED_LIST";
+    public static final String EXTRA_LIST_WANT = "extra_list_want";
 
 //    public static final String COUNTRIES_OPTION = "countries";
 //    public static final String CONTINENTS_OPTION = "countries";

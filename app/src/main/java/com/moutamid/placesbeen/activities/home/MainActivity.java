@@ -384,8 +384,22 @@ public class MainActivity extends AppCompatActivity {
 
             holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {
                 if (b1) {
+                    // ADDING CITY NAME TO EXTRA LIST
+                    if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
+                        extraCitiesList.add(model.title);
+                        Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
+                    }
+
                     holder.title.setTextColor(getResources().getColor(R.color.red));
                 } else {
+                    // REMOVING CITY NAME TO EXTRA LIST
+                    if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
+                        extraCitiesList.remove(model.title);
+                        Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
+                    }
+
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
                 }
                 triggerCheckBox(model, b1, Constants.WANT_TO_ITEMS_PATH);

@@ -37,6 +37,7 @@ public class SavedListsActivity extends AppCompatActivity {
     JSONObject jsonObject;
     public ArrayList<MainItemModel> CountryArrayList = new ArrayList<>();
     private ActivitySavedListsBinding b;
+    public String CURRENT_PATH = Constants.BEEN_ITEMS_PATH;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class SavedListsActivity extends AppCompatActivity {
         setContentView(b.getRoot());
 
         controller = new SavedListController(this);
+//        CURRENT_PATH = Stash.getString(Constants.CURRENT_PATH_FOR_SAVED_LIST, );
 
         new Thread(() -> {
             try {
@@ -73,6 +75,21 @@ public class SavedListsActivity extends AppCompatActivity {
         b.switchRecyclerViewBtn.setOnClickListener(view -> {
             b.viewSwitcher.showNext();
         });
+
+        b.toggleButtonSavedList.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.beenCheckBtn) {
+                    CURRENT_PATH = Constants.BEEN_ITEMS_PATH;
+                }
+                if (checkedId == R.id.wantToCheckBtn) {
+                    CURRENT_PATH = Constants.WANT_TO_ITEMS_PATH;
+                }
+
+                initSavedListRecyclerView();
+                initairportListRecyclerView();
+            }
+        });
+
     }
 
     private RecyclerView savedListRecyclerView;
@@ -215,8 +232,13 @@ public class SavedListsActivity extends AppCompatActivity {
                 }
             }
 
+            // CHECKING IF CURRENT PATH IS BEEN THEN EXTRACT BEEN EXTRA LIST OTHERWISE WANT TO
+            String EXTRA_LIST = Constants.EXTRA_LIST;
+            if (CURRENT_PATH.equals(Constants.WANT_TO_ITEMS_PATH))
+                EXTRA_LIST = Constants.EXTRA_LIST_WANT;
+
             // ADDING EXTRA CITIES NAMES INTO LIST WHICH WERE NOT ADDED JUST IN CASE
-            ArrayList<String> extraCitiesList = Stash.getArrayList(title+Constants.EXTRA_LIST, String.class);
+            ArrayList<String> extraCitiesList = Stash.getArrayList(title + EXTRA_LIST, String.class);
             miniItemsArrayList.addAll(extraCitiesList);
 
             // REMOVING DUPLICATES
