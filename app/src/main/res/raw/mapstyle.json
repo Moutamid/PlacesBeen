@@ -41,6 +41,18 @@
     ]
   },
   {
+    "featureType": "administrative.country",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "visibility": "on"
+      },
+      {
+        "color": "#000000"
+      }
+    ]
+  },
+  {
     "featureType": "administrative.land_parcel",
     "stylers": [
       {

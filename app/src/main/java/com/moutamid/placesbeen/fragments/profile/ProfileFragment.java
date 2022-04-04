@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
 import com.google.firebase.database.DataSnapshot;
@@ -89,6 +90,7 @@ public class ProfileFragment extends Fragment {
                             .placeholder(R.color.grey)
                             .error(R.drawable.test)
                     )
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .into(b.profileCircleImageView);
 
         b.profileCircleImageView.setOnClickListener(view -> {

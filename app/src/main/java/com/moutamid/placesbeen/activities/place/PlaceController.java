@@ -1,7 +1,7 @@
 package com.moutamid.placesbeen.activities.place;
 
 import static com.bumptech.glide.Glide.with;
-import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
 
 import android.animation.Animator;
@@ -13,6 +13,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -28,22 +35,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.gson.JsonObject;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
-import com.moutamid.placesbeen.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class PlaceController {
-    private static final String TAG = "PlaceController";
+    private static final String TAG = "HECK";
 
     PlaceItemActivity activity;
     Context context;
@@ -56,7 +64,7 @@ public class PlaceController {
 
     public void saveUnSaveItem() {
         Log.d(TAG, "saveUnSaveItem: ");
-        MainItemModel model = activity.mainItemModel;
+        MainItemModel model = activity.model;
         if (model.title.equals("nullnull")) {
             Toast.makeText(context, "NULL", Toast.LENGTH_SHORT).show();
             return;
@@ -101,7 +109,7 @@ public class PlaceController {
         Log.d(TAG, "checkIsItemSaved: ");
         ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
 //        if (Stash.getBoolean(activity.mainItemModel.title, false)) {
-        if (savedList.contains(activity.mainItemModel.title)) {
+        if (savedList.contains(activity.model.title)) {
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_save_24);
         }
     }
@@ -153,73 +161,97 @@ public class PlaceController {
                 activity.IMAGE_URL_2 = jsonArray.getJSONObject(1).getString("webformatURL");
                 activity.IMAGE_URL_3 = jsonArray.getJSONObject(2).getString("webformatURL");
 
-                activity.runOnUiThread(() -> activity.loadImages());
-
             } catch (Exception e) {
+                Log.d(TAG, "getImageUrl: ERROR: " + e.getMessage());
                 e.printStackTrace();
             }
+
+            activity.runOnUiThread(() -> activity.loadImages());
         }).start();
     }
 
     public void getLatLng() {
         Log.d(TAG, "downloadJSON: ");
         new Thread(() -> {
+            RequestQueue queue = Volley.newRequestQueue(activity);
+
+            String q = "china";
             try {
-                Log.d(TAG, "getLatLng: try {");
-                String q = URLEncoder.encode(activity.mainItemModel.title, "utf-8");
-                Log.d(TAG, "getLatLng: encoded");
-                JSONObject jsonObject = new JSONObject(new GetJson().AsString(Constants.GET_POSITION_URL((q))));
-                Log.d(TAG, "getLatLng: getted object as string");
-                JSONArray jsonArray = jsonObject.getJSONArray("data");
-                Log.d(TAG, "getLatLng: array get");
-                if (jsonArray.length() != 0) {
-                    Log.d(TAG, "getLatLng: if statement");
-                    JSONObject innerObject = jsonArray.getJSONObject(0);
-
-                    activity.LAT = String.valueOf(innerObject.getDouble("latitude"));
-                    activity.LONG = String.valueOf(innerObject.getDouble("longitude"));
-
-                    activity.COUNTRY = innerObject.getString("country");
-
-                    activity.CONTINENT = innerObject.getString("continent");
-
-                } else {
-                    Log.d(TAG, "getLatLng: else ");
-                }
-
-            } catch (ExecutionException | InterruptedException e) {
-                Log.d(TAG, "downloadJSON: error: " + e.getMessage());
-                e.printStackTrace();
-            } catch (JSONException e) {
-                Log.d(TAG, "JSONException: error: " + e.getMessage());
-                Log.d(TAG, "JSONException: error: " + e.toString());
-                e.printStackTrace();
+                q = URLEncoder.encode(activity.model.title, "utf-8");
             } catch (UnsupportedEncodingException e) {
-                Log.d(TAG, "getLatLng: error: " + e.getMessage());
                 e.printStackTrace();
             }
 
-            activity.runOnUiThread(() -> {
-                activity.loadAddress();
-            });
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                    Request.Method.GET,
+                    Constants.GET_POSITION_URL(q),
+                    null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            Log.d(TAG, "getLatLng: try {");
+                            try {
+                                Log.d(TAG, "getLatLng: getted object as string");
+                                JSONArray jsonArray = jsonObject.getJSONArray("data");
+                                Log.d(TAG, "getLatLng: array get");
+                                if (jsonArray.length() != 0) {
+                                    Log.d(TAG, "getLatLng: if statement");
+                                    JSONObject innerObject = jsonArray.getJSONObject(0);
 
+                                    activity.LAT = String.valueOf(innerObject.getDouble("latitude"));
+                                    activity.LONG = String.valueOf(innerObject.getDouble("longitude"));
+
+                                    activity.COUNTRY = innerObject.getString("country");
+
+                                    activity.CONTINENT = innerObject.getString("continent");
+
+                                } else {
+                                    Log.d(TAG, "getLatLng: else ");
+                                }
+
+                            } catch (JSONException e) {
+                                Log.d(TAG, "JSONException: error: " + e.getMessage());
+                                Log.d(TAG, "JSONException: error: " + e.toString());
+                                e.printStackTrace();
+                            }
+
+                            activity.runOnUiThread(() -> {
+                                activity.loadAddress();
+                            });
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    activity.LAT = "0";
+                    activity.LONG = "0";
+
+                    activity.runOnUiThread(() -> {
+                        activity.loadAddress();
+                    });
+                }
+            });
+            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            queue.add(jsonObjectRequest);
         }).start();
     }
 
     public void checkBeenWantTo() {
+        Log.d(TAG, "checkBeenWantTo: ");
         // IF USER BEEN
-        if (Stash.getBoolean(activity.mainItemModel.title +activity.mainItemModel.desc + Constants.BEEN_ITEMS_PATH, false)) {
+        if (Stash.getBoolean(activity.model.title + activity.model.desc + Constants.BEEN_ITEMS_PATH, false)) {
             activity.b.beenCheckBoxPlace.setChecked(true);
         }
         // IF WANT TO SAVED
-        if (Stash.getBoolean(activity.mainItemModel.title + Constants.WANT_TO_ITEMS_PATH, false)) {
+        if (Stash.getBoolean(activity.model.title + Constants.WANT_TO_ITEMS_PATH, false)) {
             activity.b.wantToCheckBoxPlace.setChecked(true);
         }
 
     }
 
     public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
-        Stash.put(mainItemModel.title+mainItemModel.desc + itemsPath, b);
+        Log.d(TAG, "triggerCheckBox: ");
+        Stash.put(mainItemModel.title + mainItemModel.desc + itemsPath, b);
         if (b) {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
@@ -236,6 +268,7 @@ public class PlaceController {
     }
 
     public void setImageOnMain(String URL) {
+        Log.d(TAG, "setImageOnMain: ");
         with(activity.getApplicationContext())
                 .asBitmap()
                 .load(URL)
@@ -243,30 +276,31 @@ public class PlaceController {
                         .placeholder(lighterGrey)
                         .error(lighterGrey)
                 )
-                .diskCacheStrategy(DATA)
+                .diskCacheStrategy(AUTOMATIC)
                 .into(activity.b.imageMainPlace);
     }
 
     public void initMaps() {
+        Log.d(TAG, "initMaps: ");
         SupportMapFragment mapFragment = (SupportMapFragment) activity.getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
+                Log.d(TAG, "onMapReady: ");
                 activity.mMap = googleMap;
 
                 MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle);
                 activity.mMap.setMapStyle(style);
 
+                activity.runOnUiThread(() -> {
+                    activity.drawPolygon(activity.model.title, Color.argb(255, 55, 0, 179));
+                });
                 double lat = Double.parseDouble(activity.LAT);
                 double lng = Double.parseDouble(activity.LONG);
 
                 LatLng sydney = new LatLng(lat, lng);
-//                LatLng sydney = new LatLng(-34, 151);
-                activity.mMap.addMarker(new MarkerOptions().position(sydney).title(activity.mainItemModel.title)
-//                        .snippet("Population: 4,627,300")
-//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-                );
+                activity.mMap.addMarker(new MarkerOptions().position(sydney).title(activity.model.title));
                 activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
                 activity.mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -381,7 +415,7 @@ public class PlaceController {
     }
 
     private void triggerOnClick() {
-
+        Log.d(TAG, "triggerOnClick: ");
         if (IS_HIDDEN) {
             IS_HIDDEN = false;
 
@@ -442,6 +476,7 @@ public class PlaceController {
     public ArrayList<MainItemModel> CityArrayList = new ArrayList<>();
 
     public void extractMarkers() {
+        Log.d(TAG, "extractMarkers: ");
         activity.b.loadingView.setVisibility(View.GONE);
         activity.b.parentLayoutPlace.setVisibility(View.VISIBLE);
 
@@ -461,6 +496,7 @@ public class PlaceController {
     boolean yes = true;
 
     private void addMarkers(ArrayList<MainItemModel> LIST) {
+        Log.d(TAG, "addMarkers: ");
         /*for (int i = 0; i <= LIST.size() - 1; i += 2) {
 
             MainItemModel model = LIST.get(i);

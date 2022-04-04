@@ -1,5 +1,7 @@
 package com.moutamid.placesbeen.activities.home;
 
+import static com.moutamid.placesbeen.utils.Utils.toast;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -9,6 +11,18 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.dezlum.codelabs.getjson.GetJson;
 import com.fxn.stash.Stash;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +38,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.moutamid.placesbeen.R;
+import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.models.MarkerModel;
 import com.moutamid.placesbeen.models.PolygonModel;
@@ -52,52 +67,124 @@ public class MainController {
         this.activity = saveFragment;
     }
 
-    public static void fetchAllPolygonBoundaries() {
+    /*public void fetchAllPolygonBoundaries() {
         Log.d(TAG, "fetchAllPolygonBoundaries: ");
         new Thread(() -> {
-            try {
+            RequestQueue queue = Volley.newRequestQueue(activity);
 
-                ArrayList<MainItemModel> CountryArrayList = Stash.getArrayList(Constants.PARAMS_Country, MainItemModel.class);
+            ArrayList<MainItemModel> CountryArrayList = Stash.getArrayList(Constants.PARAMS_Country, MainItemModel.class);
 
-                for (int i = 0; i < CountryArrayList.size(); i++) {
-                    String country = CountryArrayList.get(i).title;
-                    Log.d(TAG, "fetchAllPolygonBoundaries: COUNTRY: " + country);
+            for (int i = 0; i < CountryArrayList.size(); i++) {
+                String country = CountryArrayList.get(i).title;
+                Log.d(i + " HUFFF", "fetchAllPolygonBoundaries: COUNTRY: " + country);
 
-                    String polyGonStr = Stash.getString(Constants.POLYGON + country, Constants.NULL);
-
-                    if (polyGonStr.equals(Constants.NULL)) {
-                        Log.d(TAG, "fetchAllPolygonBoundaries: downloaded");
-                        polyGonStr = new GetJson().AsString(Constants.GET_BOUNDARY_URL((country)));
-                        Stash.put(Constants.POLYGON + country, polyGonStr);
-                    }
+                PolygonOptions polygonOptions = (PolygonOptions) Stash.getObject(Constants.POLYGON_OPTIONS + country + 0, PolygonOptions.class);
+                if (polygonOptions == null) {
+                    Log.d("HUFF", "POLYGON IS NULL" + i);
+                    queue.add(getPolygonDataRequest(country));
                 }
-
-                /*ArrayList<MainItemModel> CitiesArrayList = Stash.getArrayList(Constants.PARAMS_City, MainItemModel.class);
-
-                for (int i = 0; i < CitiesArrayList.size(); i++) {
-                    String country = CitiesArrayList.get(i).title;
-                    Log.d(TAG, "fetchAllPolygonBoundaries: CITY: " + country);
-
-                    String polyGonStr = Stash.getString(Constants.POLYGON + country, Constants.NULL);
-
-                    if (polyGonStr.equals(Constants.NULL)) {
-                        Log.d(TAG, "fetchAllPolygonBoundaries: downloaded");
-                        polyGonStr = new GetJson().AsString(Constants.GET_BOUNDARY_URL_FOR_CITY((country)));
-                        Stash.put(Constants.POLYGON + country, polyGonStr);
-                    }
-                }
-*/
-                Log.d(TAG, "fetchAllPolygonBoundaries: done");
-            } catch (InterruptedException e) {
-                Log.d(TAG, "fetchAllPolygonBoundaries: error");
-                e.printStackTrace();
-                Log.e(TAG, "drawPolygon: ERROR: " + e.getMessage());
-            } catch (ExecutionException e) {
-                Log.d(TAG, "fetchAllPolygonBoundaries: error");
-                e.printStackTrace();
-                Log.e(TAG, "drawPolygon: ERROR: " + e.getMessage());
             }
+            Log.d(TAG, "fetchAllPolygonBoundaries: done");
         }).start();
+    }
+
+    private JsonArrayRequest getPolygonDataRequest(String country) {
+        Log.d("HUFFF", "getPolygonDataRequest: started: " + country);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                Constants.GET_BOUNDARY_URL((country)),
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray jsonArray) {
+                        try {
+                            Log.d("HUFF", "drawPolygon: try {");
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                            JSONObject innerObject = jsonObject.getJSONObject("geojson");
+
+                            String type = innerObject.getString("type");
+
+                            JSONArray innerArray = innerObject.getJSONArray("coordinates");
+
+                            if (type.equals("Polygon")) {
+                                Log.d("HUFF", "drawPolygon: ");
+                                JSONArray latlngArray = innerArray.getJSONArray(0);
+                                PolygonOptions polygonOptions = new PolygonOptions();
+                                polygonOptions.strokeColor(Color.WHITE);
+                                polygonOptions.strokeWidth(1);
+                                polygonOptions.fillColor(Color.argb(255, 55, 0, 179));
+
+                                for (int i = 0; i < latlngArray.length(); i++) {
+
+                                    double lng = latlngArray.getJSONArray(i).getDouble(0);
+                                    double lat = latlngArray.getJSONArray(i).getDouble(1);
+
+                                    LatLng latLng = new LatLng(lat, lng);
+
+                                    polygonOptions.add(latLng);
+                                }
+
+                                Stash.put(Constants.POLYGON_OPTIONS + country + 0, polygonOptions);
+
+                            } else {
+                                Log.d("HUFF", "drawPolygon: looping");
+                                for (int i1 = 0; i1 < innerArray.length(); i1++) {
+                                    Stash.put(Constants.POLYGON_OPTIONS_INDEX + country, i1);
+                                    JSONArray array1 = innerArray.getJSONArray(i1);
+
+                                    JSONArray array2 = array1.getJSONArray(0);
+
+                                    PolygonOptions polygonOptions = new PolygonOptions();
+                                    polygonOptions.strokeColor(Color.WHITE);
+                                    polygonOptions.strokeWidth(1);
+                                    polygonOptions.fillColor(Color.argb(255, 55, 0, 179));
+
+                                    for (int i2 = 0; i2 < array2.length(); i2++) {
+
+                                        JSONArray latlngArrray = array2.getJSONArray(i2);
+
+                                        double lng = latlngArrray.getDouble(0);
+                                        double lat = latlngArrray.getDouble(1);
+
+                                        LatLng latLng = new LatLng(lat, lng);
+
+                                        polygonOptions.add(latLng);
+
+                                    }
+                                    Stash.put(Constants.POLYGON_OPTIONS + country + i1, polygonOptions);
+                                }
+                            }
+
+                            Log.d("HUFFF", "getPolygonDataRequest: completed: " + country);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d("HUFFF", country + "getPolygonDataRequest: error: " + e.getMessage());
+
+                            Log.e("HUFF", "drawPolygon: ERROR: " + e.getMessage());
+                        }
+                    }
+                }, error -> {
+            toast("Failed to get data: " + error.getMessage());
+            Log.d("HUFFF", country + "getPolygonDataRequest: ERROR: " + error.getMessage());
+            if (error instanceof NetworkError) {
+                Log.d("HUFFF", "NetworkError " + country);
+            } else if (error instanceof ServerError) {
+                Log.d("HUFFF", "ServerError " + country);
+            } else if (error instanceof AuthFailureError) {
+                Log.d("HUFFF", "AuthFailureError " + country);
+            } else if (error instanceof ParseError) {
+                Log.d("HUFFF", "ParseError " + country);
+            } else if (error instanceof NoConnectionError) {
+                Log.d("HUFFF", "NoConnectionError " + country);
+            } else if (error instanceof TimeoutError) {
+                Log.d("HUFFF", "TimeoutError " + country);
+            }
+        });
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        return jsonArrayRequest;
     }
 
     // FETCH ALL LAT LONGS OF CITIES
@@ -150,10 +237,9 @@ public class MainController {
             }
 
         }).start();
-    }
+    }*/
 
 //    SAVE CONTROLLER DATA FOR MAPS INTEGRATION
-
     public void retrieveDatabaseItems() {
         Log.d(TAG, "retrieveDatabaseItems: ");
         /*new Thread(new Runnable() {
@@ -172,7 +258,7 @@ public class MainController {
                 .addChildEventListener(itemsChildValueListener(
                         Constants.BEEN_ITEMS_PATH,
                         activity.beenArrayListCountries,
-                        R.drawable.save_marker,
+                        R.drawable.been_marker,
                         Color.argb(255, 50, 205, 50),
                         "Been"));
         Constants.databaseReference()
@@ -180,7 +266,7 @@ public class MainController {
                 .addChildEventListener(itemsChildValueListener(
                         Constants.WANT_TO_ITEMS_PATH,
                         activity.wantToArrayListCountries,
-                        R.drawable.save_marker,
+                        R.drawable.want_to_marker,
                         Color.argb(255, 246, 173, 33),
                         "Want to"));
 
@@ -199,8 +285,8 @@ public class MainController {
 
                     addMarkerOnMaps(model, marker, title);
 
-                    new DrawPolygonTask(model.title, colour, model).execute();
-
+//                    new DrawPolygonTask(model.title, colour, model).execute();
+                    drawCountryPolygon(model.title, colour, model);
 //                        if (saveFragment.isAdded())
                     activity.runOnUiThread(() -> {
                         activity.mMap.setOnMapClickListener(latLng -> {
@@ -209,7 +295,7 @@ public class MainController {
                     });
 
                     if (ITEMS_PATH.equals(Constants.SAVED_ITEMS_PATH) && !savedList.contains(model.title)) {
-                        savedList.add(model.title+model.desc);
+                        savedList.add(model.title + model.desc);
                         Stash.put(Constants.SAVED_LIST, savedList);
                     }
 //                    }).start();
@@ -239,7 +325,7 @@ public class MainController {
                         }
 
                         Marker marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
-                                .title(title)
+                                .title(model.title)
                                 .icon(BitmapDescriptorFactory.fromResource(marker)));
 
                         MarkerModel markerModel = new MarkerModel(model.title, marker1, descNull);
@@ -284,10 +370,9 @@ public class MainController {
                     for (int i = 0; i < polygonModelArrayList.size(); i++) {
                         Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
                         String title = polygonModelArrayList.get(i).title;
-                        Polygon polygon = polygonModelArrayList.get(i).polygon;
 
                         if (title.equals(model.title)) {
-//                            if (saveFragment.isAdded())
+                            Polygon polygon = polygonModelArrayList.get(i).polygon;
                             activity.runOnUiThread(() -> {
                                 polygon.remove();
                             });
@@ -299,7 +384,7 @@ public class MainController {
 
                     // REMOVING ITEM FROM SAVED LIST
                     if (ITEMS_PATH.equals(Constants.SAVED_ITEMS_PATH) && savedList.contains(model.title)) {
-                        savedList.remove(model.title+model.desc);
+                        savedList.remove(model.title + model.desc);
                         Stash.put(Constants.SAVED_LIST, savedList);
                     }
                 }
@@ -330,7 +415,6 @@ public class MainController {
 
                     MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle);
                     activity.mMap.setMapStyle(style);
-
                 }
             });
         });
@@ -374,6 +458,167 @@ public class MainController {
                 }
             });
 
+        }).start();
+    }
+
+    public void drawCountryPolygon(String country, int colour, MainItemModel model) {
+        Log.e("HUFF", "drawPolygon: COUNTRY: " + country);
+        new Thread(() -> {
+            RequestQueue queue = Volley.newRequestQueue(activity);
+
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                    Request.Method.GET,
+                    Constants.GET_BOUNDARY_URL((country)),
+//                    Constants.GET_BOUNDARY_URL((country)),
+                    null,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray jsonArray) {
+                            try {
+                                Log.d("HUFF", "drawPolygon: try {");
+                                JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+                                JSONObject innerObject = jsonObject.getJSONObject("geojson");
+
+                                String type = innerObject.getString("type");
+
+                                JSONArray innerArray = innerObject.getJSONArray("coordinates");
+
+                                if (type.equals("Polygon")) {
+                                    Log.d("HUFF", "drawPolygon: ");
+                                    JSONArray latlngArray = innerArray.getJSONArray(0);
+                                    PolygonOptions polygonOptions = new PolygonOptions();
+                                    polygonOptions.strokeColor(Color.WHITE);
+                                    polygonOptions.strokeWidth(2);
+                                    polygonOptions.fillColor(colour);
+
+                                    for (int i = 0; i < latlngArray.length(); i++) {
+
+                                        double lng = latlngArray.getJSONArray(i).getDouble(0);
+                                        double lat = latlngArray.getJSONArray(i).getDouble(1);
+
+                                        LatLng latLng = new LatLng(lat, lng);
+
+                                        polygonOptions.add(latLng);
+                                    }
+
+                                    activity.runOnUiThread(() -> {
+                                        boolean descNull = false;
+                                        if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {
+                                            descNull = true;
+                                        }
+                                        Log.d(TAG, "drawPolygon: title: " + model.title + " descIsNull: " + descNull);
+                                        PolygonModel polygonModel = new PolygonModel();
+                                        polygonModel.title = country;
+                                        polygonModel.polygon = activity.mMap.addPolygon(polygonOptions);
+
+                                        polygonModel.polygon.setVisible(descNull);
+
+                                        polygonModel.descNull = descNull;
+
+                                        polygonModelArrayList.add(polygonModel);
+
+                                        Stash.put(Constants.POLYGON_OPTIONS + country + 0, polygonOptions);
+
+                                    });
+                                } else {
+                                    Log.d("HUFF", "drawPolygon: looping");
+                                    for (int i1 = 0; i1 < innerArray.length(); i1++) {
+                                        Stash.put(Constants.POLYGON_OPTIONS_INDEX + country, i1);
+                                        JSONArray array1 = innerArray.getJSONArray(i1);
+
+                                        JSONArray array2 = array1.getJSONArray(0);
+
+                                        PolygonOptions polygonOptions = new PolygonOptions();
+                                        polygonOptions.strokeColor(Color.WHITE);
+                                        polygonOptions.strokeWidth(2);
+                                        polygonOptions.fillColor(colour);
+
+                                        for (int i2 = 0; i2 < array2.length(); i2++) {
+
+                                            JSONArray latlngArrray = array2.getJSONArray(i2);
+
+                                            double lng = latlngArrray.getDouble(0);
+                                            double lat = latlngArrray.getDouble(1);
+
+                                            LatLng latLng = new LatLng(lat, lng);
+
+                                            polygonOptions.add(latLng);
+
+                                        }
+                                        Stash.put(Constants.POLYGON_OPTIONS + country + i1, polygonOptions);
+                                        activity.runOnUiThread(() -> {
+                                            PolygonModel polygonModel = new PolygonModel();
+                                            polygonModel.title = country;
+                                            polygonModel.polygon = activity.mMap.addPolygon(polygonOptions);
+
+                                            boolean descNull = false;
+                                            if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {
+                                                descNull = true;
+                                            }
+                                            Log.d(TAG, "drawPolygon: title: " + model.title + " descIsNull: " + descNull);
+
+                                            polygonModel.descNull = descNull;
+
+                                            polygonModelArrayList.add(polygonModel);
+
+                                        });
+                                    }
+                                }
+
+                                Log.d("HUFF", "drawPolygon: jsonArray done");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                Log.e("HUFF", "drawPolygon: ERROR: " + e.getMessage());
+                            }
+                        }
+                    }, error -> {
+                toast("Failed to get data: " + error.getMessage());
+                if (error instanceof NetworkError) {
+                    Log.d("HUFF", "NetworkError");
+                } else if (error instanceof ServerError) {
+                    Log.d("HUFF", "ServerError");
+                } else if (error instanceof AuthFailureError) {
+                    Log.d("HUFF", "AuthFailureError");
+                } else if (error instanceof ParseError) {
+                    Log.d("HUFF", "ParseError");
+                } else if (error instanceof NoConnectionError) {
+                    Log.d("HUFF", "NoConnectionError");
+                } else if (error instanceof TimeoutError) {
+                    Log.d("HUFF", "TimeoutError");
+                }
+            });
+            jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            int index = Stash.getInt(Constants.POLYGON_OPTIONS_INDEX + country, 0);
+
+            // IF INDEX IS GREATER THAN 1 THEN IT'S A MULTI-POLYGON
+            for (int i = 0; i <= index; i++) {
+                Log.d("HUFF", "INDEX: " + i);
+                PolygonOptions polygonOptions = (PolygonOptions) Stash.getObject(Constants.POLYGON_OPTIONS + country + i, PolygonOptions.class);
+                if (polygonOptions == null) {
+                    Log.d("HUFF", "POLYGON IS NULL" + i);
+                    queue.add(jsonArrayRequest);
+                } else {
+                    Log.d("HUFF", "POLYGON EXIST" + i);
+                    activity.runOnUiThread(() -> {
+                        boolean descNull = false;
+                        if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {
+                            descNull = true;
+                        }
+                        Log.d(TAG, "drawPolygon: title: " + model.title + " descIsNull: " + descNull);
+                        PolygonModel polygonModel = new PolygonModel();
+                        polygonModel.title = country;
+                        polygonModel.polygon = activity.mMap.addPolygon(polygonOptions);
+
+                        polygonModel.polygon.setVisible(descNull);
+
+                        polygonModel.descNull = descNull;
+
+                        polygonModelArrayList.add(polygonModel);
+                    });
+                }
+            }
         }).start();
     }
 

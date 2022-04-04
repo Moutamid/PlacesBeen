@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -190,6 +191,7 @@ public class HomeController {
                                                 .placeholder(R.color.grey)
                                                 .error(R.drawable.test)
                                         )
+                                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                                         .into(mainActivity.b.profileImageMain);
                         }
                     }

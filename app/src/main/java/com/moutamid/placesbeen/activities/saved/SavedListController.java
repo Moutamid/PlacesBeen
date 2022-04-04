@@ -1,6 +1,7 @@
 package com.moutamid.placesbeen.activities.saved;
 
 import static com.bumptech.glide.Glide.with;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.utils.Constants.GET_COUNTRY_FLAG;
 
@@ -97,7 +98,7 @@ public class SavedListController {
                                                                     .placeholder(R.color.lighterGrey)
                                                                     .error(R.drawable.neutral_flag)
                                                             )
-                                                            .diskCacheStrategy(DATA)
+                                                            .diskCacheStrategy(AUTOMATIC)
                                                             .into(flagImg);
 
                                                 });
@@ -113,7 +114,7 @@ public class SavedListController {
                                                 .placeholder(R.color.lighterGrey)
                                                 .error(R.color.lighterGrey)
                                         )
-                                        .diskCacheStrategy(DATA)
+                                        .diskCacheStrategy(AUTOMATIC)
                                         .into(flagImg);
 
                             });
@@ -130,7 +131,7 @@ public class SavedListController {
                             .placeholder(R.color.lighterGrey)
                             .error(R.color.lighterGrey)
                     )
-                    .diskCacheStrategy(DATA)
+                    .diskCacheStrategy(AUTOMATIC)
                     .into(flagImg);
 
         } else {
@@ -155,7 +156,7 @@ public class SavedListController {
                                                     .placeholder(R.color.lighterGrey)
                                                     .error(R.drawable.neutral_flag)
                                             )
-                                            .diskCacheStrategy(DATA)
+                                            .diskCacheStrategy(AUTOMATIC)
                                             .into(flagImg);
                                 }
                             });
@@ -171,7 +172,7 @@ public class SavedListController {
                             .placeholder(R.drawable.ic_outline_info_24)
                             .error(R.drawable.ic_outline_info_24)
                     )
-                    .diskCacheStrategy(DATA)
+                    .diskCacheStrategy(AUTOMATIC)
                     .into(flagImg);
         }
     }

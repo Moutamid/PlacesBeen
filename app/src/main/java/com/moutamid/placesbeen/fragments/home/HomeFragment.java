@@ -214,7 +214,7 @@ public class HomeFragment extends Fragment {
 
     public boolean isAirport = false;
 
-    public void triggerCulturalClick(){
+    public void triggerCulturalClick() {
         controller.changeDotTo(b.dotCulturalSites, b.textViewCulturalSites);
         b.mainRecyclerView.showShimmerAdapter();
 
@@ -225,7 +225,7 @@ public class HomeFragment extends Fragment {
         CURRENT_TYPE = Constants.PARAMS_CulturalSites;
     }
 
-    public void triggerAirportClick(){
+    public void triggerAirportClick() {
         controller.changeDotTo(b.dotAirports, b.textViewAirports);
         b.mainRecyclerView.showShimmerAdapter();
 
@@ -283,9 +283,9 @@ public class HomeFragment extends Fragment {
                 Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
 
             holder.parenLayout.setOnClickListener(view -> {
-//                Stash.put(Constants.CURRENT_MODEL_CLASS, model);
-//                if (isAdded())
-//                    startActivity(new Intent(requireContext(), PlaceItemActivity.class));
+                Stash.put(Constants.CURRENT_MODEL_CLASS, model);
+                if (isAdded())
+                    startActivity(new Intent(requireContext(), PlaceItemActivity.class));
             });
 
             controller.isSaved(model, holder.saveBtn);

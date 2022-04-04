@@ -216,6 +216,18 @@
    "country": "United Kingdom"
  },
  {
+   "city": "England",
+   "lat": 53.1637,
+   "lng": -0.6854,
+   "country": "United Kingdom"
+ },
+ {
+   "city": "Scotland",
+   "lat": 57.1110,
+   "lng": -4.2513,
+   "country": "United Kingdom"
+ },
+ {
    "city": "Linyi",
    "lat": 35.0606,
    "lng": 118.3425,

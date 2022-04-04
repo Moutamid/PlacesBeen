@@ -1,15 +1,23 @@
 package com.moutamid.placesbeen.activities.home;
 
+import static com.bumptech.glide.Glide.with;
+import static com.moutamid.placesbeen.R.color.lighterGrey;
+import static com.moutamid.placesbeen.utils.Utils.toast;
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.dezlum.codelabs.getjson.GetJson;
 import com.fxn.stash.Stash;
+import com.google.android.gms.maps.model.Polygon;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -18,8 +26,12 @@ import com.moutamid.placesbeen.activities.saved.SavedListsActivity;
 import com.moutamid.placesbeen.databinding.ActivityHomeBinding;
 import com.moutamid.placesbeen.utils.Constants;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -84,12 +96,13 @@ public class HomeActivity extends AppCompatActivity {
                         if (snapshot.exists()) {
                             Stash.put(Constants.PROFILE_URL, snapshot.getValue().toString());
 
-                            Glide.with(getApplicationContext())
+                            with(getApplicationContext())
                                     .load(snapshot.getValue().toString())
                                     .apply(new RequestOptions()
                                             .placeholder(R.color.grey)
                                             .error(R.color.grey)
                                     )
+                                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                                     .into(b.profileImg);
                         }
                     }

@@ -2,6 +2,7 @@ package com.moutamid.placesbeen.utils;
 
 
 import static com.bumptech.glide.Glide.with;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
 
@@ -82,7 +83,7 @@ public class Utils {
                                         .placeholder(lighterGrey)
                                         .error(lighterGrey)
                                 )
-                                .diskCacheStrategy(DATA)
+                                .diskCacheStrategy(AUTOMATIC)
                                 .into(view);
                     });
                 } catch (Exception e) {

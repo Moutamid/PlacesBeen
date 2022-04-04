@@ -1,6 +1,7 @@
 package com.moutamid.placesbeen.activities.home;
 
 import static com.bumptech.glide.Glide.with;
+import static com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.greyishblue;
 import static com.moutamid.placesbeen.R.color.red;
@@ -50,6 +51,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityMainBinding;
 import com.moutamid.placesbeen.fragments.charts.ChartsFragment;
@@ -96,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
 
         viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(getSupportFragmentManager());
 
-        MainController.fetchAllPolygonBoundaries();
-        controller.fetchAllLatLngsOfCities();
+//        controller.fetchAllPolygonBoundaries();
+//        controller.fetchAllLatLngsOfCities();
 
         // Setting up the view Pager
         setupViewPager(viewPager);
@@ -362,6 +364,7 @@ public class MainActivity extends AppCompatActivity {
             holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
                 Utils.changeChartsValue(model.title, b1);
                 if (b1) {
+                    controller.drawCountryPolygon(model.title, Color.argb(255, 50, 205, 50), model);
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
@@ -371,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
 
                     holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 } else {
+                    removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
@@ -380,10 +384,12 @@ public class MainActivity extends AppCompatActivity {
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
                 }
                 triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
+
             });
 
             holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {
                 if (b1) {
+                    controller.drawCountryPolygon(model.title, Color.argb(255, 246, 173, 33), model);
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
@@ -393,6 +399,7 @@ public class MainActivity extends AppCompatActivity {
 
                     holder.title.setTextColor(getResources().getColor(R.color.red));
                 } else {
+                    removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
@@ -428,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
                                 .placeholder(R.drawable.ic_outline_info_24)
                                 .error(R.drawable.ic_outline_info_24)
                         )
-                        .diskCacheStrategy(DATA)
+                        .diskCacheStrategy(AUTOMATIC)
                         .into(flagImg);
 
             } else {
@@ -453,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
                                                         .placeholder(R.drawable.ic_outline_info_24)
                                                         .error(R.drawable.ic_outline_info_24)
                                                 )
-                                                .diskCacheStrategy(DATA)
+                                                .diskCacheStrategy(AUTOMATIC)
                                                 .into(flagImg);
                                     }
                                 });
@@ -469,7 +476,7 @@ public class MainActivity extends AppCompatActivity {
                                 .placeholder(R.drawable.ic_outline_info_24)
                                 .error(R.drawable.ic_outline_info_24)
                         )
-                        .diskCacheStrategy(DATA)
+                        .diskCacheStrategy(AUTOMATIC)
                         .into(flagImg);
             }
         }
@@ -614,44 +621,24 @@ public class MainActivity extends AppCompatActivity {
 
             }).start();
         }
+    }
 
-        /*public Filter getFilter() {
-            return new Filter() {
-                @Override
-                protected FilterResults performFiltering(CharSequence charSequence) {
-                    String key = charSequence.toString();
-                    if (key.isEmpty()) {
-                        mainItemModelArrayList = mainItemModelArrayListAll;
-                    } else {
-                        ArrayList<MainItemModel> filtered = new ArrayList<>();
+    private void removePolygon(MainItemModel model) {
+        // REMOVING POLYGON FROM MAP
+        for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
+            Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
+            String title = controller.polygonModelArrayList.get(i).title;
 
-                        for (MainItemModel model : mainItemModelArrayListAll) {
-                            if (model.title.toLowerCase().contains(key.toLowerCase())) {
-                                filtered.add(model);
-                            } else if (model.desc.toLowerCase().contains(key.toLowerCase())) {
-                                filtered.add(model);
-                            }
-//                            else if (model.getSongYTUrl().toLowerCase().contains(key.toLowerCase())) {
-//                                filtered.add(model);
-//                            }
-                        }
+            if (title.equals(model.title)) {
+                Polygon polygon = controller.polygonModelArrayList.get(i).polygon;
+                runOnUiThread(() -> {
+                    polygon.remove();
+                });
+                controller.polygonModelArrayList.remove(i);
+                break;
+            }
 
-                        mainItemModelArrayList.clear();
-                        mainItemModelArrayList = filtered;
-                    }
-                    FilterResults filterResults = new FilterResults();
-                    filterResults.values = mainItemModelArrayList;
-                    return filterResults;
-                }
-
-                @Override
-                protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                    b.searchProgressBarMain.setVisibility(View.GONE);
-                    mainItemModelArrayList = (ArrayList<MainItemModel>) filterResults.values;
-                    adapter.notifyDataSetChanged();
-                }
-            };
-        }*/
+        }
     }
 
     boolean IS_HIDDEN = false;

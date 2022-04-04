@@ -3,12 +3,14 @@ package com.moutamid.placesbeen.onboard;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fxn.stash.Stash;
 import com.moutamid.placesbeen.activities.home.HomeActivity;
 import com.moutamid.placesbeen.activities.home.MainActivity;
+import com.moutamid.placesbeen.activities.mapdata.DownloadMapDataActivity;
 import com.moutamid.placesbeen.activities.place.PlaceItemActivity;
 import com.moutamid.placesbeen.models.MainItemModel;
 import com.moutamid.placesbeen.utils.Constants;
@@ -57,6 +59,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(SplashActivity.this, HomeActivity.class));
 
             else startActivity(new Intent(SplashActivity.this, OnBoardingActivity.class));
+//            else startActivity(new Intent(SplashActivity.this, DownloadMapDataActivity.class));
         });
 
     }
