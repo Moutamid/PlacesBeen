@@ -239,7 +239,7 @@ public class MainController {
         }).start();
     }*/
 
-//    SAVE CONTROLLER DATA FOR MAPS INTEGRATION
+    //    SAVE CONTROLLER DATA FOR MAPS INTEGRATION
     public void retrieveDatabaseItems() {
         Log.d(TAG, "retrieveDatabaseItems: ");
         /*new Thread(new Runnable() {
@@ -304,7 +304,11 @@ public class MainController {
 
             private void addMarkerOnMaps(MainItemModel model, int marker, String title) {
                 new Thread(() -> {
-                    Log.d(TAG, "addMarkerOnMaps: ");
+                    Log.d(TAG, "addMarkerOnMaps: " + model.title);
+
+                    if (Constants.COUNTRIES_LIST.contains(model.title))
+                        return;
+
                     double lat;
                     double lng;
 

@@ -179,7 +179,7 @@ public class PlaceItemActivity extends AppCompatActivity {
                 .diskCacheStrategy(AUTOMATIC)
                 .into(b.imageMainPlace);
 
-        with(PlaceItemActivity.this)
+        with(getApplicationContext())
                 .asBitmap()
                 .load(IMAGE_URL_1)
                 .apply(new RequestOptions()
@@ -189,7 +189,7 @@ public class PlaceItemActivity extends AppCompatActivity {
                 .diskCacheStrategy(AUTOMATIC)
                 .into(b.imageItem1Place);
 
-        with(PlaceItemActivity.this)
+        with(getApplicationContext())
                 .asBitmap()
                 .load(IMAGE_URL_2)
                 .apply(new RequestOptions()
@@ -199,7 +199,7 @@ public class PlaceItemActivity extends AppCompatActivity {
                 .diskCacheStrategy(AUTOMATIC)
                 .into(b.imageItem2Place);
 
-        with(PlaceItemActivity.this)
+        with(getApplicationContext())
                 .asBitmap()
                 .load(IMAGE_URL_3)
                 .apply(new RequestOptions()

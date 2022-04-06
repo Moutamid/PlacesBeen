@@ -343,7 +343,8 @@ public class MainActivity extends AppCompatActivity {
 
             // IF USER BEEN
             if (Stash.getBoolean(model.title + model.desc + Constants.BEEN_ITEMS_PATH, false)) {
-                holder.title.setTextColor(getResources().getColor(R.color.yellow2));
+                holder.title.setTextColor(getResources().getColor(R.color.green));
+//                holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 holder.beenCB.setChecked(true);
             }
             // IF WANT TO SAVED
@@ -372,7 +373,8 @@ public class MainActivity extends AppCompatActivity {
                         Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
                     }
 
-                    holder.title.setTextColor(getResources().getColor(R.color.yellow2));
+                    holder.title.setTextColor(getResources().getColor(R.color.green));
+//                    holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 } else {
                     removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST

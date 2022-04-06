@@ -284,43 +284,45 @@ public class PlaceController {
         Log.d(TAG, "initMaps: ");
         SupportMapFragment mapFragment = (SupportMapFragment) activity.getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull GoogleMap googleMap) {
-                Log.d(TAG, "onMapReady: ");
-                activity.mMap = googleMap;
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(@NonNull GoogleMap googleMap) {
+                    Log.d(TAG, "onMapReady: ");
+                    activity.mMap = googleMap;
 
-                MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle);
-                activity.mMap.setMapStyle(style);
+                    MapStyleOptions style = MapStyleOptions.loadRawResourceStyle(context, R.raw.mapstyle);
+                    activity.mMap.setMapStyle(style);
 
-                activity.runOnUiThread(() -> {
-                    activity.drawPolygon(activity.model.title, Color.argb(255, 55, 0, 179));
-                });
-                double lat = Double.parseDouble(activity.LAT);
-                double lng = Double.parseDouble(activity.LONG);
+                    activity.runOnUiThread(() -> {
+                        activity.drawPolygon(activity.model.title, Color.argb(255, 55, 0, 179));
+                    });
+                    double lat = Double.parseDouble(activity.LAT);
+                    double lng = Double.parseDouble(activity.LONG);
 
-                LatLng sydney = new LatLng(lat, lng);
-                activity.mMap.addMarker(new MarkerOptions().position(sydney).title(activity.model.title));
-                activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                    LatLng sydney = new LatLng(lat, lng);
+                    activity.mMap.addMarker(new MarkerOptions().position(sydney).title(activity.model.title));
+                    activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
-                activity.mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(@NonNull Marker marker) {
+                    activity.mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(@NonNull Marker marker) {
+                            activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                            triggerOnClick();
+                            return false;
+                        }
+                    });
+
+                    activity.mMap.setOnMapClickListener(latLng -> {
                         activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
                         triggerOnClick();
-                        return false;
-                    }
-                });
+                    });
 
-                activity.mMap.setOnMapClickListener(latLng -> {
-                    activity.mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                    triggerOnClick();
-                });
+                    extractMarkers();
 
-                extractMarkers();
-
-            }
-        });
+                }
+            });
+        }
     }
 
     public Polygon polygon;
