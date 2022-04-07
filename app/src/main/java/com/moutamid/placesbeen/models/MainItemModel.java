@@ -1,7 +1,15 @@
 package com.moutamid.placesbeen.models;
 
 public class MainItemModel {
-    public String title, desc, lat, lng, url;
+    public String title, desc, lat, lng, url, type;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getTitle() {
         return title;

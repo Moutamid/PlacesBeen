@@ -312,12 +312,18 @@ public class MainController {
                     double lat;
                     double lng;
 
-                    if (model.lat.equals(Constants.NULL)) {
-                        lat = getLat(model.title);
-                        lng = LONG;
-                    } else {
-                        lat = Double.parseDouble(model.lat);
-                        lng = Double.parseDouble(model.lng);
+                    try {
+                        if (model.lat.equals(Constants.NULL)) {
+                            lat = getLat(model.title);
+                            lng = LONG;
+                        } else {
+                            lat = Double.parseDouble(model.lat);
+                            lng = Double.parseDouble(model.lng);
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                        lat = 0;
+                        lng = 0;
                     }
 
                     LatLng sydney = new LatLng(lat, lng);

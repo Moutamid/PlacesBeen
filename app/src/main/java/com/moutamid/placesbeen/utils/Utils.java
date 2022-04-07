@@ -190,7 +190,50 @@ public class Utils {
     private static final ArrayList<MainItemModel> CulturalSitesArrayList = Stash.getArrayList(Constants.PARAMS_CulturalSites, MainItemModel.class);
     private static final ArrayList<MainItemModel> AirportsArrayList = Stash.getArrayList(Constants.PARAMS_Airports, MainItemModel.class);
 
-    public static void changeChartsValue(String title, boolean increase) {
+    public static void changeChartsValue(MainItemModel model, boolean increase) {
+        new Thread(() -> {
+//            for (MainItemModel m : CountryArrayList) {
+//                if (title.equals(m.title)) {
+            if (model.type.equals(Constants.PARAMS_Country)) {
+                // EXIST IN HERE
+                if (increase) {
+                    increaseFromChart(Constants.PARAMS_Country);
+                } else decreaseFromChart(Constants.PARAMS_Country);
+                return;
+            }
+//            }
+//            for (MainItemModel m : CityArrayList) {
+//                if (title.equals(m.title)) {
+            if (model.type.equals(Constants.PARAMS_City)) {
+                // EXIST IN HERE
+                if (increase) {
+                    increaseFromChart(Constants.PARAMS_City);
+                } else decreaseFromChart(Constants.PARAMS_City);
+                return;
+            }
+//            }
+//            for (MainItemModel m : CulturalSitesArrayList) {
+//                if (title.equals(m.title)) {
+            if (model.type.equals(Constants.PARAMS_CulturalSites)) {
+                // EXIST IN HERE
+                if (increase) {
+                    increaseFromChart(Constants.PARAMS_CulturalSites);
+                } else decreaseFromChart(Constants.PARAMS_CulturalSites);
+                return;
+            }
+//            }
+//            for (MainItemModel m : AirportsArrayList) {
+//                if (title.equals(m.title)) {
+            if (model.type.equals(Constants.PARAMS_Airports)) {
+                // EXIST IN HERE
+                if (increase) {
+                    increaseFromChart(Constants.PARAMS_Airports);
+                } else decreaseFromChart(Constants.PARAMS_Airports);
+            }
+//            }
+        }).start();
+    }
+    /*public static void changeChartsValue(MainItemModel title, boolean increase) {
         new Thread(() -> {
             for (MainItemModel m : CountryArrayList) {
                 if (title.equals(m.title)) {
@@ -228,7 +271,7 @@ public class Utils {
                 }
             }
         }).start();
-    }
+    }*/
 
     public static String getImageUrl(String tt, String dd, boolean isAirport, boolean inHighQuality) {
         String link = "null";

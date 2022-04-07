@@ -79,11 +79,15 @@ public class Constants {
 
     public static String GET_BOUNDARY_URL(String q) {
         String query = null;
-        try {
-            query = URLEncoder.encode(q, "utf-8");
-        } catch (UnsupportedEncodingException e) {
+        if (q == null) {
             query = "china";
-            e.printStackTrace();
+        } else {
+            try {
+                query = URLEncoder.encode(q, "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                query = "china";
+                e.printStackTrace();
+            }
         }
         return "https://nominatim.openstreetmap.org/search?country=" +
                 query +

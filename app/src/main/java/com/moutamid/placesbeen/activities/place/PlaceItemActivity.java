@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,7 +24,6 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.request.RequestOptions;
 import com.fxn.stash.Stash;
@@ -44,7 +42,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.function.Function;
 
 public class PlaceItemActivity extends AppCompatActivity {
     private static final String TAG = "HECK";
@@ -108,7 +105,7 @@ public class PlaceItemActivity extends AppCompatActivity {
                     Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
                 }
 
-                Utils.changeChartsValue(model.title, true);
+                Utils.changeChartsValue(model, true);
                 if (controller.polygon == null)
                     controller.drawPolygon(model.title, Color.argb(255, 50, 205, 50));
             } else {
@@ -119,7 +116,7 @@ public class PlaceItemActivity extends AppCompatActivity {
                     Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
                 }
 
-                Utils.changeChartsValue(model.title, false);
+                Utils.changeChartsValue(model, false);
                 if (controller.polygon != null) {
                     controller.polygon.remove();
                     controller.polygon = null;

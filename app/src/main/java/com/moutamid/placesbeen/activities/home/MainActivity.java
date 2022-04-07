@@ -363,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
-                Utils.changeChartsValue(model.title, b1);
+                Utils.changeChartsValue(model, b1);
                 if (b1) {
                     controller.drawCountryPolygon(model.title, Color.argb(255, 50, 205, 50), model);
                     // ADDING CITY NAME TO EXTRA LIST

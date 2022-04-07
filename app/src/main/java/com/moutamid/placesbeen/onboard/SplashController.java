@@ -37,7 +37,7 @@ public class SplashController {
                 model.desc = "";
                 model.lat = Constants.NULL;
                 model.lng = Constants.NULL;
-
+                model.type = Constants.PARAMS_Continent;
                 model.url = Constants.NULL;
 
                 mainActivity.ContinentArrayList.add(model);
@@ -63,7 +63,7 @@ public class SplashController {
             model.desc = "";
             model.lat = Constants.NULL;
             model.lng = Constants.NULL;
-
+            model.type = Constants.PARAMS_Country;
             model.url = Constants.NULL;
 //            model.url = getImageUrl(model.title, model.title);
 
@@ -88,6 +88,7 @@ public class SplashController {
             model.desc = "";
             model.lat = Constants.NULL;
             model.lng = Constants.NULL;
+            model.type = Constants.PARAMS_States;
 
             model.url = Constants.NULL;
 //            model.url = getImageUrl(model.title, model.title);
@@ -107,8 +108,6 @@ public class SplashController {
 
     public void getCities() {
         Log.d(TAG, "getCities: ");
-
-//
         try {
             Log.d(TAG, "getCities: try {");
             JSONArray jsonArray = new JSONArray(loadJSONFromAsset(Constants.WORLD_CITIES_JSON));
@@ -123,6 +122,7 @@ public class SplashController {
                 fillModelClass(jo_inside, model, Constants.WORLD_CITIES_JSON);
 
                 model.url = Constants.NULL;
+                model.type = Constants.PARAMS_City;
 
                 mainActivity.CityArrayList.add(model);
             }
@@ -156,6 +156,7 @@ public class SplashController {
                 fillModelClass(jo_inside, model, Constants.CULTURAL_SITES_JSON);
 
                 model.url = Constants.NULL;
+                model.type = Constants.PARAMS_CulturalSites;
 
                 mainActivity.CulturalSitesArrayList.add(model);
             }
@@ -189,6 +190,7 @@ public class SplashController {
                 fillModelClass(jo_inside, model, Constants.CULTURAL_SITES_JSON);
 
                 model.url = Constants.NULL;
+                model.type = Constants.PARAMS_NationalParks;
 
                 mainActivity.NationalParksArrayList.add(model);
             }
@@ -222,6 +224,7 @@ public class SplashController {
                 fillModelClass(jo_inside, model, Constants.AIRPORTS_JSON);
 
                 model.url = Constants.NULL;
+                model.type = Constants.PARAMS_Airports;
 
                 mainActivity.AirportsArrayList.add(model);
             }
