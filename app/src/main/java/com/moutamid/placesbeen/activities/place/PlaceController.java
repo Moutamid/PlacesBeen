@@ -3,6 +3,7 @@ package com.moutamid.placesbeen.activities.place;
 import static com.bumptech.glide.Glide.with;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC;
 import static com.moutamid.placesbeen.R.color.lighterGrey;
+import static com.moutamid.placesbeen.utils.Utils.encodeString;
 
 import android.animation.Animator;
 import android.content.Context;
@@ -70,7 +71,6 @@ public class PlaceController {
             return;
         }
         ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
-
         if (savedList.contains(model.title)) {
             if (polygon != null) {
                 polygon.remove();
@@ -82,7 +82,7 @@ public class PlaceController {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(Constants.SAVED_ITEMS_PATH)
-                    .child(model.title)
+                    .child(encodeString(model.title + model.desc))
                     .removeValue();
 
             savedList.remove(model.title);
@@ -97,7 +97,7 @@ public class PlaceController {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(Constants.SAVED_ITEMS_PATH)
-                    .child(model.title)
+                    .child(encodeString(model.title + model.desc))
                     .setValue(model);
 
             savedList.add(model.title);
@@ -256,13 +256,13 @@ public class PlaceController {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(itemsPath)
-                    .child(mainItemModel.title)
+                    .child(encodeString(mainItemModel.title + mainItemModel.desc))
                     .setValue(mainItemModel);
         } else {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(itemsPath)
-                    .child(mainItemModel.title)
+                    .child(encodeString(mainItemModel.title + mainItemModel.desc))
                     .removeValue();
         }
     }

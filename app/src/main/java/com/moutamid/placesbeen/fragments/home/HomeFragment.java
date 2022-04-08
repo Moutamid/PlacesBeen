@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -269,36 +270,42 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position) {
-            MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
+            try {
+                MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
 
-            holder.title.setText(model.title);
-            holder.desc.setText(model.desc);
+                holder.title.setText(model.title);
+                holder.desc.setText(model.desc);
 
-            int nmbr = new Random().nextInt(2);
-            nmbr += 4;
-            holder.ratingBar.setRating(nmbr);
-            holder.ratingText.setText(nmbr + "");
+                int nmbr = new Random().nextInt(2);
+                nmbr += 4;
+                holder.ratingBar.setRating(nmbr);
+                holder.ratingText.setText(nmbr + "");
 
-            if (isAdded())
-                Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
-
-            holder.parenLayout.setOnClickListener(view -> {
-                Stash.put(Constants.CURRENT_MODEL_CLASS, model);
                 if (isAdded())
-                    startActivity(new Intent(requireContext(), PlaceItemActivity.class));
-            });
+                    Utils.loadImage(requireActivity(), holder.imageView, model.title, model.desc, isAirport, false);
 
-            controller.isSaved(model, holder.saveBtn);
+                holder.parenLayout.setOnClickListener(view -> {
+                    Stash.put(Constants.CURRENT_MODEL_CLASS, model);
+                    if (isAdded())
+                        startActivity(new Intent(requireContext(), PlaceItemActivity.class));
+                });
 
-            holder.saveBtn.setOnClickListener(view -> {
-                controller.saveUnSaveItem(model, holder.saveBtn);
-                controller.setvaluesOnTextviews();
-            });
+                controller.isSaved(model, holder.saveBtn);
+
+                holder.saveBtn.setOnClickListener(view -> {
+                    controller.saveUnSaveItem(model, holder.saveBtn);
+                    controller.setvaluesOnTextviews();
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("HUSH", "onBindViewHolder: ERROR: " + e.getMessage());
+            }
         }
 
         @Override
         public int getItemCount() {
-            if (mainItemModelArrayList == null)
+            Log.d("HUSH", "getItemCount: " + mainItemModelArrayList.size());
+            if (mainItemModelArrayList == null || mainItemModelArrayList.size() == 0)
                 return 0;
             return mainItemModelArrayList.size();
         }

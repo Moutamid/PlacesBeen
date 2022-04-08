@@ -320,11 +320,14 @@ public class MainController {
                             lat = Double.parseDouble(model.lat);
                             lng = Double.parseDouble(model.lng);
                         }
-                    } catch (NullPointerException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         lat = 0;
                         lng = 0;
                     }
+
+                    if (lat == 0 && lng == 0)
+                        return;
 
                     LatLng sydney = new LatLng(lat, lng);
 //                if (saveFragment.isAdded())
@@ -355,48 +358,54 @@ public class MainController {
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
                 Log.d(TAG, "onChildRemoved: ");
-                if (snapshot.exists()) {
-                    MainItemModel model = snapshot.getValue(MainItemModel.class);
-                    itemArrayList.remove(model);
 
-                    // REMOVING MARKER FROM MAP
-                    for (int i = 0; i < markers.size(); i++) {
-                        Log.d(TAG, "onChildRemoved: marker iteration: " + i);
-                        String title = markers.get(i).title;
-                        Marker marker = markers.get(i).marker;
+                try {
+                    if (snapshot.exists()) {
+                        MainItemModel model = snapshot.getValue(MainItemModel.class);
+                        itemArrayList.remove(model);
 
-                        if (title.equals(model.title)) {
+                        // REMOVING MARKER FROM MAP
+                        for (int i = 0; i < markers.size(); i++) {
+                            Log.d(TAG, "onChildRemoved: marker iteration: " + i);
+                            String title = markers.get(i).title;
+                            Marker marker = markers.get(i).marker;
+
+                            if (title.equals(model.title)) {
 //                            if (saveFragment.isAdded())
-                            activity.runOnUiThread(() -> {
-                                marker.remove();
-                            });
-                            markers.remove(i);
-                            break;
+                                activity.runOnUiThread(() -> {
+                                    marker.remove();
+                                });
+                                markers.remove(i);
+                                break;
+                            }
+
                         }
 
-                    }
+                        // REMOVING POLYGON FROM MAP
+                        for (int i = 0; i < polygonModelArrayList.size(); i++) {
+                            Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
+                            String title = polygonModelArrayList.get(i).title;
 
-                    // REMOVING POLYGON FROM MAP
-                    for (int i = 0; i < polygonModelArrayList.size(); i++) {
-                        Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
-                        String title = polygonModelArrayList.get(i).title;
+                            if (title.equals(model.title)) {
+                                Polygon polygon = polygonModelArrayList.get(i).polygon;
+                                activity.runOnUiThread(() -> {
+                                    polygon.remove();
+                                });
+                                polygonModelArrayList.remove(i);
+                                break;
+                            }
 
-                        if (title.equals(model.title)) {
-                            Polygon polygon = polygonModelArrayList.get(i).polygon;
-                            activity.runOnUiThread(() -> {
-                                polygon.remove();
-                            });
-                            polygonModelArrayList.remove(i);
-                            break;
                         }
 
+                        // REMOVING ITEM FROM SAVED LIST
+                        if (ITEMS_PATH.equals(Constants.SAVED_ITEMS_PATH) && savedList.contains(model.title)) {
+                            savedList.remove(model.title + model.desc);
+                            Stash.put(Constants.SAVED_LIST, savedList);
+                        }
                     }
-
-                    // REMOVING ITEM FROM SAVED LIST
-                    if (ITEMS_PATH.equals(Constants.SAVED_ITEMS_PATH) && savedList.contains(model.title)) {
-                        savedList.remove(model.title + model.desc);
-                        Stash.put(Constants.SAVED_LIST, savedList);
-                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "onChildRemoved: ERROR: " + e.getMessage());
                 }
             }
 

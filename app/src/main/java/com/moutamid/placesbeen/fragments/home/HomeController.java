@@ -1,5 +1,7 @@
 package com.moutamid.placesbeen.fragments.home;
 
+import static com.moutamid.placesbeen.utils.Utils.encodeString;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
@@ -69,7 +71,7 @@ public class HomeController {
             return;
         }
 
-        if (mainActivity.savedList.contains(model.title+model.desc)) {
+        if (mainActivity.savedList.contains(model.title + model.desc)) {
 //            if (Stash.getBoolean(model.title, false)) {
             // IF ALREADY SAVED THEN REMOVE
             saveBtn.setImageResource(R.drawable.ic_unsave_24);
@@ -77,10 +79,10 @@ public class HomeController {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(Constants.SAVED_ITEMS_PATH)
-                    .child(model.title+model.desc)
+                    .child(encodeString(model.title + model.desc))
                     .removeValue();
 
-            mainActivity.savedList.remove(model.title+model.desc);
+            mainActivity.savedList.remove(model.title + model.desc);
             Stash.put(Constants.SAVED_LIST, mainActivity.savedList);
 //                Stash.clear(model.title);
             // DECREASE 1 FROM CURRENT QUANTITY FOR CHARTS
@@ -96,10 +98,10 @@ public class HomeController {
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(Constants.SAVED_ITEMS_PATH)
-                    .child(model.title+model.desc)
+                    .child(encodeString(model.title + model.desc))
                     .setValue(model);
 
-            mainActivity.savedList.add(model.title+model.desc);
+            mainActivity.savedList.add(model.title + model.desc);
             Stash.put(Constants.SAVED_LIST, mainActivity.savedList);
 //                Stash.put(model.title, true);
 
@@ -111,7 +113,7 @@ public class HomeController {
     }
 
     public void isSaved(MainItemModel model, ImageView saveBtn) {
-        if (mainActivity.savedList.contains(model.title+model.desc)) {
+        if (mainActivity.savedList.contains(model.title + model.desc)) {
             Log.d("MFUCKER", "isSaved: " + model.title);
             saveBtn.setImageResource(R.drawable.ic_save_24);
             mainActivity.CURRENT_COUNT++;
@@ -130,7 +132,7 @@ public class HomeController {
 
                                 MainItemModel model = snapshot.getValue(MainItemModel.class);
 
-                                Stash.put(model.title+model.desc, true);
+                                Stash.put(model.title + model.desc, true);
                                 Log.d(TAG, "onChildAdded: " + model.title);
                             } catch (Exception e) {
                                 Log.e(TAG, "onChildAdded: ERROR: " + snapshot.getKey());
@@ -152,7 +154,7 @@ public class HomeController {
 
                                 MainItemModel model = snapshot.getValue(MainItemModel.class);
 
-                                Stash.clear(model.title+model.desc);
+                                Stash.clear(model.title + model.desc);
 
                                 Log.d(TAG, "onChildRemoved: " + model.title);
                             } catch (Exception e) {

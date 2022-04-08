@@ -233,6 +233,11 @@ public class Utils {
 //            }
         }).start();
     }
+
+    public static String encodeString(String value) {
+        return value.replace(".", " ").replace("#", " ").replace("$", " ").replace("[", " ").replace("]", " ");
+    }
+
     /*public static void changeChartsValue(MainItemModel title, boolean increase) {
         new Thread(() -> {
             for (MainItemModel m : CountryArrayList) {

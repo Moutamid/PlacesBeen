@@ -6,6 +6,7 @@ import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
 import static com.moutamid.placesbeen.R.color.greyishblue;
 import static com.moutamid.placesbeen.R.color.red;
 import static com.moutamid.placesbeen.utils.Constants.GET_COUNTRY_FLAG;
+import static com.moutamid.placesbeen.utils.Utils.encodeString;
 import static com.moutamid.placesbeen.utils.Utils.toast;
 
 import android.app.ProgressDialog;
@@ -520,18 +521,17 @@ public class MainActivity extends AppCompatActivity {
         public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
             toast(mainItemModel.title + mainItemModel.desc);
             Stash.put(mainItemModel.title + mainItemModel.desc + itemsPath, b);
-
             if (b) {
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(itemsPath)
-                        .child(mainItemModel.title + mainItemModel.desc)
+                        .child(encodeString(mainItemModel.title + mainItemModel.desc))
                         .setValue(mainItemModel);
             } else {
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(itemsPath)
-                        .child(mainItemModel.title + mainItemModel.desc)
+                        .child(encodeString(mainItemModel.title + mainItemModel.desc))
                         .removeValue();
             }
         }
@@ -540,13 +540,12 @@ public class MainActivity extends AppCompatActivity {
 
         public void saveUnSaveItem(MainItemModel model, CheckBox checkBox) {
             if (savedList.contains(model.title + model.desc)) {
-
                 // IF ALREADY SAVED THEN REMOVE
                 checkBox.setChecked(false);
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(Constants.SAVED_ITEMS_PATH)
-                        .child(model.title + model.desc)
+                        .child(encodeString(model.title + model.desc))
                         .removeValue();
 
                 savedList.remove(model.title + model.desc);
@@ -557,7 +556,7 @@ public class MainActivity extends AppCompatActivity {
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(Constants.SAVED_ITEMS_PATH)
-                        .child(model.title + model.desc)
+                        .child(encodeString(model.title + model.desc))
                         .setValue(model);
 
                 savedList.add(model.title + model.desc);
