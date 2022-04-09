@@ -625,20 +625,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removePolygon(MainItemModel model) {
-        // REMOVING POLYGON FROM MAP
-        for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
-            Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
-            String title = controller.polygonModelArrayList.get(i).title;
+        try {
+            // REMOVING POLYGON FROM MAP
+            for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
+                Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
+                String title = controller.polygonModelArrayList.get(i).title;
 
-            if (title.equals(model.title)) {
-                Polygon polygon = controller.polygonModelArrayList.get(i).polygon;
-                runOnUiThread(() -> {
-                    polygon.remove();
-                });
-                controller.polygonModelArrayList.remove(i);
-                break;
+                if (title.equals(model.title)) {
+                    controller.polygonModelArrayList.remove(i);
+                    Polygon polygon = controller.polygonModelArrayList.get(i).polygon;
+                    runOnUiThread(() -> {
+                        polygon.remove();
+                    });
+                    break;
+                }
+
             }
-
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG, "removePolygon: ERROR: " + e.getMessage());
         }
     }
 

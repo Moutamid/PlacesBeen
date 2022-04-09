@@ -259,7 +259,7 @@ public class MainController {
                         Constants.BEEN_ITEMS_PATH,
                         activity.beenArrayListCountries,
                         R.drawable.been_marker,
-                        Color.argb(255, 50, 205, 50),
+                        Color.argb(255, 73, 238, 69),
                         "Been"));
         Constants.databaseReference()
                 .child(Constants.auth().getUid()).child(Constants.WANT_TO_ITEMS_PATH)
@@ -267,7 +267,7 @@ public class MainController {
                         Constants.WANT_TO_ITEMS_PATH,
                         activity.wantToArrayListCountries,
                         R.drawable.want_to_marker,
-                        Color.argb(255, 246, 173, 33),
+                        Color.argb(255, 246, 21, 21),
                         "Want to"));
 
     }
@@ -626,6 +626,7 @@ public class MainController {
                             descNull = true;
                         }
                         Log.d(TAG, "drawPolygon: title: " + model.title + " descIsNull: " + descNull);
+                        polygonOptions.fillColor(colour);
                         PolygonModel polygonModel = new PolygonModel();
                         polygonModel.title = country;
                         polygonModel.polygon = activity.mMap.addPolygon(polygonOptions);
