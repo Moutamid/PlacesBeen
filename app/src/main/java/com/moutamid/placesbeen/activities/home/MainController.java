@@ -267,7 +267,7 @@ public class MainController {
                         Constants.WANT_TO_ITEMS_PATH,
                         activity.wantToArrayListCountries,
                         R.drawable.want_to_marker,
-                        Color.argb(255, 246, 21, 21),
+                        Color.argb(255, 254, 154, 0),
                         "Want to"));
 
     }

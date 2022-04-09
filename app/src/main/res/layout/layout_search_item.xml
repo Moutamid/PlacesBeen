@@ -68,7 +68,7 @@
             android:id="@+id/wantToCheckBoxSearchItem"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="@color/red" />
+            android:buttonTint="@color/yellow3" />
 
 
     </LinearLayout>
