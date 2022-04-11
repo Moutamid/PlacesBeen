@@ -2,9 +2,6 @@ package com.moutamid.placesbeen.activities.home;
 
 import static com.bumptech.glide.Glide.with;
 import static com.bumptech.glide.load.engine.DiskCacheStrategy.AUTOMATIC;
-import static com.bumptech.glide.load.engine.DiskCacheStrategy.DATA;
-import static com.moutamid.placesbeen.R.color.greyishblue;
-import static com.moutamid.placesbeen.R.color.red;
 import static com.moutamid.placesbeen.utils.Constants.GET_COUNTRY_FLAG;
 import static com.moutamid.placesbeen.utils.Utils.encodeString;
 import static com.moutamid.placesbeen.utils.Utils.toast;

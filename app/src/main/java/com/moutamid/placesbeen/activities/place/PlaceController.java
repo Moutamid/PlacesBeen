@@ -282,6 +282,10 @@ public class PlaceController {
 
     public void initMaps() {
         Log.d(TAG, "initMaps: ");
+        if (activity.model.type.equals(Constants.PARAMS_NationalParks)) {
+            activity.b.mapFragmentLayoutPlace.setVisibility(View.INVISIBLE);
+        }
+
         SupportMapFragment mapFragment = (SupportMapFragment) activity.getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {

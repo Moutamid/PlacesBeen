@@ -592,7 +592,7 @@ public class MainController {
                             }
                         }
                     }, error -> {
-                toast("Failed to get data: " + error.getMessage());
+//                toast("Failed to get data: " + error.getMessage());
                 if (error instanceof NetworkError) {
                     Log.d("HUFF", "NetworkError");
                 } else if (error instanceof ServerError) {
