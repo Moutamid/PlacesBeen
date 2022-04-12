@@ -151,7 +151,6 @@ public class HomeController {
                     public void onChildRemoved(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             try {
-
                                 MainItemModel model = snapshot.getValue(MainItemModel.class);
 
                                 Stash.clear(model.title + model.desc);

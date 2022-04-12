@@ -176,12 +176,13 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:id="@+id/descTextViewPlace"
+                            android:id="@+id/otherTextView1Place"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:text=""
+                            android:visibility="invisible"
                             android:textColor="@color/white"
                             android:textSize="20sp" />
 
@@ -229,7 +230,7 @@
                         android:orientation="vertical">
                         <!--TODO: IT CAN BE REGION, COUNTRY OR CONTINENT-->
                         <TextView
-                            android:id="@+id/otherTextView1Place"
+                            android:id="@+id/descTextViewPlace"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
@@ -237,7 +238,7 @@
                             android:text="Loading..."
                             android:textColor="@color/black"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
 
                         <TextView
                             android:id="@+id/otherTextView2Place"
@@ -246,6 +247,7 @@
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:text=""
+                            android:visibility="invisible"
                             android:textSize="14sp" />
 
 
