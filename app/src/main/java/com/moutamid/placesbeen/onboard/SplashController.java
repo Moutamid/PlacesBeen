@@ -191,7 +191,8 @@ public class SplashController {
 
                 model.url = Constants.NULL;
                 model.type = Constants.PARAMS_NationalParks;
-
+                /*if (model.desc.contains(","))
+                    Log.d(TAG, "COUNTRYYY: " + model.desc);*/
                 mainActivity.NationalParksArrayList.add(model);
             }
 
@@ -269,7 +270,6 @@ public class SplashController {
 //                    Log.d(TAG, "fillModelClass: lng: " + model.lng);
                     break;
                 case Constants.CULTURAL_SITES_JSON:
-//                    Log.d(TAG, "fillModelClass: case Constants.CULTURAL_SITES_JSON:");
                     model.title = jo_inside.getString("name");
                     /*String[] cc = jo_inside.getString("country").split(",");
                     model.desc = cc[0];*/

@@ -307,7 +307,7 @@
                                     android:id="@+id/profileImg"
                                     android:layout_width="match_parent"
                                     android:layout_height="150dp"
-                                    android:background="@color/grey"
+                                    android:src="@drawable/test"
                                     android:scaleType="centerCrop" />
 
                                 <TextView
