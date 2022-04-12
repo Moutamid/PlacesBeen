@@ -141,7 +141,7 @@ public class SplashController {
 
     public void getCulturalSites() {
         Log.d(TAG, "getCulturalSites: ");
-//
+
         try {
             Log.d(TAG, "getCities: try {");
             JSONArray jsonArray = new JSONArray(loadJSONFromAsset(Constants.CULTURAL_SITES_JSON));
@@ -271,7 +271,9 @@ public class SplashController {
                 case Constants.CULTURAL_SITES_JSON:
 //                    Log.d(TAG, "fillModelClass: case Constants.CULTURAL_SITES_JSON:");
                     model.title = jo_inside.getString("name");
-                    model.desc = jo_inside.getString("country");
+                    /*String[] cc = jo_inside.getString("country").split(",");
+                    model.desc = cc[0];*/
+                    model.desc = jo_inside.getString("country").split(",")[0];
                     model.lat = jo_inside.getString("lat");
                     model.lng = jo_inside.getString("lng");
                     break;

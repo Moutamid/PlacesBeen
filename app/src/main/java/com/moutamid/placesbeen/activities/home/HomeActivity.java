@@ -100,7 +100,7 @@ public class HomeActivity extends AppCompatActivity {
                                     .load(snapshot.getValue().toString())
                                     .apply(new RequestOptions()
                                             .placeholder(R.color.grey)
-                                            .error(R.color.grey)
+                                            .error(R.drawable.test)
                                     )
                                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                                     .into(b.profileImg);
