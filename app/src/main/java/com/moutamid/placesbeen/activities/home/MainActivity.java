@@ -328,6 +328,13 @@ public class MainActivity extends AppCompatActivity {
             holder.saveCB.setOnCheckedChangeListener(null);
             holder.wantToCB.setOnCheckedChangeListener(null);
 
+            if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
+                // TODO: NEW
+                holder.wantToCB.setVisibility(View.INVISIBLE);
+                holder.saveCB.setVisibility(View.INVISIBLE);
+                holder.beenCB.setButtonTintList(ColorStateList.valueOf(getResources().getColor(R.color.pink)));
+            }
+
             holder.title.setText(model.title);
             if (!model.desc.equals(Constants.NULL)) {
                 holder.desc.setVisibility(View.VISIBLE);
@@ -341,9 +348,12 @@ public class MainActivity extends AppCompatActivity {
 
             // IF USER BEEN
             if (Stash.getBoolean(model.title + model.desc + Constants.BEEN_ITEMS_PATH, false)) {
-                holder.title.setTextColor(getResources().getColor(R.color.green));
-//                holder.title.setTextColor(getResources().getColor(R.color.yellow2));
                 holder.beenCB.setChecked(true);
+
+                if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites))
+                    holder.title.setTextColor(getResources().getColor(R.color.pink));
+                else
+                    holder.title.setTextColor(getResources().getColor(R.color.green));
             }
             // IF WANT TO SAVED
             if (Stash.getBoolean(model.title + model.desc + Constants.WANT_TO_ITEMS_PATH, false)) {
@@ -371,8 +381,10 @@ public class MainActivity extends AppCompatActivity {
                         Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
                     }
 
-                    holder.title.setTextColor(getResources().getColor(R.color.green));
-//                    holder.title.setTextColor(getResources().getColor(R.color.yellow2));
+                    if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites))
+                        holder.title.setTextColor(getResources().getColor(R.color.pink));
+                    else
+                        holder.title.setTextColor(getResources().getColor(R.color.green));
                 } else {
                     removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST

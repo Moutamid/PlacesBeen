@@ -8,6 +8,7 @@ import static com.moutamid.placesbeen.utils.Utils.toast;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -72,6 +73,11 @@ public class PlaceItemActivity extends AppCompatActivity {
         controller = new PlaceController(this);
 
         model = (MainItemModel) Stash.getObject(Constants.CURRENT_MODEL_CLASS, MainItemModel.class);
+
+        if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
+            b.wantToCheckBoxPlace.setVisibility(View.GONE);
+            b.saveBtnPlace.setVisibility(View.GONE);
+        }
 
         b.titleTextViewPlace.setText(model.title);
 

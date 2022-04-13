@@ -302,7 +302,7 @@ public class MainController {
                 }
             }
 
-            private void addMarkerOnMaps(MainItemModel model, int marker, String title) {
+            private void addMarkerOnMaps(MainItemModel model, final int marker, String title) {
                 new Thread(() -> {
                     Log.d(TAG, "addMarkerOnMaps: " + model.title);
 
@@ -337,10 +337,16 @@ public class MainController {
                             descNull = true;
                         }
 
-                        Marker marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
-                                .title(model.title)
-                                .icon(BitmapDescriptorFactory.fromResource(marker)));
-
+                        Marker marker1;
+                        if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
+                            marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
+                                    .title(model.title)
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.parks_marker)));
+                        } else {
+                            marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
+                                    .title(model.title)
+                                    .icon(BitmapDescriptorFactory.fromResource(marker)));
+                        }
                         MarkerModel markerModel = new MarkerModel(model.title, marker1, descNull);
                         markers.add(markerModel);
                         marker1.setVisible(descNull);
