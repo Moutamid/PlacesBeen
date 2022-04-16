@@ -62,6 +62,8 @@ import com.moutamid.placesbeen.utils.Utils;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -89,6 +91,16 @@ public class MainActivity extends AppCompatActivity {
         b = ActivityMainBinding.inflate(getLayoutInflater());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(b.getRoot());
+
+        /*new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (Stash.getBoolean("Total Rf HeliportBensalem, US\n" +
+                        "    (heliport)" + Constants.BEEN_ITEMS_PATH)) {
+                    Log.d(TAG, "runrunrun: " + "true");
+                }
+            }
+        }, 1000, 100);*/
 
         controller = new MainController(this);
 
@@ -314,123 +326,157 @@ public class MainActivity extends AppCompatActivity {
         }
 
         boolean shouldColor = false;
+        String TAG = "PUPP";
 
         @Override
         public void onBindViewHolder(@NonNull final ViewHolderRightMessage holder, int position1) {
+            Log.d(TAG, "onBindViewHolder: " + position1);
             MainItemModel model = mainItemModelArrayList.get(holder.getAdapterPosition());
 
             loadFlagOnImage(model, holder.flagImg);
 
-            holder.beenCB.setChecked(false);
-            holder.saveCB.setChecked(false);
-            holder.wantToCB.setChecked(false);
             holder.beenCB.setOnCheckedChangeListener(null);
             holder.saveCB.setOnCheckedChangeListener(null);
             holder.wantToCB.setOnCheckedChangeListener(null);
+            holder.beenCB.setChecked(false);
+            holder.saveCB.setChecked(false);
+            holder.wantToCB.setChecked(false);
 
-            if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
-                // TODO: NEW
-                holder.wantToCB.setVisibility(View.INVISIBLE);
-                holder.saveCB.setVisibility(View.INVISIBLE);
-                holder.beenCB.setButtonTintList(ColorStateList.valueOf(getResources().getColor(R.color.pink)));
-            }
+//            if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
+//                Log.d(TAG, "onBindViewHolder: if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {");
+            // TODO: NEW
+//                holder.wantToCB.setVisibility(View.INVISIBLE);
+//                holder.saveCB.setVisibility(View.INVISIBLE);
+//                holder.beenCB.setButtonTintList(ColorStateList.valueOf(getResources().getColor(R.color.pink)));
+//            }
 
             holder.title.setText(model.title);
             if (!model.desc.equals(Constants.NULL)) {
+                Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL)) {");
                 holder.desc.setVisibility(View.VISIBLE);
                 holder.desc.setText(model.desc);
             }
 
             if (savedList.contains(model.title + model.desc)) {
+                Log.d(TAG, "onBindViewHolder: if (savedList.contains(model.title + model.desc)) {");
                 holder.title.setTextColor(getResources().getColor(R.color.yellow));
                 holder.saveCB.setChecked(true);
             }
 
             // IF USER BEEN
             if (Stash.getBoolean(model.title + model.desc + Constants.BEEN_ITEMS_PATH, false)) {
+//                Log.d(TAG, "onBindViewHolder: DEFAULT TRUE: " + model.title + model.desc);
+//                Log.d(TAG, "onBindViewHolder: if (Stash.getBoolean(model.title + model.desc + Constants.BEEN_ITEMS_PATH, false)) {");
                 holder.beenCB.setChecked(true);
 
-                if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites))
-                    holder.title.setTextColor(getResources().getColor(R.color.pink));
-                else
-                    holder.title.setTextColor(getResources().getColor(R.color.green));
+//                if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
+//                    Log.d(TAG, "onBindViewHolder: if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites))");
+//                    holder.title.setTextColor(getResources().getColor(R.color.pink));
+//                } else {
+//                    Log.d(TAG, "onBindViewHolder: } else {");
+                holder.title.setTextColor(getResources().getColor(R.color.green));
+//                }
             }
+//            else Log.d(TAG, "onBindViewHolder: DEFAULT FALSE: " + model.title + model.desc);
+
             // IF WANT TO SAVED
             if (Stash.getBoolean(model.title + model.desc + Constants.WANT_TO_ITEMS_PATH, false)) {
+                Log.d(TAG, "onBindViewHolder: if (Stash.getBoolean(model.title + model.desc + Constants.WANT_TO_ITEMS_PATH, false)) {");
                 holder.title.setTextColor(getResources().getColor(R.color.red));
                 holder.wantToCB.setChecked(true);
             }
 
             holder.saveCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                Log.d(TAG, "onBindViewHolder: holder.saveCB.setOnCheckedChangeListener((compoundButton, b1) -> {");
                 if (b1) {
+                    Log.d(TAG, "onBindViewHolder: if (b1) {");
                     holder.title.setTextColor(getResources().getColor(R.color.yellow));
                 } else {
+                    Log.d(TAG, "onBindViewHolder: } else {");
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
                 }
                 saveUnSaveItem(model, holder.saveCB);
             });
 
             holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                Log.d(TAG, "onBindViewHolder: CHECKED: " + model.title + model.desc + " " + b1);
+                Log.d(TAG, "onBindViewHolder: holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {");
                 Utils.changeChartsValue(model, b1);
                 if (b1) {
+                    Log.d(TAG, "onBindViewHolder: if (b1) {");
                     controller.drawCountryPolygon(model.title, Color.argb(255, 50, 205, 50), model);
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
                         extraCitiesList.add(model.title);
                         Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
                     }
 
-                    if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites))
-                        holder.title.setTextColor(getResources().getColor(R.color.pink));
-                    else
-                        holder.title.setTextColor(getResources().getColor(R.color.green));
+//                    if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
+//                        Log.d(TAG, "onBindViewHolder: if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {");
+//                        holder.title.setTextColor(getResources().getColor(R.color.pink));
+//                    } else {
+//                        Log.d(TAG, "onBindViewHolder: else {");
+                    holder.title.setTextColor(getResources().getColor(R.color.green));
+                    triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
+//                    }
                 } else {
+                    Log.d(TAG, "onBindViewHolder: } else {");
                     removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
                         extraCitiesList.remove(model.title);
                         Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
                     }
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                    triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
                 }
-                triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
 
             });
 
             holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {
+                Log.d(TAG, "onBindViewHolder: holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {");
                 if (b1) {
+                    Log.d(TAG, "onBindViewHolder: if (b1) {");
                     controller.drawCountryPolygon(model.title, Color.argb(255, 246, 173, 33), model);
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
                         extraCitiesList.add(model.title);
                         Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
                     }
 
                     holder.title.setTextColor(getResources().getColor(R.color.red));
+                    triggerCheckBox(model, b1, Constants.WANT_TO_ITEMS_PATH);
                 } else {
+                    Log.d(TAG, "onBindViewHolder: } else {");
                     removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
                         ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
                         extraCitiesList.remove(model.title);
                         Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
                     }
 
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                    triggerCheckBox(model, b1, Constants.WANT_TO_ITEMS_PATH);
+
                 }
-                triggerCheckBox(model, b1, Constants.WANT_TO_ITEMS_PATH);
             });
 
             holder.parentLayout.setOnClickListener(view -> {
+                Log.d(TAG, "onBindViewHolder: holder.parentLayout.setOnClickListener(view -> {");
                 b.searchEtLayoutMain.setVisibility(View.GONE);
                 b.searchBtnLayout.setVisibility(View.VISIBLE);
 
                 addMarkerOnMaps(model);
             });
-
+            Log.d(TAG, "onBindViewHolder: ended");
         }
 
         private void loadFlagOnImage(MainItemModel model, ImageView flagImg) {
@@ -528,6 +574,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
+            Log.d(TAG, "triggerCheckBoxxx: " + mainItemModel.title + mainItemModel.desc + itemsPath + " " + b);
             toast(mainItemModel.title + mainItemModel.desc);
             Stash.put(mainItemModel.title + mainItemModel.desc + itemsPath, b);
             if (b) {

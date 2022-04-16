@@ -1,6 +1,7 @@
 package com.moutamid.placesbeen.onboard;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,7 @@ public class AppContext extends Application {
                         if (snapshot.exists()) {
                             MainItemModel model = snapshot.getValue(MainItemModel.class);
                             Stash.put(model.title + model.desc + Constants.BEEN_ITEMS_PATH, true);
+                            Log.d("triggerCheckBoxxx", "onChildAdded: " + model.title + model.desc + Constants.BEEN_ITEMS_PATH + " true");
                         }
                     }
 
@@ -42,10 +44,11 @@ public class AppContext extends Application {
 
                     @Override
                     public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
+                        /*if (snapshot.exists()) {
                             MainItemModel model = snapshot.getValue(MainItemModel.class);
                             Stash.put(model.title + model.desc + Constants.BEEN_ITEMS_PATH, false);
-                        }
+                            Log.d("triggerCheckBoxxx", "onChildRemoved: " + model.title + model.desc + Constants.BEEN_ITEMS_PATH + " false");
+                        }*/
                     }
 
                     @Override
@@ -78,10 +81,10 @@ public class AppContext extends Application {
 
                     @Override
                     public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
+                        /*if (snapshot.exists()) {
                             MainItemModel model = snapshot.getValue(MainItemModel.class);
                             Stash.put(model.title + model.desc + Constants.WANT_TO_ITEMS_PATH, false);
-                        }
+                        }*/
                     }
 
                     @Override
