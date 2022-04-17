@@ -50,6 +50,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.moutamid.placesbeen.R;
 import com.moutamid.placesbeen.databinding.ActivityMainBinding;
 import com.moutamid.placesbeen.fragments.charts.ChartsFragment;
@@ -404,7 +406,9 @@ public class MainActivity extends AppCompatActivity {
                 Utils.changeChartsValue(model, b1);
                 if (b1) {
                     Log.d(TAG, "onBindViewHolder: if (b1) {");
-                    controller.drawCountryPolygon(model.title, Color.argb(255, 50, 205, 50), model);
+                    Log.d(TAG, "onBindViewHolder: BEEN POSITIVE");
+//                    controller.drawCountryPolygon(model.title, Color.argb(255, 50, 205, 50), model);
+//                    controller.addMarkerOnMaps(model, R.drawable.been_marker, model.title);
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
@@ -423,6 +427,7 @@ public class MainActivity extends AppCompatActivity {
 //                    }
                 } else {
                     Log.d(TAG, "onBindViewHolder: } else {");
+                    Log.d(TAG, "onBindViewHolder: BEEN NEGATIVE");
                     removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
@@ -441,7 +446,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onBindViewHolder: holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {");
                 if (b1) {
                     Log.d(TAG, "onBindViewHolder: if (b1) {");
-                    controller.drawCountryPolygon(model.title, Color.argb(255, 246, 173, 33), model);
+//                    controller.drawCountryPolygon(model.title, Color.argb(255, 246, 173, 33), model);
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
@@ -578,12 +583,28 @@ public class MainActivity extends AppCompatActivity {
             toast(mainItemModel.title + mainItemModel.desc);
             Stash.put(mainItemModel.title + mainItemModel.desc + itemsPath, b);
             if (b) {
+                String data = encodeString(mainItemModel.title + mainItemModel.desc);
+                Log.d(TAG, "onCompleteee: VALUE: " + data);
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(itemsPath)
-                        .child(encodeString(mainItemModel.title + mainItemModel.desc))
-                        .setValue(mainItemModel);
+                        .child(data)
+                        .setValue(mainItemModel).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            toast("TASK IS SUCCESSFUL");
+                        } else {
+                            toast("TASK IS FAILED: " + task.getException().getMessage());
+                            Log.d(TAG, "onCompleteee: ERROR: " + task.getException().getMessage());
+                            task.getException().printStackTrace();
+                        }
+                    }
+                });
             } else {
+                Log.d(TAG, "triggerCheckBox: onBindViewHolder: BEENN NEGATIVE");
+                Log.d(TAG, "onChildAddeddd: CHILD REMOVED: " + mainItemModel.title);
+                Log.d(TAG, "saveUnSaveItem: mainactivity 595 HEHE REMOVED");
                 Constants.databaseReference()
                         .child(Constants.auth().getUid())
                         .child(itemsPath)
@@ -596,6 +617,7 @@ public class MainActivity extends AppCompatActivity {
 
         public void saveUnSaveItem(MainItemModel model, CheckBox checkBox) {
             if (savedList.contains(model.title + model.desc)) {
+                Log.d(TAG, "saveUnSaveItem: Mainactivity 608 HEHE REMOVED");
                 // IF ALREADY SAVED THEN REMOVE
                 checkBox.setChecked(false);
                 Constants.databaseReference()
@@ -681,26 +703,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removePolygon(MainItemModel model) {
-        try {
-            // REMOVING POLYGON FROM MAP
-            for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
-                Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
-                String title = controller.polygonModelArrayList.get(i).title;
+        // REMOVING POLYGON FROM MAP
+        for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
+            Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
+            String title = controller.polygonModelArrayList.get(i).title;
 
-                if (title.equals(model.title)) {
-                    controller.polygonModelArrayList.remove(i);
+            if (title.equals(model.title)) {
+                try {
                     Polygon polygon = controller.polygonModelArrayList.get(i).polygon;
                     runOnUiThread(() -> {
                         polygon.remove();
                     });
-                    break;
+                    controller.polygonModelArrayList.remove(i);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "removePolygon: ERROR: " + e.getMessage());
                 }
-
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "removePolygon: ERROR: " + e.getMessage());
+
         }
+
     }
 
     boolean IS_HIDDEN = false;

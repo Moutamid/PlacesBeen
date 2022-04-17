@@ -72,6 +72,7 @@ public class HomeController {
         }
 
         if (mainActivity.savedList.contains(model.title + model.desc)) {
+            Log.d(TAG, "saveUnSaveItem: homecontroller 75 HEHE REMOVED");
 //            if (Stash.getBoolean(model.title, false)) {
             // IF ALREADY SAVED THEN REMOVE
             saveBtn.setImageResource(R.drawable.ic_unsave_24);

@@ -79,6 +79,7 @@ public class PlaceController {
             // IF ALREADY SAVED THEN REMOVE
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_unsave_24);
             YoYo.with(Techniques.Bounce).duration(700).playOn(activity.b.saveBtnPlace);
+            Log.d(TAG, "saveUnSaveItem: Placecontroller 82 HEHE REMOVED");
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(Constants.SAVED_ITEMS_PATH)
@@ -259,6 +260,7 @@ public class PlaceController {
                     .child(encodeString(mainItemModel.title + mainItemModel.desc))
                     .setValue(mainItemModel);
         } else {
+            Log.d(TAG, "saveUnSaveItem: Placecontroller 263 HEHE REMOVED");
             Constants.databaseReference()
                     .child(Constants.auth().getUid())
                     .child(itemsPath)

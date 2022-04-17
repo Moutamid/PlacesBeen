@@ -235,7 +235,7 @@ public class Utils {
     }
 
     public static String encodeString(String value) {
-        return value.replace(".", " ").replace("#", " ").replace("$", " ").replace("[", " ").replace("]", " ");
+        return value.replace(".", "-").replace("#", "-").replace("$", "-").replace("[", "-").replace("]", "-").replace("\n", "-").replace("\r", "-");
     }
 
     /*public static void changeChartsValue(MainItemModel title, boolean increase) {

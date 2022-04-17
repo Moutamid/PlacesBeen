@@ -80,12 +80,12 @@ public class Constants {
     public static String GET_BOUNDARY_URL(String q) {
         String query = null;
         if (q == null) {
-            query = "china";
+            query = "ccc";
         } else {
             try {
                 query = URLEncoder.encode(q, "utf-8");
             } catch (UnsupportedEncodingException e) {
-                query = "china";
+                query = "ccc";
                 e.printStackTrace();
             }
         }
@@ -112,7 +112,7 @@ public class Constants {
         try {
             query = URLEncoder.encode(q, "utf-8");
         } catch (UnsupportedEncodingException e) {
-            query = "china";
+            query = "ccc";
             e.printStackTrace();
         }
         return "https://nominatim.openstreetmap.org/search?city=" +

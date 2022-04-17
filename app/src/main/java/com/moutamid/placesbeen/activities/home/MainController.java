@@ -282,7 +282,7 @@ public class MainController {
 //                    new Thread(() -> {
                     MainItemModel model = snapshot.getValue(MainItemModel.class);
                     itemArrayList.add(model);
-
+                    Log.d(TAG, "onChildAddeddd: " + model.title + model.desc + model.lat + model.lng);
                     addMarkerOnMaps(model, marker, title);
 
 //                    new DrawPolygonTask(model.title, colour, model).execute();
@@ -302,60 +302,6 @@ public class MainController {
                 }
             }
 
-            private void addMarkerOnMaps(MainItemModel model, final int marker, String title) {
-                new Thread(() -> {
-                    Log.d(TAG, "addMarkerOnMaps: " + model.title);
-
-                    if (Constants.COUNTRIES_LIST.contains(model.title))
-                        return;
-
-                    double lat;
-                    double lng;
-
-                    try {
-                        if (model.lat.equals(Constants.NULL)) {
-                            lat = getLat(model.title);
-                            lng = LONG;
-                        } else {
-                            lat = Double.parseDouble(model.lat);
-                            lng = Double.parseDouble(model.lng);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        lat = 0;
-                        lng = 0;
-                    }
-
-                    if (lat == 0 && lng == 0)
-                        return;
-
-                    LatLng sydney = new LatLng(lat, lng);
-//                if (saveFragment.isAdded())
-                    activity.runOnUiThread(() -> {
-                        boolean descNull = false;
-                        if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {
-                            descNull = true;
-                        }
-
-                        Marker marker1;
-                        if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
-                            marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
-                                    .title(model.title)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.parks_marker)));
-                        } else {
-                            marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
-                                    .title(model.title)
-                                    .icon(BitmapDescriptorFactory.fromResource(marker)));
-                        }
-                        MarkerModel markerModel = new MarkerModel(model.title, marker1, descNull);
-                        markers.add(markerModel);
-                        marker1.setVisible(descNull);
-                        Log.d(TAG, "addMarkerOnMaps: " + model.title + " Desc NULL: " + descNull);
-                    });
-
-                }).start();
-            }
-
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
@@ -363,11 +309,11 @@ public class MainController {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                Log.d(TAG, "onChildRemoved: ");
 
                 try {
                     if (snapshot.exists()) {
                         MainItemModel model = snapshot.getValue(MainItemModel.class);
+                        Log.d(TAG, "onChildRemovedddd: " + model.title);
                         itemArrayList.remove(model);
 
                         // REMOVING MARKER FROM MAP
@@ -428,6 +374,60 @@ public class MainController {
     }
 //        }).start();
 //    }
+
+    public void addMarkerOnMaps(MainItemModel model, final int marker, String title) {
+        new Thread(() -> {
+            Log.d(TAG, "addMarkerOnMaps: " + model.title);
+
+            if (Constants.COUNTRIES_LIST.contains(model.title))
+                return;
+
+            double lat;
+            double lng;
+
+            try {
+                if (model.lat.equals(Constants.NULL)) {
+                    lat = getLat(model.title);
+                    lng = LONG;
+                } else {
+                    lat = Double.parseDouble(model.lat);
+                    lng = Double.parseDouble(model.lng);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                lat = 0;
+                lng = 0;
+            }
+
+            if (lat == 0 && lng == 0)
+                return;
+
+            LatLng sydney = new LatLng(lat, lng);
+//                if (saveFragment.isAdded())
+            activity.runOnUiThread(() -> {
+                boolean descNull = false;
+                if (model.desc == null || model.desc.equals(Constants.NULL) || model.desc.equals("") || TextUtils.isEmpty(model.desc)) {
+                    descNull = true;
+                }
+
+                Marker marker1;
+                if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
+                    marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
+                            .title(model.title)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.parks_marker)));
+                } else {
+                    marker1 = activity.mMap.addMarker(new MarkerOptions().position(sydney)
+                            .title(model.title)
+                            .icon(BitmapDescriptorFactory.fromResource(marker)));
+                }
+                MarkerModel markerModel = new MarkerModel(model.title, marker1, descNull);
+                markers.add(markerModel);
+                marker1.setVisible(descNull);
+                Log.d(TAG, "addMarkerOnMaps: " + model.title + " Desc NULL: " + descNull);
+            });
+
+        }).start();
+    }
 
     public void initMaps() {
         Log.d(TAG, "initMaps: ");

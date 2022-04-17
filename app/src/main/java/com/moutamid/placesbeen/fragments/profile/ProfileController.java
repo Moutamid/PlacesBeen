@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -132,11 +133,16 @@ public class ProfileController {
 
             dialog.findViewById(R.id.delBtnDialog).setOnClickListener(view -> {
                 Stash.clear(pathToDelete);
-                if (pathToDelete.equals(Constants.SAVED_LIST))
+                if (pathToDelete.equals(Constants.SAVED_LIST)) {
+                    Log.d("TAG", "saveUnSaveItem: Placecontroller 137 HEHE REMOVED");
                     Constants.databaseReference().child(Constants.auth().getUid())
                             .child(Constants.SAVED_ITEMS_PATH).removeValue();
-                else Constants.databaseReference().child(Constants.auth().getUid())
-                        .child(pathToDelete).removeValue();
+                }
+                else {
+                    Log.d("TAG", "saveUnSaveItem: Placecontroller 142 HEHE REMOVED");
+                    Constants.databaseReference().child(Constants.auth().getUid())
+                            .child(pathToDelete).removeValue();
+                }
 
                 dialog.dismiss();
                 toast("Done");
