@@ -2,6 +2,8 @@ package com.moutamid.placesbeen.fragments.home;
 
 import static android.view.LayoutInflater.from;
 
+import static com.moutamid.placesbeen.utils.Utils.encodeString;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -293,12 +295,51 @@ public class HomeFragment extends Fragment {
                 controller.isSaved(model, holder.saveBtn);
 
                 holder.saveBtn.setOnClickListener(view -> {
+                    // IF USER BEEN
+                    if (Stash.getBoolean(model.title + model.desc + Constants.BEEN_ITEMS_PATH, false)) {
+                        // REMOVING CITY NAME TO EXTRA LIST
+                        if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                            ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
+                            extraCitiesList.remove(model.title);
+                            Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
+                        }
+                        Utils.changeChartsValue(model, false);
+                        triggerCheckBox(model, false, Constants.BEEN_ITEMS_PATH);
+                    }
+                    // IF WANT TO SAVED
+                    if (Stash.getBoolean(model.title + Constants.WANT_TO_ITEMS_PATH, false)) {
+                        // REMOVING CITY NAME TO EXTRA LIST
+                        if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                            ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
+                            extraCitiesList.remove(model.title);
+                            Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
+                        }
+                        triggerCheckBox(model, false, Constants.WANT_TO_ITEMS_PATH);
+                    }
+
                     controller.saveUnSaveItem(model, holder.saveBtn);
                     controller.setvaluesOnTextviews();
                 });
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e("HUSH", "onBindViewHolder: ERROR: " + e.getMessage());
+            }
+        }
+
+        public void triggerCheckBox(MainItemModel mainItemModel, boolean b, String itemsPath) {
+            Stash.put(mainItemModel.title + mainItemModel.desc + itemsPath, b);
+            if (b) {
+                Constants.databaseReference()
+                        .child(Constants.auth().getUid())
+                        .child(itemsPath)
+                        .child(encodeString(mainItemModel.title + mainItemModel.desc))
+                        .setValue(mainItemModel);
+            } else {
+                Constants.databaseReference()
+                        .child(Constants.auth().getUid())
+                        .child(itemsPath)
+                        .child(encodeString(mainItemModel.title + mainItemModel.desc))
+                        .removeValue();
             }
         }
 

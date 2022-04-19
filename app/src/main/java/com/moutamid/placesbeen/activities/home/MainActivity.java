@@ -274,8 +274,13 @@ public class MainActivity extends AppCompatActivity {
 
         controller.retrieveSearchListItems();
 
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading...");
+
     }
 
+    private ProgressDialog progressDialog;
     public ArrayList<MainItemModel> mainItemModelArrayList = new ArrayList<>();
     public ArrayList<MainItemModel> mainItemModelArrayListAll = new ArrayList<>();
 
@@ -390,7 +395,36 @@ public class MainActivity extends AppCompatActivity {
 
             holder.saveCB.setOnCheckedChangeListener((compoundButton, b1) -> {
                 Log.d(TAG, "onBindViewHolder: holder.saveCB.setOnCheckedChangeListener((compoundButton, b1) -> {");
+                disableButtons(holder);
                 if (b1) {
+                    // IF ANY OTHER CHECK BOX IS MARKED AS TRUE THEN REMOVE THEM FIRST
+                    if (holder.beenCB.isChecked()) {
+                        holder.beenCB.setChecked(false);
+                        removePolygon(model);
+                        // REMOVING CITY NAME TO EXTRA LIST
+                        if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                            Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
+                            ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
+                            extraCitiesList.remove(model.title);
+                            Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
+                        }
+                        holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                        triggerCheckBox(model, false, Constants.BEEN_ITEMS_PATH);
+                    }
+                    if (holder.wantToCB.isChecked()) {
+                        holder.wantToCB.setChecked(false);
+                        removePolygon(model);
+                        // REMOVING CITY NAME TO EXTRA LIST
+                        if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                            Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
+                            ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
+                            extraCitiesList.remove(model.title);
+                            Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
+                        }
+
+                        holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                        triggerCheckBox(model, false, Constants.WANT_TO_ITEMS_PATH);
+                    }
                     Log.d(TAG, "onBindViewHolder: if (b1) {");
                     holder.title.setTextColor(getResources().getColor(R.color.yellow));
                 } else {
@@ -398,17 +432,33 @@ public class MainActivity extends AppCompatActivity {
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
                 }
                 saveUnSaveItem(model, holder.saveCB);
+//                enableButtons(holder);
             });
 
             holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {
-                Log.d(TAG, "onBindViewHolder: CHECKED: " + model.title + model.desc + " " + b1);
-                Log.d(TAG, "onBindViewHolder: holder.beenCB.setOnCheckedChangeListener((compoundButton, b1) -> {");
+                disableButtons(holder);
                 Utils.changeChartsValue(model, b1);
                 if (b1) {
-                    Log.d(TAG, "onBindViewHolder: if (b1) {");
-                    Log.d(TAG, "onBindViewHolder: BEEN POSITIVE");
-//                    controller.drawCountryPolygon(model.title, Color.argb(255, 50, 205, 50), model);
-//                    controller.addMarkerOnMaps(model, R.drawable.been_marker, model.title);
+                    // FIRST REMOVE PREVIOUS MARKED CHECK BOXES
+                    if (holder.saveCB.isChecked()) {
+                        saveUnSaveItem(model, holder.saveCB);
+                        holder.saveCB.setChecked(false);
+                    }
+                    if (holder.wantToCB.isChecked()) {
+                        holder.wantToCB.setChecked(false);
+                        removePolygon(model);
+                        // REMOVING CITY NAME TO EXTRA LIST
+                        if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                            Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
+                            ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
+                            extraCitiesList.remove(model.title);
+                            Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
+                        }
+
+                        holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                        triggerCheckBox(model, false, Constants.WANT_TO_ITEMS_PATH);
+                    }
+
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
@@ -416,18 +466,10 @@ public class MainActivity extends AppCompatActivity {
                         extraCitiesList.add(model.title);
                         Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
                     }
-
-//                    if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {
-//                        Log.d(TAG, "onBindViewHolder: if (model.type.equals(Constants.PARAMS_NationalParks) || model.type.equals(Constants.PARAMS_CulturalSites)) {");
-//                        holder.title.setTextColor(getResources().getColor(R.color.pink));
-//                    } else {
-//                        Log.d(TAG, "onBindViewHolder: else {");
                     holder.title.setTextColor(getResources().getColor(R.color.green));
                     triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
 //                    }
                 } else {
-                    Log.d(TAG, "onBindViewHolder: } else {");
-                    Log.d(TAG, "onBindViewHolder: BEEN NEGATIVE");
                     removePolygon(model);
                     // REMOVING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
@@ -439,14 +481,30 @@ public class MainActivity extends AppCompatActivity {
                     holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
                     triggerCheckBox(model, b1, Constants.BEEN_ITEMS_PATH);
                 }
-
+//                enableButtons(holder);
             });
 
             holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {
                 Log.d(TAG, "onBindViewHolder: holder.wantToCB.setOnCheckedChangeListener((compoundButton, b1) -> {");
+                disableButtons(holder);
                 if (b1) {
-                    Log.d(TAG, "onBindViewHolder: if (b1) {");
-//                    controller.drawCountryPolygon(model.title, Color.argb(255, 246, 173, 33), model);
+                    if (holder.saveCB.isChecked()) {
+                        saveUnSaveItem(model, holder.saveCB);
+                        holder.saveCB.setChecked(false);
+                    }
+                    if (holder.beenCB.isChecked()) {
+                        holder.beenCB.setChecked(false);
+                        removePolygon(model);
+                        // REMOVING CITY NAME TO EXTRA LIST
+                        if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                            Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
+                            ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
+                            extraCitiesList.remove(model.title);
+                            Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
+                        }
+                        holder.title.setTextColor(getResources().getColor(R.color.default_text_color));
+                        triggerCheckBox(model, false, Constants.BEEN_ITEMS_PATH);
+                    }
                     // ADDING CITY NAME TO EXTRA LIST
                     if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                         Log.d(TAG, "onBindViewHolder: if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {");
@@ -472,6 +530,7 @@ public class MainActivity extends AppCompatActivity {
                     triggerCheckBox(model, b1, Constants.WANT_TO_ITEMS_PATH);
 
                 }
+//                enableButtons(holder);
             });
 
             holder.parentLayout.setOnClickListener(view -> {
@@ -482,6 +541,28 @@ public class MainActivity extends AppCompatActivity {
                 addMarkerOnMaps(model);
             });
             Log.d(TAG, "onBindViewHolder: ended");
+        }
+
+        private void disableButtons(ViewHolderRightMessage holder) {
+            holder.saveCB.setEnabled(false);
+            holder.saveCB.setClickable(false);
+            holder.beenCB.setEnabled(false);
+            holder.beenCB.setClickable(false);
+            holder.wantToCB.setEnabled(false);
+            holder.wantToCB.setClickable(false);
+
+            new Handler().postDelayed(() -> {
+                enableButtons(holder);
+            }, 1000);
+        }
+
+        private void enableButtons(ViewHolderRightMessage holder) {
+            holder.saveCB.setEnabled(true);
+            holder.saveCB.setClickable(true);
+            holder.beenCB.setEnabled(true);
+            holder.beenCB.setClickable(true);
+            holder.wantToCB.setEnabled(true);
+            holder.wantToCB.setClickable(true);
         }
 
         private void loadFlagOnImage(MainItemModel model, ImageView flagImg) {
@@ -593,7 +674,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            toast("TASK IS SUCCESSFUL");
+//                            toast("TASK IS SUCCESSFUL");
                         } else {
                             toast("TASK IS FAILED: " + task.getException().getMessage());
                             Log.d(TAG, "onCompleteee: ERROR: " + task.getException().getMessage());
@@ -722,6 +803,25 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+        for (int i = 0; i < controller.polygonModelArrayList.size(); i++) {
+            Log.d(TAG, "onChildRemoved: polygon iteration: " + i);
+            String title = controller.polygonModelArrayList.get(i).title;
+
+            if (title.equals(model.title)) {
+                try {
+                    Polygon polygon = controller.polygonModelArrayList.get(i).polygon;
+                    runOnUiThread(() -> {
+                        polygon.remove();
+                    });
+                    controller.polygonModelArrayList.remove(i);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "removePolygon: ERROR: " + e.getMessage());
+                }
+            }
+
+        }
+
 
     }
 

@@ -109,7 +109,6 @@ public class PlaceController {
     public void checkIsItemSaved() {
         Log.d(TAG, "checkIsItemSaved: ");
         ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
-//        if (Stash.getBoolean(activity.mainItemModel.title, false)) {
         if (savedList.contains(activity.model.title)) {
             activity.b.saveBtnPlace.setImageResource(R.drawable.ic_save_24);
         }

@@ -93,6 +93,35 @@ public class PlaceItemActivity extends AppCompatActivity {
         controller.checkBeenWantTo();
 
         b.saveBtnPlace.setOnClickListener(view -> {
+            if (b.beenCheckBoxPlace.isChecked()){
+                b.beenCheckBoxPlace.setChecked(false);
+                // REMOVING CITY NAME TO EXTRA LIST
+                if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                    ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
+                    extraCitiesList.remove(model.title);
+                    Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
+                }
+
+                Utils.changeChartsValue(model, false);
+                if (controller.polygon != null) {
+                    controller.polygon.remove();
+                    controller.polygon = null;
+                }
+            }
+            if (b.wantToCheckBoxPlace.isChecked()){
+                b.wantToCheckBoxPlace.setChecked(false);
+                // REMOVING CITY NAME TO EXTRA LIST
+                if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                    ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
+                    extraCitiesList.remove(model.title);
+                    Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
+                }
+
+                if (controller.polygon != null) {
+                    controller.polygon.remove();
+                    controller.polygon = null;
+                }
+            }
             controller.saveUnSaveItem();
         });
 
@@ -104,6 +133,24 @@ public class PlaceItemActivity extends AppCompatActivity {
 
         b.beenCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) {
+                ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
+                if (savedList.contains(model.title)) {
+                    controller.saveUnSaveItem();
+                }
+                if (this.b.wantToCheckBoxPlace.isChecked()){
+                    this.b.wantToCheckBoxPlace.setChecked(false);
+                    // REMOVING CITY NAME TO EXTRA LIST
+                    if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);
+                        extraCitiesList.remove(model.title);
+                        Stash.put(model.desc + Constants.EXTRA_LIST_WANT, extraCitiesList);
+                    }
+
+                    if (controller.polygon != null) {
+                        controller.polygon.remove();
+                        controller.polygon = null;
+                    }
+                }
                 // ADDING CITY NAME TO EXTRA LIST
                 if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                     ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
@@ -133,6 +180,26 @@ public class PlaceItemActivity extends AppCompatActivity {
 
         b.wantToCheckBoxPlace.setOnCheckedChangeListener((compoundButton, b) -> {
             if (b) {
+                ArrayList<String> savedList = Stash.getArrayList(Constants.SAVED_LIST, String.class);
+                if (savedList.contains(model.title)) {
+                    controller.saveUnSaveItem();
+                }
+                if (this.b.beenCheckBoxPlace.isChecked()){
+                    this.b.beenCheckBoxPlace.setChecked(false);
+                    // REMOVING CITY NAME TO EXTRA LIST
+                    if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
+                        ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST, String.class);
+                        extraCitiesList.remove(model.title);
+                        Stash.put(model.desc + Constants.EXTRA_LIST, extraCitiesList);
+                    }
+
+                    Utils.changeChartsValue(model, false);
+                    if (controller.polygon != null) {
+                        controller.polygon.remove();
+                        controller.polygon = null;
+                    }
+                }
+
                 // ADDING CITY NAME TO EXTRA LIST
                 if (!model.desc.equals(Constants.NULL) && !model.desc.isEmpty()) {
                     ArrayList<String> extraCitiesList = Stash.getArrayList(model.desc + Constants.EXTRA_LIST_WANT, String.class);

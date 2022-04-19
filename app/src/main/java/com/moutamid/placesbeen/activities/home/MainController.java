@@ -309,7 +309,6 @@ public class MainController {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
                 try {
                     if (snapshot.exists()) {
                         MainItemModel model = snapshot.getValue(MainItemModel.class);
